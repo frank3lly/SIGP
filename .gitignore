@@ -17,6 +17,7 @@ runs/
 # Data & Storage
 storage/data/
 storage/images/
+storage/cameras/
 cam_software/fotos/
 *.sqlite
 *.sqlite3

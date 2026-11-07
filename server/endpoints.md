@@ -148,6 +148,12 @@
 - **Vomits:**
   - Binary image (200 OK, `image/jpeg`)
 
+### GET /api/v1/cameras/{camera_id}/raw
+- **Gets:**
+  - Path: `camera_id` (str)
+- **Vomits:**
+  - Raw binary image (200 OK, `image/jpeg`)
+
 ### GET /storage/images/latest_{camera_id}.jpg
 - **Gets:**
   - Path: `camera_id` (str)

@@ -5,7 +5,7 @@ from typing import Optional, Tuple
 
 import cv2
 import numpy as np
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, Response, UploadFile, status
 
 from detection.config_loader import CameraConfig
 from detection.detector import VehicleDetector
@@ -151,11 +151,44 @@ async def upload_camera_frame(
             detail="Invalid image encoding. File could not be decoded as an image.",
         )
 
-    # 3. Dispatch synchronous vision workload to threadpool
+    # 3. Hardware Audit: Store real hardware frame for diagnostic inspection
+    raw_hardware_path = Path(f"storage/cameras/raw_{camera_id}.jpg")
+    try:
+        raw_hardware_path.parent.mkdir(parents=True, exist_ok=True)
+        raw_hardware_path.write_bytes(contents)
+    except Exception as e:
+        logger.warning(f"Failed to save raw hardware frame for '{camera_id}': {e}")
+    server_state.record_raw_image(camera_id, contents)
+
+    # 4. Decoupled Test Mode: Check if test mode is enabled globally or per-camera
+    is_test_mode = server_state.test_mode_enabled or getattr(camera_cfg, "test_mode_enabled", False)
+    if is_test_mode:
+        custom_dir = getattr(camera_cfg, "test_mode_sample_dir", None)
+        sample_path = server_state.get_next_sample_frame(camera_id, sample_dir=custom_dir)
+        if sample_path and sample_path.exists():
+            detection_image = cv2.imread(str(sample_path))
+            if detection_image is None or detection_image.size == 0:
+                logger.warning(
+                    f"[{camera_id}] Failed to decode sample image {sample_path}. Falling back to live image."
+                )
+                detection_image = image
+            else:
+                logger.info(
+                    f"[{camera_id}] Hardware-decoupled test mode active: swapped live frame with sample {sample_path.name}"
+                )
+        else:
+            logger.warning(
+                f"[{camera_id}] Test mode active but no sample frames found. Falling back to live image."
+            )
+            detection_image = image
+    else:
+        detection_image = image
+
+    # 5. Dispatch synchronous vision workload to threadpool
     try:
         occupancy_resp, annotated_bytes = await asyncio.to_thread(
             process_frame_sync,
-            image,
+            detection_image,
             camera_cfg,
             server_state.detector,
         )
@@ -263,3 +296,52 @@ def update_camera_hot_config(
         f"active={payload.active}, quality={payload.quality}"
     )
     return payload
+
+
+@router.get(
+    "/api/v1/cameras/{camera_id}/raw",
+    status_code=status.HTTP_200_OK,
+    summary="Get latest raw uploaded camera image without annotations",
+    responses={
+        200: {
+            "content": {"image/jpeg": {}},
+            "description": "Latest raw camera JPEG image.",
+        },
+        404: {"description": "Camera not found or no raw image uploaded yet."},
+    },
+)
+@router.get(
+    "/cameras/{camera_id}/raw",
+    include_in_schema=False,
+)
+def get_camera_raw_image(camera_id: str) -> Response:
+    if camera_id not in server_state.camera_configs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Camera '{camera_id}' not found in registered configurations.",
+        )
+
+    raw_bytes = server_state.get_camera_raw_image(camera_id)
+    if not raw_bytes:
+        raw_path = Path(f"storage/cameras/raw_{camera_id}.jpg")
+        if raw_path.exists():
+            try:
+                raw_bytes = raw_path.read_bytes()
+            except Exception:
+                pass
+
+    if not raw_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No raw image has been uploaded yet for camera '{camera_id}'.",
+        )
+
+    return Response(
+        content=raw_bytes,
+        media_type="image/jpeg",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
+    )

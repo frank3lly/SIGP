@@ -47,6 +47,23 @@ class CameraConfig(BaseModel):
     reference_resolution: List[int] = Field(..., description="[width, height] of the calibration frame")
     spots: List[SpotConfig] = Field(..., min_length=1, description="List of parking spots")
     hot_config: Optional[Dict[str, Any]] = Field(default=None, description="Optional dynamic hot-configuration")
+    test_mode: Optional[Union[Dict[str, Any], bool]] = Field(
+        default=None, description="Optional hardware-decoupled test mode configuration"
+    )
+
+    @property
+    def test_mode_enabled(self) -> bool:
+        if isinstance(self.test_mode, bool):
+            return self.test_mode
+        if isinstance(self.test_mode, dict):
+            return bool(self.test_mode.get("enabled", False))
+        return False
+
+    @property
+    def test_mode_sample_dir(self) -> Optional[str]:
+        if isinstance(self.test_mode, dict):
+            return self.test_mode.get("sample_dir")
+        return None
 
     @field_validator("reference_resolution")
     @classmethod

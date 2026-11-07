@@ -24,6 +24,7 @@ logger = logging.getLogger("parqueame.server")
 async def lifespan(app: FastAPI):
     logger.info("Initializing Parqueame Smart Parking Server...")
     Path("storage/images").mkdir(parents=True, exist_ok=True)
+    Path("storage/cameras").mkdir(parents=True, exist_ok=True)
     init_db()
     server_state.initialize(config_dir="config/cameras")
     logger.info("Server initialization complete. Listening for incoming camera frames.")

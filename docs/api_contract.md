@@ -118,7 +118,15 @@ const imageUrl = `http://localhost:8000/api/v1/cameras/cam_01/image?t=${Date.now
 
 ---
 
-### 4. `GET /api/v1/analytics/cameras/{camera_id}/summary` (KPI Summary)
+### 4. `GET /api/v1/cameras/{camera_id}/raw` (Raw Hardware Capture)
+- **Role:** Serves the latest unannotated raw camera image as received directly over HTTP from the physical camera microcontroller. Used for optical calibration, lens diagnostics, and indoor hardware testing verification.
+- **Content-Type:** `image/jpeg`
+- **Error Response:**
+  - `404 Not Found` if no raw image has been uploaded yet for the given camera.
+
+---
+
+### 5. `GET /api/v1/analytics/cameras/{camera_id}/summary` (KPI Summary)
 - **Role:** Supplies turnover, peak occupancy, and utilization metrics for dashboard cards and summary widgets.
 - **Query Parameters:**
   - `hours` (float, optional, default: `2.0`): Historical analysis window in hours.

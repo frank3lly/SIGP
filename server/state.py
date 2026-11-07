@@ -1,8 +1,9 @@
 import logging
+import os
 import threading
 import time
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 import torch
 
@@ -28,7 +29,10 @@ class ServerState:
         self.camera_hot_configs: Dict[str, CameraHotConfig] = {}
         self.latest_occupancy: Dict[str, OccupancyResponse] = {}
         self.latest_images: Dict[str, bytes] = {}
+        self.latest_raw_images: Dict[str, bytes] = {}
         self.latest_battery: Dict[str, Dict[str, Any]] = {}
+        self.sample_indices: Dict[str, int] = {}
+        self._test_mode_override: Optional[bool] = None
         self.lock = threading.Lock()
 
     def initialize(self, config_dir: str = "config/cameras") -> None:
@@ -215,6 +219,59 @@ class ServerState:
     def get_camera_image(self, camera_id: str) -> Optional[bytes]:
         with self.lock:
             return self.latest_images.get(camera_id)
+
+    @property
+    def test_mode_enabled(self) -> bool:
+        if self._test_mode_override is not None:
+            return self._test_mode_override
+        env_val = os.getenv("PARQUEAME_TEST_MODE", "").strip().lower()
+        return env_val in ("true", "1", "yes")
+
+    @test_mode_enabled.setter
+    def test_mode_enabled(self, value: Optional[bool]) -> None:
+        self._test_mode_override = value
+
+    def record_raw_image(self, camera_id: str, raw_jpeg: bytes) -> None:
+        with self.lock:
+            self.latest_raw_images[camera_id] = raw_jpeg
+
+    def get_camera_raw_image(self, camera_id: str) -> Optional[bytes]:
+        with self.lock:
+            return self.latest_raw_images.get(camera_id)
+
+    def get_next_sample_frame(
+        self,
+        camera_id: str,
+        sample_dir: Optional[Union[str, Path]] = None,
+    ) -> Optional[Path]:
+        """Retrieves the next sequential sample frame path for a camera, wrapping around sequentially."""
+        if sample_dir:
+            dir_path = Path(sample_dir)
+        else:
+            cfg = self.camera_configs.get(camera_id)
+            custom_dir = getattr(cfg, "test_mode_sample_dir", None) if cfg else None
+            dir_path = Path(custom_dir) if custom_dir else Path("test-samples") / camera_id
+
+        if not dir_path.exists() or not dir_path.is_dir():
+            logger.warning(
+                f"Sample frame directory '{dir_path}' does not exist for camera '{camera_id}'"
+            )
+            return None
+
+        valid_extensions = {".jpg", ".jpeg", ".png"}
+        sample_files = sorted(
+            [p for p in dir_path.iterdir() if p.is_file() and p.suffix.lower() in valid_extensions]
+        )
+
+        if not sample_files:
+            logger.warning(f"No sample images found in '{dir_path}' for camera '{camera_id}'")
+            return None
+
+        with self.lock:
+            idx = self.sample_indices.get(camera_id, 0)
+            selected = sample_files[idx % len(sample_files)]
+            self.sample_indices[camera_id] = (idx + 1) % len(sample_files)
+            return selected
 
 
 server_state = ServerState()
