@@ -19,15 +19,61 @@ logger = logging.getLogger("parqueame.server.upload")
 router = APIRouter(tags=["Ingestion"])
 
 
+def normalize_frame_to_reference(
+    image: np.ndarray,
+    reference_resolution: Tuple[int, int],
+) -> Tuple[np.ndarray, bool]:
+    """Normalizes an incoming image frame to match the camera's calibrated reference resolution.
+    
+    Args:
+        image: Decoded BGR image matrix from camera upload.
+        reference_resolution: Expected (width, height) tuple from CameraConfig.
+        
+    Returns:
+        Tuple containing:
+            - Normalized image matrix matching (reference_width, reference_height).
+            - Boolean flag indicating whether a resize operation was performed.
+    """
+    ref_w, ref_h = reference_resolution
+    curr_h, curr_w = image.shape[:2]
+
+    if (curr_w, curr_h) == (ref_w, ref_h):
+        return image, False
+
+    # Choose optimal interpolation method based on scale factor
+    if curr_w > ref_w or curr_h > ref_h:
+        interpolation = cv2.INTER_AREA
+    else:
+        interpolation = cv2.INTER_LINEAR
+
+    resized_image = cv2.resize(image, (ref_w, ref_h), interpolation=interpolation)
+    return resized_image, True
+
+
 def process_frame_sync(
     image: np.ndarray,
     camera_cfg: CameraConfig,
     detector: VehicleDetector,
 ) -> Tuple[OccupancyResponse, bytes]:
-    """Synchronous CPU/GPU worker running detection and spatial math."""
-    spots = camera_cfg.to_detection_spots()
-    detections, latency_ms = detector.detect(image)
+    """Synchronous CPU/GPU worker running detection and spatial math with dimension normalization."""
+    # 1. Normalize frame to camera calibration reference resolution
+    normalized_image, was_resized = normalize_frame_to_reference(
+        image, 
+        tuple(camera_cfg.reference_resolution)
+    )
+    if was_resized:
+        logger.info(
+            f"[{camera_cfg.camera_id}] Ingested frame ({image.shape[1]}x{image.shape[0]}) "
+            f"automatically normalized to reference ({camera_cfg.reference_resolution[0]}x{camera_cfg.reference_resolution[1]})."
+        )
 
+    # 2. Extract spot definitions in calibrated space
+    spots = camera_cfg.to_detection_spots()
+
+    # 3. Execute object detection on normalized image
+    detections, latency_ms = detector.detect(normalized_image)
+
+    # 4. Evaluate point-in-polygon occupancy
     occupancy_resp = evaluate_occupancy(
         spots=spots,
         detections=detections,
@@ -35,8 +81,9 @@ def process_frame_sync(
         inference_time_ms=latency_ms,
     )
 
+    # 5. Render detection overlay on normalized image
     annotated = draw_detection_overlay(
-        image=image,
+        image=normalized_image,
         occupancy_response=occupancy_resp,
         spots=spots,
         detections=detections,
@@ -44,6 +91,7 @@ def process_frame_sync(
         draw_hud=True,
     )
 
+    # 6. Encode annotated JPEG for web frontend consumption
     success, buffer = cv2.imencode(
         ".jpg",
         annotated,
