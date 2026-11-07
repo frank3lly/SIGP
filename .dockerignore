@@ -1,0 +1,33 @@
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ruff_cache/
+
+# Git
+.git/
+.gitignore
+
+# Mounted volumes and runtime outputs
+tests/output/
+test/reports/
+tests/reports/
+storage/images/*
+storage/*.db
+storage/*.sqlite*
+storage/data/*
+cam_software/fotos/*
+
+# IDE and OS metadata
+.idea/
+.vscode/
+.DS_Store
+*.log

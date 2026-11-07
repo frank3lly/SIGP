@@ -28,6 +28,7 @@ uploads/
 .vscode/
 .DS_Store
 *.log
+docker-compose.override.yml
 __*
 test*
 verify*
