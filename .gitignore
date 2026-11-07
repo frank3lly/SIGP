@@ -29,7 +29,7 @@ uploads/
 .DS_Store
 *.log
 docker-compose.override.yml
-__*
-test*
-verify*
-__specs__
+__specs__/
+test-samples/
+tests/output/
+tests/reports/

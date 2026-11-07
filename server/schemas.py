@@ -17,6 +17,7 @@ class CameraStatusResponse(BaseModel):
     total_spots: int = Field(default=0, description="Total number of spots monitored")
     occupied_spots: int = Field(default=0, description="Number of currently occupied spots")
     free_spots: int = Field(default=0, description="Number of currently vacant spots")
+    occupancy_rate: float = Field(default=0.0, description="Camera occupancy rate between 0.0 and 1.0")
     last_processed_at: Optional[float] = Field(default=None, description="Timestamp of last processed frame")
     inference_time_ms: Optional[float] = Field(default=None, description="Inference latency of last frame in ms")
     battery_percentage: Optional[float] = Field(default=None, description="Battery percentage (0.0 to 100.0)")
@@ -45,6 +46,9 @@ class OverallStatusResponse(BaseModel):
     total_spots: int = Field(default=0, description="Grand total spots across all cameras")
     total_occupied: int = Field(default=0, description="Total occupied spots across all cameras")
     total_free: int = Field(default=0, description="Total vacant spots across all cameras")
+    occupied_spots: int = Field(default=0, description="Total occupied spots across all cameras")
+    free_spots: int = Field(default=0, description="Total vacant spots across all cameras")
+    occupancy_rate: float = Field(default=0.0, description="Aggregated occupancy rate between 0.0 and 1.0")
     timestamp: float = Field(..., description="Current server timestamp")
     cameras: Dict[str, CameraStatusResponse] = Field(default_factory=dict, description="Status mapping per camera")
 
@@ -95,8 +99,10 @@ class CameraFlowSummaryResponse(BaseModel):
 
 class TimelineBucketItem(BaseModel):
     timestamp: float
-    time_label: str
-    occupied_avg: float
-    free_avg: float
-    sample_count: int
+    time_label: Optional[str] = None
+    occupied_avg: Optional[float] = None
+    free_avg: Optional[float] = None
+    occupied_spots: Optional[int] = None
+    occupancy_rate: Optional[float] = None
+    sample_count: Optional[int] = None
 

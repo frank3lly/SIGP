@@ -100,12 +100,16 @@ class ServerState:
                             polygon=spot_cfg.polygon,
                         )
                     )
+                tot = len(cfg.spots)
+                occ = latest.occupied_count
+                rate = round(occ / tot, 4) if tot > 0 else 0.0
                 return CameraStatusResponse(
                     camera_id=camera_id,
                     name=cfg.name,
-                    total_spots=len(cfg.spots),
-                    occupied_spots=latest.occupied_count,
+                    total_spots=tot,
+                    occupied_spots=occ,
                     free_spots=latest.free_count,
+                    occupancy_rate=rate,
                     last_processed_at=latest.timestamp,
                     inference_time_ms=latest.inference_time_ms,
                     battery_percentage=bat_pct,
@@ -130,6 +134,7 @@ class ServerState:
                     total_spots=len(cfg.spots),
                     occupied_spots=0,
                     free_spots=len(cfg.spots),
+                    occupancy_rate=0.0,
                     last_processed_at=None,
                     inference_time_ms=None,
                     battery_percentage=bat_pct,
@@ -155,10 +160,14 @@ class ServerState:
                 total_occupied += stat.occupied_spots
                 total_free += stat.free_spots
 
+        overall_rate = round(total_occupied / total_spots, 4) if total_spots > 0 else 0.0
         return OverallStatusResponse(
             total_spots=total_spots,
             total_occupied=total_occupied,
             total_free=total_free,
+            occupied_spots=total_occupied,
+            free_spots=total_free,
+            occupancy_rate=overall_rate,
             timestamp=time.time(),
             cameras=cameras_map,
         )

@@ -226,13 +226,17 @@ def compute_timeline_series(
             / len(b_logs),
         )
         time_label = datetime.fromtimestamp(b_ts).strftime("%H:%M")
+        total_stalls = max(1.0, avg_occ + avg_free)
+        occ_rate = round(avg_occ / total_stalls, 4)
 
         series.append(
             {
-                "timestamp": b_ts,
+                "timestamp": float(b_ts),
                 "time_label": time_label,
                 "occupied_avg": round(avg_occ, 1),
                 "free_avg": round(avg_free, 1),
+                "occupied_spots": int(round(avg_occ)),
+                "occupancy_rate": occ_rate,
                 "sample_count": len(b_logs),
             }
         )
