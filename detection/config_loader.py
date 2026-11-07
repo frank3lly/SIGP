@@ -46,6 +46,7 @@ class CameraConfig(BaseModel):
     description: Optional[str] = Field(default="", description="Optional mounting/perspective notes")
     reference_resolution: List[int] = Field(..., description="[width, height] of the calibration frame")
     spots: List[SpotConfig] = Field(..., min_length=1, description="List of parking spots")
+    hot_config: Optional[Dict[str, Any]] = Field(default=None, description="Optional dynamic hot-configuration")
 
     @field_validator("reference_resolution")
     @classmethod

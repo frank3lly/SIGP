@@ -10,6 +10,7 @@ from detection.config_loader import CameraConfig, load_camera_config
 from detection.detector import VehicleDetector
 from detection.occupancy import OccupancyResponse
 from server.schemas import (
+    CameraHotConfig,
     CameraStatusResponse,
     HealthResponse,
     OverallStatusResponse,
@@ -24,6 +25,7 @@ class ServerState:
         self.start_time: float = time.time()
         self.detector: Optional[VehicleDetector] = None
         self.camera_configs: Dict[str, CameraConfig] = {}
+        self.camera_hot_configs: Dict[str, CameraHotConfig] = {}
         self.latest_occupancy: Dict[str, OccupancyResponse] = {}
         self.latest_images: Dict[str, bytes] = {}
         self.latest_battery: Dict[str, Dict[str, Any]] = {}
@@ -38,6 +40,7 @@ class ServerState:
         cfg_path = Path(config_dir)
         with self.lock:
             self.camera_configs.clear()
+            self.camera_hot_configs.clear()
 
         if cfg_path.exists():
             for p in sorted(cfg_path.glob("*.json")):
@@ -45,10 +48,26 @@ class ServerState:
                     cfg = load_camera_config(p)
                     with self.lock:
                         self.camera_configs[cfg.camera_id] = cfg
+                        hot_data = getattr(cfg, "hot_config", None) or {}
+                        self.camera_hot_configs[cfg.camera_id] = (
+                            CameraHotConfig(**hot_data)
+                            if isinstance(hot_data, dict)
+                            else CameraHotConfig()
+                        )
                     logger.info(f"Loaded configuration for camera '{cfg.camera_id}' ({len(cfg.spots)} spots)")
                 except Exception as e:
                     logger.error(f"Failed to load camera config '{p}': {e}")
         logger.info(f"ServerState initialized with {len(self.camera_configs)} cameras.")
+
+    def get_camera_hot_config(self, camera_id: str) -> CameraHotConfig:
+        with self.lock:
+            if camera_id in self.camera_hot_configs:
+                return self.camera_hot_configs[camera_id]
+            return CameraHotConfig()
+
+    def set_camera_hot_config(self, camera_id: str, hot_config: CameraHotConfig) -> None:
+        with self.lock:
+            self.camera_hot_configs[camera_id] = hot_config
 
     def record_result(
         self,

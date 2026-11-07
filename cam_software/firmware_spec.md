@@ -140,3 +140,46 @@ Content-Type: image/jpeg
 El lente del sensor OV2640 de la placa XIAO viene de fábrica con el foco preajustado a corta distancia (0.5 m a 1 m):
 1. **Enfoque a Distancia (Aparcamiento a 15–20 metros):** Es necesario girar suavemente en sentido horario o antihorario el anillo exterior de la lente de la cámara hasta que las líneas del asfalto y los vehículos lejanos se vean completamente nítidos.
 2. **Fijación de Posición:** Una vez calibrado el foco, asegurar el lente con una pequeña gota de silicona o cinta para evitar descalibraciones por vibración o viento en la estructura de montaje.
+
+---
+
+## 8. Protocolo de Hot-Configuration Bidireccional y Resolución Dinámica
+
+### A. Respuesta del Servidor con Configuración Dinámica
+Cada respuesta HTTP 200/201 a `POST /api/v1/upload/{camera_id}` retorna un objeto `config` JSON con parámetros operativos:
+
+```json
+{
+  "status": "success",
+  "camera_id": "cam_01",
+  "processed_at": 1730935560.12,
+  "inference_time_ms": 15.2,
+  "total_spots": 28,
+  "occupied_spots": 12,
+  "free_spots": 16,
+  "config": {
+    "interval_seconds": 45,
+    "active": true,
+    "quality": 12,
+    "firmware_version": "1.0.1"
+  }
+}
+```
+
+### B. Campos de Hot-Configuration
+| Campo | Tipo | Rango / Formato | Efecto en Firmware |
+| :--- | :--- | :--- | :--- |
+| `interval_seconds` | Entero | `5` a `3600` s | Actualiza la frecuencia de captura sin reiniciar el microcontrolador. |
+| `active` | Booleano | `true` / `false` | Si es `false`, la cámara suspende captura de fotogramas y mantiene latido mínimo. |
+| `quality` | Entero | `1` a `63` | Ajusta la compresión JPEG del sensor OV2640. |
+| `firmware_version` | Cadena | Semantic Versioning | Identificador de versión esperada de la flota. |
+
+### C. Resolución Dinámica de Host (Sin IPs Fijas)
+1. **Modo Nube (Hugging Face Spaces):**
+   - Host: `thegxnster-parqueame-server.hf.space`
+   - Puerto: `443`
+   - Protocolo: HTTPS mediante `WiFiClientSecure` con `client.setInsecure()`.
+2. **Modo Local (mDNS / Zeroconf):**
+   - Host: `parqueame.local`
+   - Puerto: `8000`
+   - Protocolo: HTTP mediante `WiFiClient`.

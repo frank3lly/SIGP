@@ -53,6 +53,14 @@ class OverallStatusResponse(BaseModel):
     cameras: Dict[str, CameraStatusResponse] = Field(default_factory=dict, description="Status mapping per camera")
 
 
+class CameraHotConfig(BaseModel):
+    """Dynamic hot-configuration parameters sent to microcontrollers."""
+    interval_seconds: int = Field(default=30, ge=5, le=3600, description="Delay in seconds before the next capture cycle")
+    active: bool = Field(default=True, description="If false, camera pauses uploads and enters low-frequency heartbeat")
+    quality: int = Field(default=12, ge=1, le=63, description="JPEG compression quality level")
+    firmware_version: str = Field(default="1.0.0", description="Target firmware version for remote fleet tracking")
+
+
 class UploadResponse(BaseModel):
     """Response returned immediately after an image upload is processed."""
     status: str = Field(default="success", description="Processing status ('success' or 'error')")
@@ -62,6 +70,7 @@ class UploadResponse(BaseModel):
     total_spots: int = Field(..., description="Total spots evaluated")
     occupied_spots: int = Field(..., description="Count of occupied spots")
     free_spots: int = Field(..., description="Count of vacant spots")
+    config: CameraHotConfig = Field(default_factory=CameraHotConfig, description="Dynamic hot-configuration returned to camera")
 
 
 class HealthResponse(BaseModel):

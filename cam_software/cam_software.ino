@@ -7,6 +7,7 @@
 // Version definitiva
 #include <Arduino.h>
 #include <WiFi.h>
+#include <WiFiClientSecure.h>
 #include "esp_camera.h"
 #include "esp_sleep.h"
 
@@ -22,12 +23,19 @@ const char* WIFI_SSID     = "Ezequiel";
 const char* WIFI_PASSWORD = "Ezequiel23101609";
 
 // Configuración del Servidor Central FastAPI
+// Modo 1: Cloud Deployment (Hugging Face Spaces): "thegxnster-parqueame-server.hf.space", puerto 443, USE_HTTPS=true
+// Modo 2: Local Network Discovery via mDNS / LAN: "parqueame.local" o IP "192.168.1.29", puerto 8000, USE_HTTPS=false
 const char* SERVER_HOST   = "192.168.1.29";
 const uint16_t SERVER_PORT = 8000;
+const bool USE_HTTPS      = false;
 const char* CAMERA_ID     = "cam_01";
 
-// Tiempos de ciclo (30 segundos para menor estrés y dar margen a captura HD)
-const uint32_t INTERVAL_SECONDS     = 30;
+// Tiempos de ciclo y variables dinámicas de Hot-Configuration
+const uint32_t DEFAULT_INTERVAL_SECONDS = 30;
+uint32_t currentIntervalSeconds         = DEFAULT_INTERVAL_SECONDS;
+bool     cameraIsActive                 = true;
+uint8_t  currentQuality                 = 12;
+
 const uint32_t WIFI_TIMEOUT_MS      = 10000;
 const uint32_t HTTP_TIMEOUT_MS      = 10000;
 const char*    MULTIPART_BOUNDARY   = "----ParqueameBoundary7MA4YWxkTrZu0gW";
@@ -241,10 +249,20 @@ bool connectWiFi() {
  * Estado 5 (DISPATCH): Construye y despacha el paquete HTTP/1.1 POST Multipart Form-Data
  */
 bool dispatchFrame(camera_fb_t* fb, const BatteryTelemetry& telemetry) {
-  WiFiClient client;
+  WiFiClient plainClient;
+  WiFiClientSecure secureClient;
+  WiFiClient* clientPtr = nullptr;
+
+  if (USE_HTTPS) {
+    secureClient.setInsecure();
+    clientPtr = &secureClient;
+  } else {
+    clientPtr = &plainClient;
+  }
+  WiFiClient& client = *clientPtr;
   client.setTimeout(HTTP_TIMEOUT_MS / 1000);
 
-  Serial.printf("[HTTP] Conectando a %s:%u...\n", SERVER_HOST, SERVER_PORT);
+  Serial.printf("[HTTP] Conectando a %s:%u (HTTPS=%s)...\n", SERVER_HOST, SERVER_PORT, USE_HTTPS ? "SI" : "NO");
   if (!client.connect(SERVER_HOST, SERVER_PORT, HTTP_TIMEOUT_MS)) {
     Serial.println("[HTTP] ERROR: connect failed hacia el servidor central.");
     return false;
@@ -303,7 +321,77 @@ bool dispatchFrame(camera_fb_t* fb, const BatteryTelemetry& telemetry) {
   statusLine.trim();
   Serial.printf("[HTTP] Respuesta del servidor: %s\n", statusLine.c_str());
 
+  // Leer encabezados HTTP hasta línea vacía
+  while (client.connected() && client.available()) {
+    String headerLine = client.readStringUntil('\n');
+    headerLine.trim();
+    if (headerLine.length() == 0) {
+      break;
+    }
+  }
+
+  // Leer cuerpo JSON para extraer Hot-Configuration
+  String responseBody = "";
+  while (client.connected() && client.available()) {
+    char c = client.read();
+    responseBody += c;
+  }
   client.stop();
+
+  if (responseBody.length() > 0) {
+    Serial.printf("[HOT-CONFIG] Payload recibido: %s\n", responseBody.c_str());
+
+    // 1. Extraer interval_seconds
+    int idxInterval = responseBody.indexOf("\"interval_seconds\":");
+    if (idxInterval >= 0) {
+      int start = idxInterval + 19;
+      int end = responseBody.indexOf(",", start);
+      if (end < 0) end = responseBody.indexOf("}", start);
+      if (end > start) {
+        uint32_t newInterval = responseBody.substring(start, end).toInt();
+        if (newInterval >= 5 && newInterval <= 3600) {
+          if (newInterval != currentIntervalSeconds) {
+            Serial.printf("[HOT-CONFIG] Intervalo actualizado dinamicamente de %u s a %u s\n",
+                          currentIntervalSeconds, newInterval);
+            currentIntervalSeconds = newInterval;
+          }
+        }
+      }
+    }
+
+    // 2. Extraer active
+    int idxActive = responseBody.indexOf("\"active\":");
+    if (idxActive >= 0) {
+      int start = idxActive + 9;
+      while (start < responseBody.length() && responseBody.charAt(start) == ' ') start++;
+      if (responseBody.substring(start).startsWith("false")) {
+        if (cameraIsActive) {
+          Serial.println("[HOT-CONFIG] Estado de camara actualizado a INACTIVA (pause).");
+          cameraIsActive = false;
+        }
+      } else if (responseBody.substring(start).startsWith("true")) {
+        if (!cameraIsActive) {
+          Serial.println("[HOT-CONFIG] Estado de camara actualizado a ACTIVA.");
+          cameraIsActive = true;
+        }
+      }
+    }
+
+    // 3. Extraer quality
+    int idxQuality = responseBody.indexOf("\"quality\":");
+    if (idxQuality >= 0) {
+      int start = idxQuality + 10;
+      int end = responseBody.indexOf(",", start);
+      if (end < 0) end = responseBody.indexOf("}", start);
+      if (end > start) {
+        int newQuality = responseBody.substring(start, end).toInt();
+        if (newQuality >= 1 && newQuality <= 63) {
+          currentQuality = (uint8_t)newQuality;
+        }
+      }
+    }
+  }
+
   return statusLine.startsWith("HTTP/1.1 200") || statusLine.startsWith("HTTP/1.1 201");
 }
 
@@ -313,6 +401,12 @@ bool dispatchFrame(camera_fb_t* fb, const BatteryTelemetry& telemetry) {
 void executeCaptureAndDispatchCycle() {
   if (!cameraReady) {
     Serial.println("[ERROR] La camara no esta inicializada.");
+    return;
+  }
+
+  if (!cameraIsActive) {
+    Serial.printf("[HOT-CONFIG] Camara en pausa remota (active=false). Omitiendo captura. Espera heartbeat: %u s.\n",
+                  currentIntervalSeconds);
     return;
   }
 
@@ -350,12 +444,12 @@ void executeCaptureAndDispatchCycle() {
 }
 
 void enterProductionDeepSleep() {
-  Serial.printf("[SLEEP] Apagando Wi-Fi y entrando en Deep Sleep por %u s...\n", INTERVAL_SECONDS);
+  Serial.printf("[SLEEP] Apagando Wi-Fi y entrando en Deep Sleep por %u s...\n", currentIntervalSeconds);
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   Serial.flush();
 
-  esp_sleep_enable_timer_wakeup((uint64_t)INTERVAL_SECONDS * 1000000ULL);
+  esp_sleep_enable_timer_wakeup((uint64_t)currentIntervalSeconds * 1000000ULL);
   esp_deep_sleep_start();
 }
 
@@ -378,7 +472,7 @@ void setup() {
   Serial.printf(" PARQUEAME FIRMWARE - Camara: %s | Boot #%u\n", CAMERA_ID, bootCount);
   Serial.printf(" Modo: %s | Intervalo: %u s | PSRAM OPI: %s (%u bytes)\n",
                 DEV_MODE ? "DEV_MODE (Continuo)" : "PROD_MODE (Deep Sleep)",
-                INTERVAL_SECONDS,
+                currentIntervalSeconds,
                 psramFound() ? "OK" : "NO DETECTADA",
                 (unsigned int)ESP.getPsramSize());
   Serial.println("=======================================================");
@@ -413,7 +507,7 @@ void setup() {
 
 void loop() {
   if (DEV_MODE) {
-    if (millis() - lastCaptureTime >= (INTERVAL_SECONDS * 1000UL)) {
+    if (millis() - lastCaptureTime >= (currentIntervalSeconds * 1000UL)) {
       lastCaptureTime = millis();
       executeCaptureAndDispatchCycle();
     }

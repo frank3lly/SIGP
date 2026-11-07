@@ -11,7 +11,7 @@ from detection.config_loader import CameraConfig
 from detection.detector import VehicleDetector
 from detection.occupancy import OccupancyResponse, evaluate_occupancy
 from detection.visualizer import draw_detection_overlay
-from server.schemas import UploadResponse
+from server.schemas import CameraHotConfig, UploadResponse
 from server.state import server_state
 from storage.repository import record_detection_event
 
@@ -213,7 +213,8 @@ async def upload_camera_frame(
     except Exception as e:
         logger.error(f"Failed to record detection event to SQLite: {e}")
 
-    # 7. Return summary
+    # 7. Return summary with dynamic hot-config
+    hot_config = server_state.get_camera_hot_config(camera_id)
     return UploadResponse(
         status="success",
         camera_id=camera_id,
@@ -222,4 +223,43 @@ async def upload_camera_frame(
         total_spots=occupancy_resp.total_spots,
         occupied_spots=occupancy_resp.occupied_count,
         free_spots=occupancy_resp.free_count,
+        config=hot_config,
     )
+
+
+@router.get(
+    "/api/v1/cameras/{camera_id}/config",
+    response_model=CameraHotConfig,
+    status_code=status.HTTP_200_OK,
+    summary="Get dynamic hot-configuration for camera",
+)
+def get_camera_hot_config(camera_id: str) -> CameraHotConfig:
+    if camera_id not in server_state.camera_configs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Camera '{camera_id}' not found in registered configurations.",
+        )
+    return server_state.get_camera_hot_config(camera_id)
+
+
+@router.put(
+    "/api/v1/cameras/{camera_id}/config",
+    response_model=CameraHotConfig,
+    status_code=status.HTTP_200_OK,
+    summary="Update dynamic hot-configuration for camera",
+)
+def update_camera_hot_config(
+    camera_id: str,
+    payload: CameraHotConfig,
+) -> CameraHotConfig:
+    if camera_id not in server_state.camera_configs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Camera '{camera_id}' not found in registered configurations.",
+        )
+    server_state.set_camera_hot_config(camera_id, payload)
+    logger.info(
+        f"Updated hot-config for camera '{camera_id}': interval={payload.interval_seconds}s, "
+        f"active={payload.active}, quality={payload.quality}"
+    )
+    return payload
