@@ -32,3 +32,12 @@ __*
 test*
 verify*
 __specs__
+
+# Dependencias de Node.js
+node_modules/
+
+# Archivos locales de Visual Studio
+.vs/
+
+# Archivos generados por Vite
+dist/
