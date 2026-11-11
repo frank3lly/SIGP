@@ -78,7 +78,7 @@ export function openSpot(spotId, node, store) {
   if (drawerZone) drawerZone.textContent = spot.zone;
   if (drawerId) drawerId.textContent = spot.id;
   if (drawerLoc) drawerLoc.textContent = spot.zone + ' (' + spot.side + ')';
-  if (drawerConf) drawerConf.textContent = (spot.conf || 94.0).toFixed(1) + '% (Modelo Óptico)';
+  if (drawerConf) drawerConf.textContent = (spot.conf || 94.0).toFixed(0) + '%';
   if (drawerGps) drawerGps.textContent = spot.lat.toFixed(6) + ', ' + spot.lng.toFixed(6);
 
   if (drawerCard) {
@@ -91,11 +91,11 @@ export function openSpot(spotId, node, store) {
     if (drawerCardIcon) drawerCardIcon.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"></polyline></svg>';
   } else if (spot.status === 'occupied') {
     if (drawerStatusText) drawerStatusText.textContent = 'Ocupado';
-    if (drawerStatusDesc) drawerStatusDesc.textContent = 'Vehículo detectado en la plaza';
+    if (drawerStatusDesc) drawerStatusDesc.textContent = 'Espacio ocupado';
     if (drawerCardIcon) drawerCardIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
   } else {
-    if (drawerStatusText) drawerStatusText.textContent = 'Baja Confianza';
-    if (drawerStatusDesc) drawerStatusDesc.textContent = 'En proceso de validación óptica';
+    if (drawerStatusText) drawerStatusText.textContent = 'Por confirmar';
+    if (drawerStatusDesc) drawerStatusDesc.textContent = 'Estado en verificación';
     if (drawerCardIcon) drawerCardIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
   }
 
@@ -103,7 +103,7 @@ export function openSpot(spotId, node, store) {
     drawerMapsBtn.href = 'https://www.google.com/maps/dir/?api=1&destination=' + spot.lat + ',' + spot.lng;
   }
 
-  // Camera telemetry & image
+  // Camera preview
   const camInfo = getSpotCameraInfo(spotId);
   if (camInfo && drawerCameraSection) {
     drawerCameraSection.style.display = 'flex';
@@ -118,7 +118,7 @@ export function openSpot(spotId, node, store) {
     if (state.isConnected) {
       if (drawerCameraImg) drawerCameraImg.style.display = 'none';
       if (drawerCameraEmpty) drawerCameraEmpty.style.display = 'flex';
-      if (drawerCameraMsg) drawerCameraMsg.textContent = 'Cargando captura...';
+      if (drawerCameraMsg) drawerCameraMsg.textContent = 'Cargando imagen...';
 
       const imgUrl = getCameraImageUrl(camInfo.cameraId);
       const testImg = new Image();
@@ -133,14 +133,14 @@ export function openSpot(spotId, node, store) {
         if (drawerCameraImg) drawerCameraImg.style.display = 'none';
         if (drawerCameraEmpty) {
           drawerCameraEmpty.style.display = 'flex';
-          drawerCameraMsg.textContent = 'Sin captura reciente en esta cámara';
+          drawerCameraMsg.textContent = 'Sin imagen disponible';
         }
       };
       testImg.src = imgUrl;
     } else {
       if (drawerCameraImg) drawerCameraImg.style.display = 'none';
       if (drawerCameraEmpty) drawerCameraEmpty.style.display = 'flex';
-      if (drawerCameraMsg) drawerCameraMsg.textContent = 'Cámara en espera de enlace backend';
+      if (drawerCameraMsg) drawerCameraMsg.textContent = 'Sin imagen disponible';
     }
   } else if (drawerCameraSection) {
     drawerCameraSection.style.display = 'none';

@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const spotId = node.getAttribute('data-id');
-      const centroid = getSpotCentroid(node);
+      const centroid = getSpotCentroid(node, zoomLayer);
       viewport.zoomToSpot(centroid.cx, centroid.cy);
       openSpot(spotId, node, store);
     });
@@ -158,9 +158,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 7. Navbar Telemetry and Status Count Updates
-  const apiStatusPill = document.getElementById('apiStatusPill');
-  const apiStatusText = document.getElementById('apiStatusText');
+  // 7. Status Count Updates
   const cntFree = document.getElementById('cntFree');
   const cntOcc = document.getElementById('cntOcc');
   const cntWarn = document.getElementById('cntWarn');
@@ -241,15 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleApiConnectionChange(connected) {
     store.setState({ isConnected: connected });
-    if (!apiStatusPill || !apiStatusText) return;
-
-    if (connected) {
-      apiStatusPill.className = 'api-status-pill connected';
-      apiStatusText.textContent = 'En Vivo (API Conectada)';
-    } else {
-      apiStatusPill.className = 'api-status-pill simulated';
-      apiStatusText.textContent = 'Modo Autónomo';
-    }
   }
 
   const polling = new PollingManager();

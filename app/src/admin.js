@@ -73,11 +73,11 @@ function showAdminToast(message, isError = false) {
   toastEl.className = `admin-toast show ${isError ? 'error' : 'success'}`;
   setTimeout(() => {
     toastEl.classList.remove('show');
-  }, 3400);
+  }, 3000);
 }
 
 /**
- * Render Admin Login Modal with the exact same site design
+ * Render Admin Login Modal with clean, minimal copy
  */
 export function renderAdminLoginModal(store) {
   cleanupAdminViews();
@@ -95,24 +95,23 @@ export function renderAdminLoginModal(store) {
           <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
         </svg>
       </div>
-      <h2>Portal de Administración SGIP</h2>
-      <p>Acceso seguro para control de flota de cámaras y calibración</p>
+      <h2>Administración</h2>
     </div>
 
     <form class="admin-login-form" id="adminLoginForm">
       <div class="admin-form-group">
-        <label for="adminUsername">Usuario Administrador</label>
+        <label for="adminUsername">Usuario</label>
         <div class="admin-input-wrapper">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
           </svg>
-          <input type="text" id="adminUsername" placeholder="admin" required autofocus autocomplete="username" />
+          <input type="text" id="adminUsername" placeholder="Usuario" required autofocus autocomplete="username" />
         </div>
       </div>
 
       <div class="admin-form-group">
-        <label for="adminPassword">Contraseña de Seguridad</label>
+        <label for="adminPassword">Contraseña</label>
         <div class="admin-input-wrapper">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -125,7 +124,7 @@ export function renderAdminLoginModal(store) {
       <div class="admin-login-error" id="adminLoginError" style="display:none;"></div>
 
       <button type="submit" class="admin-btn-primary" id="adminLoginSubmit">
-        <span>Acceder al Sistema</span>
+        <span>Ingresar</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
           <line x1="5" y1="12" x2="19" y2="12"></line>
           <polyline points="12 5 19 12 12 19"></polyline>
@@ -133,7 +132,7 @@ export function renderAdminLoginModal(store) {
       </button>
 
       <button type="button" class="admin-btn-cancel" id="adminLoginCancel">
-        Cancelar y volver al mapa público
+        Cancelar
       </button>
     </form>
   `;
@@ -172,10 +171,10 @@ export function renderAdminLoginModal(store) {
         cleanupAdminViews();
         renderAdminDashboard(store, resp.token);
       } else {
-        throw new Error('Respuesta inválida del servidor.');
+        throw new Error('Respuesta inválida.');
       }
     } catch (err) {
-      errorEl.textContent = err.message || 'Credenciales administrativas inválidas.';
+      errorEl.textContent = err.message || 'Credenciales inválidas.';
       errorEl.style.display = 'block';
       modal.classList.add('shake');
       setTimeout(() => modal.classList.remove('shake'), 450);
@@ -187,7 +186,7 @@ export function renderAdminLoginModal(store) {
 }
 
 /**
- * Render Complete Administrative Fleet & Hardware Gallery Dashboard
+ * Render Complete Administrative Dashboard
  */
 export async function renderAdminDashboard(store, token) {
   cleanupAdminViews();
@@ -207,23 +206,20 @@ export async function renderAdminDashboard(store, token) {
             <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
           </svg>
         </div>
-        <div>
-          <div class="admin-nav-title">SGIP &bull; Control Administrativo</div>
-          <div class="admin-nav-sub">Modo Seguro &bull; Gestión de Hardware y Diagnóstico de Lentes</div>
-        </div>
+        <div class="admin-nav-title">Panel de Control</div>
       </div>
 
       <div class="admin-nav-actions">
-        <span class="admin-badge-live">ONLINE &bull; FLOTA ACTIVA</span>
-        <button class="admin-nav-btn" id="adminReturnMapBtn" title="Volver al plano interactivo">
+        <span class="admin-badge-live">En Línea</span>
+        <button class="admin-nav-btn" id="adminReturnMapBtn" title="Volver al mapa">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
             <line x1="8" y1="2" x2="8" y2="18"></line>
             <line x1="16" y1="6" x2="16" y2="22"></line>
           </svg>
-          <span>Volver al Mapa</span>
+          <span>Mapa</span>
         </button>
-        <button class="admin-nav-btn logout" id="adminLogoutBtn" title="Cerrar sesión segura">
+        <button class="admin-nav-btn logout" id="adminLogoutBtn" title="Cerrar sesión">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
             <polyline points="16 17 21 12 16 7"></polyline>
@@ -236,31 +232,25 @@ export async function renderAdminDashboard(store, token) {
 
     <!-- Main Dashboard Scrollable Content -->
     <main class="admin-content">
-      <!-- Section 1: Fleet Hot-Config -->
+      <!-- Section 1: Cameras -->
       <section class="admin-section">
         <div class="admin-section-header">
-          <div>
-            <h3>Flota de Cámaras y Hot-Configuration</h3>
-            <p>Monitoreo de telemetría en tiempo real, voltaje de batería y parámetros dinámicos de microcontrolador</p>
-          </div>
+          <h3>Cámaras</h3>
           <button class="admin-btn-refresh" id="adminRefreshCamerasBtn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-            <span>Actualizar Telemetría</span>
+            <span>Actualizar</span>
           </button>
         </div>
 
         <div class="admin-camera-grid" id="adminCameraGrid">
-          <div class="admin-loading-card">Cargando telemetría de cámaras...</div>
+          <div class="admin-loading-card">Cargando cámaras...</div>
         </div>
       </section>
 
-      <!-- Section 2: Hardware Diagnostic Photo Gallery -->
+      <!-- Section 2: Hardware Photo Gallery -->
       <section class="admin-section">
         <div class="admin-section-header">
-          <div>
-            <h3>Galería de Diagnóstico de Fotogramas (Raw y Anotados)</h3>
-            <p>Auditoría de limpieza de lente, exposición nocturna y calibración de campo visual</p>
-          </div>
+          <h3>Galería de Capturas</h3>
           <div class="admin-gallery-controls">
             <select id="adminGalleryCamFilter" class="admin-select">
               <option value="">Todas las cámaras</option>
@@ -270,13 +260,13 @@ export async function renderAdminDashboard(store, token) {
             </select>
             <button class="admin-btn-refresh" id="adminRefreshGalleryBtn">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-              <span>Refrescar Galería</span>
+              <span>Actualizar</span>
             </button>
           </div>
         </div>
 
         <div class="admin-gallery-grid" id="adminGalleryGrid">
-          <div class="admin-loading-card">Cargando fotogramas de la galería...</div>
+          <div class="admin-loading-card">Cargando capturas...</div>
         </div>
       </section>
     </main>
@@ -306,7 +296,7 @@ export async function renderAdminDashboard(store, token) {
     sessionStorage.removeItem(CONFIG.ADMIN_TOKEN_KEY);
     store.setState({ adminToken: null, adminActive: false });
     cleanupAdminViews();
-    showAdminToast('Sesión administrativa finalizada.');
+    showAdminToast('Sesión finalizada.');
     if (window.location.hash === '#admin') {
       window.location.hash = '';
     } else {
@@ -331,7 +321,7 @@ async function loadCameras(token, container) {
     const data = await fetchAdminCameras(token);
     const cameras = data.cameras || [];
     if (cameras.length === 0) {
-      grid.innerHTML = '<div class="admin-empty">No hay cámaras registradas en la configuración.</div>';
+      grid.innerHTML = '<div class="admin-empty">No hay cámaras registradas.</div>';
       return;
     }
 
@@ -342,8 +332,7 @@ async function loadCameras(token, container) {
       const isOnline = cam.status === 'online';
       const isPaused = !cam.config.active;
 
-      const batPct = cam.battery_percentage != null ? `${cam.battery_percentage.toFixed(1)}%` : '--';
-      const batVolts = cam.battery_voltage != null ? `${cam.battery_voltage.toFixed(2)} V` : '--';
+      const batPct = cam.battery_percentage != null ? `${Math.round(cam.battery_percentage)}%` : '--';
       const lastSeen = cam.seconds_since_last_seen != null
         ? `hace ${Math.round(cam.seconds_since_last_seen)}s`
         : 'Sin conexión';
@@ -352,20 +341,20 @@ async function loadCameras(token, container) {
         <div class="admin-cam-card-top">
           <div>
             <div class="admin-cam-name">${cam.name || cam.camera_id}</div>
-            <div class="admin-cam-id">ID: <code>${cam.camera_id}</code> &bull; Firm: v${cam.config.firmware_version || '1.0.0'}</div>
+            <div class="admin-cam-id">${cam.camera_id}</div>
           </div>
           <span class="admin-status-badge ${isOnline ? 'online' : (isPaused ? 'paused' : 'offline')}">
-            ${isPaused ? 'PAUSADA' : (isOnline ? 'ONLINE' : 'OFFLINE')}
+            ${isPaused ? 'En Pausa' : (isOnline ? 'En Línea' : 'Desconectada')}
           </span>
         </div>
 
         <div class="admin-cam-telemetry">
           <div class="admin-telem-item">
             <span class="telem-lbl">Batería</span>
-            <span class="telem-val">${batPct} <small>(${batVolts})</small></span>
+            <span class="telem-val">${batPct}</span>
           </div>
           <div class="admin-telem-item">
-            <span class="telem-lbl">Último Reporte</span>
+            <span class="telem-lbl">Último reporte</span>
             <span class="telem-val">${lastSeen}</span>
           </div>
         </div>
@@ -373,26 +362,26 @@ async function loadCameras(token, container) {
         <form class="admin-hotconfig-form" data-cam="${cam.camera_id}">
           <div class="admin-form-row">
             <div class="admin-field">
-              <label>Intervalo (s)</label>
+              <label>Intervalo (seg)</label>
               <input type="number" name="interval_seconds" min="5" max="3600" value="${cam.config.interval_seconds || 30}" required />
             </div>
             <div class="admin-field">
-              <label>Calidad JPEG (1-63)</label>
+              <label>Calidad</label>
               <input type="number" name="quality" min="1" max="63" value="${cam.config.quality || 12}" required />
             </div>
           </div>
 
           <div class="admin-field">
-            <label>Estado Operativo</label>
+            <label>Estado</label>
             <select name="active" class="admin-select">
-              <option value="true" ${cam.config.active ? 'selected' : ''}>Activa (Captura Continua)</option>
-              <option value="false" ${!cam.config.active ? 'selected' : ''}>En Pausa (Bajo Consumo)</option>
+              <option value="true" ${cam.config.active ? 'selected' : ''}>Activa</option>
+              <option value="false" ${!cam.config.active ? 'selected' : ''}>En Pausa</option>
             </select>
           </div>
 
           <button type="submit" class="admin-btn-save">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
-            <span>Guardar Configuración</span>
+            <span>Guardar</span>
           </button>
         </form>
       `;
@@ -415,9 +404,9 @@ async function loadCameras(token, container) {
             active: activeVal,
             firmware_version: cam.config.firmware_version || '1.0.0',
           });
-          showAdminToast(`Configuración de ${cam.camera_id} actualizada correctamente.`);
+          showAdminToast(`Guardado.`);
         } catch (err) {
-          showAdminToast(err.message || 'Error al guardar configuración.', true);
+          showAdminToast(err.message || 'Error al guardar.', true);
         } finally {
           btn.disabled = false;
           btn.classList.remove('loading');
@@ -427,7 +416,7 @@ async function loadCameras(token, container) {
       grid.appendChild(card);
     });
   } catch (err) {
-    grid.innerHTML = `<div class="admin-error">Error al cargar telemetría: ${err.message}</div>`;
+    grid.innerHTML = `<div class="admin-error">Error al cargar: ${err.message}</div>`;
   }
 }
 
@@ -435,13 +424,13 @@ async function loadGallery(token, container, cameraIdFilter = '') {
   const grid = container.querySelector('#adminGalleryGrid');
   if (!grid) return;
 
-  grid.innerHTML = '<div class="admin-loading-card">Cargando fotogramas de la galería...</div>';
+  grid.innerHTML = '<div class="admin-loading-card">Cargando capturas...</div>';
 
   try {
     const data = await fetchAdminGallery(token, cameraIdFilter || null, 36, 0);
     const items = data.items || [];
     if (items.length === 0) {
-      grid.innerHTML = '<div class="admin-empty">Aún no se han registrado fotogramas en el archivo.</div>';
+      grid.innerHTML = '<div class="admin-empty">No hay capturas disponibles.</div>';
       return;
     }
 
@@ -450,16 +439,15 @@ async function loadGallery(token, container, cameraIdFilter = '') {
       const card = document.createElement('div');
       card.className = 'admin-gallery-card';
 
-      const sizeKb = (item.size_bytes / 1024).toFixed(1);
       const isAnnotated = item.filename.includes('annotated') || item.filename.startsWith('latest_');
 
       card.innerHTML = `
         <div class="admin-gal-thumb-wrapper">
           <img src="${item.url_raw}" alt="${item.filename}" class="admin-gal-thumb" loading="lazy" />
           <span class="admin-gal-badge ${isAnnotated ? 'annotated' : 'raw'}">
-            ${isAnnotated ? 'ANNOTATED' : 'RAW HARDWARE'}
+            ${isAnnotated ? 'Detecciones' : 'Original'}
           </span>
-          <button class="admin-gal-zoom-btn" title="Inspeccionar en resolución completa">
+          <button class="admin-gal-zoom-btn" title="Ver imagen">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -469,8 +457,8 @@ async function loadGallery(token, container, cameraIdFilter = '') {
           </button>
         </div>
         <div class="admin-gal-meta">
-          <div class="admin-gal-cam">${item.camera_id} &bull; <small>${item.date_str}</small></div>
-          <div class="admin-gal-file"><code>${item.filename}</code> (${sizeKb} KB)</div>
+          <div class="admin-gal-cam">${item.camera_id}</div>
+          <div class="admin-gal-file">${item.date_str}</div>
         </div>
       `;
 
@@ -482,12 +470,12 @@ async function loadGallery(token, container, cameraIdFilter = '') {
       grid.appendChild(card);
     });
   } catch (err) {
-    grid.innerHTML = `<div class="admin-error">Error al cargar galería: ${err.message}</div>`;
+    grid.innerHTML = `<div class="admin-error">Error al cargar: ${err.message}</div>`;
   }
 }
 
 /**
- * Open High-Resolution Lightbox Modal
+ * Open Lightbox Modal
  */
 function openLightbox(item) {
   if (activeLightbox && activeLightbox.parentNode) {
@@ -500,8 +488,8 @@ function openLightbox(item) {
     <div class="admin-lightbox-content">
       <div class="admin-lightbox-header">
         <div class="admin-lightbox-title">
-          <h4>Inspección de Fotograma: ${item.camera_id}</h4>
-          <span>${item.date_str} &bull; ${item.filename} &bull; ${(item.size_bytes / 1024).toFixed(1)} KB</span>
+          <h4>Fotograma &bull; ${item.camera_id}</h4>
+          <span>${item.date_str}</span>
         </div>
         <button class="admin-lightbox-close" id="adminLightboxClose" title="Cerrar (Esc)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -515,11 +503,11 @@ function openLightbox(item) {
       <div class="admin-lightbox-footer">
         <a href="${item.url_raw}" target="_blank" download="${item.filename}" class="admin-lightbox-action">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          <span>Descargar Imagen RAW</span>
+          <span>Descargar</span>
         </a>
         <a href="${item.url_annotated}" target="_blank" class="admin-lightbox-action">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-          <span>Ver Inferencia Anotada</span>
+          <span>Ver con detecciones</span>
         </a>
       </div>
     </div>

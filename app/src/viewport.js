@@ -5,16 +5,45 @@
 
 import { CONFIG } from './config.js';
 
-export function getSpotCentroid(spotElement) {
+export function getSpotCentroid(spotElement, layerElement) {
   try {
     const bbox = spotElement.getBBox();
+    const localX = bbox.x + bbox.width / 2;
+    const localY = bbox.y + bbox.height / 2;
+
+    const svg = spotElement.ownerSVGElement;
+    const targetLayer = layerElement || (svg ? svg.getElementById('zoomLayer') : null);
+
+    if (svg && svg.createSVGPoint && spotElement.getScreenCTM && targetLayer && targetLayer.getScreenCTM) {
+      const spotCTM = spotElement.getScreenCTM();
+      const layerCTM = targetLayer.getScreenCTM();
+      if (spotCTM && layerCTM) {
+        const pt = svg.createSVGPoint();
+        pt.x = localX;
+        pt.y = localY;
+
+        const screenPt = pt.matrixTransform(spotCTM);
+        const layerPt = screenPt.matrixTransform(layerCTM.inverse());
+
+        if (isFinite(layerPt.x) && isFinite(layerPt.y)) {
+          return {
+            cx: layerPt.x,
+            cy: layerPt.y,
+            width: bbox.width,
+            height: bbox.height,
+          };
+        }
+      }
+    }
+
     return {
-      cx: bbox.x + bbox.width / 2,
-      cy: bbox.y + bbox.height / 2,
+      cx: localX,
+      cy: localY,
       width: bbox.width,
       height: bbox.height,
     };
-  } catch {
+  } catch (err) {
+    console.warn('Error calculating spot centroid:', err);
     return { cx: 92, cy: 91, width: 8, height: 16 };
   }
 }
@@ -330,13 +359,18 @@ export class ViewportController {
     const startX = this.x;
     const startY = this.y;
 
+    let effectiveCenterX = this.viewBoxCenterX;
     let effectiveCenterY = this.viewBoxCenterY;
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      // Offset visible center upwards to account for mobile bottom drawer
-      effectiveCenterY = this.viewBoxCenterY - 14;
+
+    if (typeof window !== 'undefined') {
+      if (window.innerWidth <= 768) {
+        effectiveCenterY = this.viewBoxCenterY - 18;
+      } else {
+        effectiveCenterX = this.viewBoxCenterX - 10;
+      }
     }
 
-    const targetX = this.viewBoxCenterX - cx * targetScale;
+    const targetX = effectiveCenterX - cx * targetScale;
     const targetY = effectiveCenterY - cy * targetScale;
 
     const startTime = performance.now();
