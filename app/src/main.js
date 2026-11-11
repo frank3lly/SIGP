@@ -352,7 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 10. Check if hidden /admin route requested
-  if (isAdminRouteRequested()) {
-    initAdmin(store);
-  }
+  initAdmin(store);
+  window.addEventListener('popstate', () => initAdmin(store));
+  window.addEventListener('hashchange', () => initAdmin(store));
 });
