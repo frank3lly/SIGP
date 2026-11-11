@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 import logging
 from pathlib import Path
 from typing import Optional, Tuple
@@ -156,6 +157,8 @@ async def upload_camera_frame(
     try:
         raw_hardware_path.parent.mkdir(parents=True, exist_ok=True)
         raw_hardware_path.write_bytes(contents)
+        ts_str = datetime.now().strftime("%Y%m%d_%H%M%S")
+        (raw_hardware_path.parent / f"{camera_id}_{ts_str}.jpg").write_bytes(contents)
     except Exception as e:
         logger.warning(f"Failed to save raw hardware frame for '{camera_id}': {e}")
     server_state.record_raw_image(camera_id, contents)
