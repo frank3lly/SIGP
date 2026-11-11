@@ -5,35 +5,35 @@
  */
 
 const ROUTES_DATA = [
-  // 1. Acceso Norte -> Avenida Central -> Salida Sur
+  // 1. Acceso Norte -> Avenida Central (Carril Sur) -> Salida Sur
   [
     [71.0, 16.0], [72.5, 45.0], [74.0, 72.0], [78.0, 98.0],
     [86.0, 126.0], [96.0, 148.0], [107.0, 168.0], [108.5, 178.0]
   ],
-  // 2. Acceso Sur -> Avenida Central -> Salida Norte
+  // 2. Acceso Sur -> Avenida Central (Carril Norte) -> Salida Norte
   [
-    [109.0, 176.0], [108.0, 166.0], [98.0, 144.0], [88.5, 120.0],
-    [80.5, 90.0], [74.5, 56.0], [73.5, 20.0], [73.0, 14.0]
+    [111.0, 176.0], [110.0, 166.0], [100.5, 144.0], [91.0, 120.0],
+    [83.0, 90.0], [76.5, 56.0], [75.0, 20.0], [74.5, 14.0]
   ],
-  // 3. Acceso Noroeste -> Incorporación Avenida Central -> Salida Sur
+  // 3. Acceso Noroeste -> Incorporación Central -> Salida Sur
   [
     [35.0, 48.0], [52.0, 32.0], [68.0, 34.0], [74.0, 60.0],
-    [80.0, 100.0], [90.0, 134.0], [104.0, 164.0], [107.0, 176.0]
+    [78.0, 98.0], [86.0, 126.0], [96.0, 148.0], [107.0, 168.0], [108.5, 178.0]
   ],
-  // 4. Acceso Norte -> Giro hacia pasillo L1-L2 -> Salida Oeste
+  // 4. Acceso Norte -> Giro hacia pasillo L1-L2 (Sentido Único Oeste) -> Salida Oeste
   [
     [71.0, 16.0], [73.0, 55.0], [70.0, 84.0], [52.0, 95.0],
     [32.0, 107.0], [14.0, 118.0]
   ],
-  // 5. Entrada Oeste por pasillo L1-L2 -> Incorporación a Central -> Salida Sur
+  // 5. Acceso Noroeste -> Incorporación Central -> Salida Norte
   [
-    [14.0, 118.0], [32.0, 107.0], [52.0, 95.0], [74.0, 105.0],
-    [86.0, 126.0], [96.0, 148.0], [107.0, 168.0], [108.5, 178.0]
+    [35.0, 48.0], [52.0, 32.0], [68.0, 34.0], [76.0, 34.0],
+    [76.5, 20.0], [75.0, 14.0]
   ],
   // 6. Acceso Delantal Sur -> Avenida Central -> Salida Norte
   [
-    [52.0, 175.0], [70.0, 172.0], [90.0, 170.0], [108.0, 168.0],
-    [98.0, 144.0], [88.5, 120.0], [80.5, 90.0], [74.0, 54.0], [73.0, 14.0]
+    [52.0, 175.0], [70.0, 172.0], [90.0, 170.0], [110.0, 166.0],
+    [100.5, 144.0], [91.0, 120.0], [83.0, 90.0], [76.5, 56.0], [75.0, 20.0], [74.5, 14.0]
   ]
 ];
 
@@ -125,6 +125,7 @@ export class AmbientCarManager {
       opacity: 0,
       state: 'waiting', // 'waiting' | 'driving'
       waitTimer: 0,
+      blockedTime: 0,
     };
   }
 
@@ -145,18 +146,29 @@ export class AmbientCarManager {
   }
 
   spawnCar(car) {
-    // Exclude routes currently used by other active cars
+    // 1. Exclude routes currently used by other active cars
     const occupiedRoutes = this.cars
       .filter((c) => c !== car && c.state === 'driving')
       .map((c) => c.routeIdx);
 
-    const availableIndices = PREPARED_ROUTES.map((_, idx) => idx).filter(
-      (idx) => !occupiedRoutes.includes(idx)
-    );
+    // 2. Don't spawn if another active car is currently near the start point
+    const availableIndices = PREPARED_ROUTES.map((_, idx) => idx).filter((idx) => {
+      if (occupiedRoutes.includes(idx)) return false;
+      const startPt = PREPARED_ROUTES[idx].pts[0];
+      const isEntryBusy = this.cars.some((c) => {
+        if (c === car || c.state !== 'driving') return false;
+        return Math.hypot(c.x - startPt[0], c.y - startPt[1]) < 18.0;
+      });
+      return !isEntryBusy;
+    });
 
-    const selectedRouteIdx = availableIndices.length > 0
-      ? availableIndices[Math.floor(Math.random() * availableIndices.length)]
-      : Math.floor(Math.random() * PREPARED_ROUTES.length);
+    if (availableIndices.length === 0) {
+      // Entry points momentarily busy: retry shortly
+      car.waitTimer = 1.0;
+      return;
+    }
+
+    const selectedRouteIdx = availableIndices[Math.floor(Math.random() * availableIndices.length)];
 
     car.routeIdx = selectedRouteIdx;
     car.dist = 0;
@@ -164,6 +176,7 @@ export class AmbientCarManager {
     car.currentSpeed = car.baseSpeed;
     car.state = 'driving';
     car.opacity = 0;
+    car.blockedTime = 0;
     this.updateCarPalette(car);
 
     // Initial position & heading
@@ -195,26 +208,54 @@ export class AmbientCarManager {
       }
     }
 
-    // 2. Anti-collision check for driving cars
+    // 2. Anti-collision check & deadlock avoidance for driving cars
     for (const car of this.cars) {
       if (car.state !== 'driving') continue;
 
       let speedFactor = 1.0;
+      const rad = (car.heading * Math.PI) / 180;
+      const cosA = Math.cos(rad);
+      const sinA = Math.sin(rad);
+
       for (const other of this.cars) {
         if (other === car || other.state !== 'driving') continue;
 
-        const dist = Math.hypot(other.x - car.x, other.y - car.y);
-        if (dist < 15.0) {
-          // Check if 'other' is in front of 'car' along car's heading direction
-          const angToOther = Math.atan2(other.y - car.y, other.x - car.x) * (180 / Math.PI);
-          const angleDiff = Math.abs(normalizeDeg(angToOther - car.heading));
+        const dx = other.x - car.x;
+        const dy = other.y - car.y;
+        const dist = Math.hypot(dx, dy);
 
-          if (angleDiff < 65) {
-            // Other car is directly ahead in car's travel path: slow down or stop
-            const clearanceFactor = Math.max(0, (dist - 7.5) / 7.5);
-            speedFactor = Math.min(speedFactor, clearanceFactor);
+        if (dist >= 14.0) continue;
+
+        const forwardDist = dx * cosA + dy * sinA;
+        const lateralDist = Math.abs(-dx * sinA + dy * cosA);
+
+        // Forward corridor following (in-lane traffic ahead)
+        if (forwardDist > 0.5 && lateralDist < 2.4) {
+          const clearance = Math.max(0, (forwardDist - 5.5) / 5.5);
+          speedFactor = Math.min(speedFactor, clearance);
+        }
+        // Intersection merge yield: if cars get too close, the car with higher ID yields
+        else if (dist < 5.5) {
+          if (car.id > other.id) {
+            const clearance = Math.max(0, (dist - 4.0) / 1.5);
+            speedFactor = Math.min(speedFactor, clearance);
           }
         }
+      }
+
+      // Anti-deadlock watchdog: if car is stopped / blocked for > 2.0s, despawn to guarantee free flow
+      if (speedFactor < 0.25) {
+        car.blockedTime = (car.blockedTime || 0) + dt;
+        if (car.blockedTime > 2.0) {
+          car.state = 'waiting';
+          car.opacity = 0;
+          car.element.style.opacity = '0';
+          car.waitTimer = 1.5 + Math.random() * 2.0;
+          car.blockedTime = 0;
+          continue;
+        }
+      } else {
+        car.blockedTime = 0;
       }
 
       car.currentSpeed = car.baseSpeed * speedFactor;
