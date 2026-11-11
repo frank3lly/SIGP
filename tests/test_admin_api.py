@@ -145,6 +145,24 @@ class TestAdminAPI(unittest.TestCase):
         me_res = self.client.get("/api/v1/admin/me", headers=headers)
         self.assertEqual(me_res.status_code, 401)
 
+    def test_07_gallery_image_query_token_auth(self):
+        # 1. Unauthenticated request without token returns 401
+        res = self.client.get("/api/v1/admin/gallery/image/test_sample.jpg")
+        self.assertEqual(res.status_code, 401)
+
+        # 2. Login to get token
+        login_res = self.client.post(
+            "/api/v1/admin/login",
+            json={"username": "admin", "password": "parqueame_secret_2026"},
+        )
+        token = login_res.json()["token"]
+
+        # 3. Request with query param ?token=
+        # Since 'nonexistent_test_123.jpg' doesn't exist, it should pass auth and return 404 (Not Found), not 401
+        res_with_token = self.client.get(f"/api/v1/admin/gallery/image/nonexistent_test_123.jpg?token={token}")
+        self.assertEqual(res_with_token.status_code, 404)
+        self.assertIn("Image not found in gallery", res_with_token.json()["detail"])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -27,15 +27,21 @@ security = HTTPBearer(auto_error=False)
 
 def get_current_admin(
     credentials: Optional[HTTPAuthorizationCredentials] = Depends(security),
+    token: Optional[str] = Query(None),
 ) -> dict:
-    if not credentials or not credentials.credentials:
+    auth_token = None
+    if credentials and credentials.credentials:
+        auth_token = credentials.credentials
+    elif token:
+        auth_token = token
+
+    if not auth_token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Missing administrative authentication token.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    token = credentials.credentials
-    session = server_state.validate_admin_session(token)
+    session = server_state.validate_admin_session(auth_token)
     if not session:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

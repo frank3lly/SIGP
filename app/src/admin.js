@@ -11,7 +11,19 @@ import {
   fetchAdminCameras,
   fetchAdminGallery,
   updateCameraConfig,
+  getBaseUrl,
 } from './api.js';
+
+export function resolveMediaUrl(url, token) {
+  if (!url) return '';
+  const base = getBaseUrl() || '';
+  let fullUrl = url.startsWith('http') ? url : `${base}${url}`;
+  if (token && fullUrl.includes('/api/v1/admin/gallery/image/')) {
+    const sep = fullUrl.includes('?') ? '&' : '?';
+    fullUrl = `${fullUrl}${sep}token=${encodeURIComponent(token)}`;
+  }
+  return fullUrl;
+}
 
 export function isAdminRouteRequested() {
   if (typeof window === 'undefined') return false;
@@ -199,34 +211,36 @@ export async function renderAdminDashboard(store, token) {
   container.innerHTML = `
     <!-- Top Administrative Navigation -->
     <header class="admin-navbar">
-      <div class="admin-navbar-brand">
-        <div class="admin-brand-icon-sm">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-          </svg>
+      <div class="admin-navbar-inner">
+        <div class="admin-navbar-brand">
+          <img src="/logo.svg" alt="Logo SGIP" class="brand-logo-img" onerror="this.style.display='none';" />
+          <div class="brand-text">
+            <div class="admin-brand-title-row">
+              <span class="brand-title">SGIP</span>
+              <span class="admin-tag-badge">Administración</span>
+            </div>
+            <span class="brand-sub">Sistema de Gestión Inteligente de Parqueos</span>
+          </div>
         </div>
-        <div class="admin-nav-title">Panel de Control</div>
-      </div>
 
-      <div class="admin-nav-actions">
-        <span class="admin-badge-live">En Línea</span>
-        <button class="admin-nav-btn" id="adminReturnMapBtn" title="Volver al mapa">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-            <line x1="8" y1="2" x2="8" y2="18"></line>
-            <line x1="16" y1="6" x2="16" y2="22"></line>
-          </svg>
-          <span>Mapa</span>
-        </button>
-        <button class="admin-nav-btn logout" id="adminLogoutBtn" title="Cerrar sesión">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-            <polyline points="16 17 21 12 16 7"></polyline>
-            <line x1="21" y1="12" x2="9" y2="12"></line>
-          </svg>
-          <span>Cerrar Sesión</span>
-        </button>
+        <div class="admin-nav-actions">
+          <button class="btn-navbar-action" id="adminReturnMapBtn" title="Volver al mapa">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+            <span class="nav-btn-text">Ver Mapa</span>
+          </button>
+          <button class="btn-navbar-action btn-logout" id="adminLogoutBtn" title="Cerrar sesión">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            <span class="nav-btn-text">Cerrar Sesión</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -440,10 +454,11 @@ async function loadGallery(token, container, cameraIdFilter = '') {
       card.className = 'admin-gallery-card';
 
       const isAnnotated = item.filename.includes('annotated') || item.filename.startsWith('latest_');
+      const rawUrl = resolveMediaUrl(item.url_raw, token);
 
       card.innerHTML = `
         <div class="admin-gal-thumb-wrapper">
-          <img src="${item.url_raw}" alt="${item.filename}" class="admin-gal-thumb" loading="lazy" />
+          <img src="${rawUrl}" alt="${item.filename}" class="admin-gal-thumb" loading="lazy" />
           <span class="admin-gal-badge ${isAnnotated ? 'annotated' : 'raw'}">
             ${isAnnotated ? 'Detecciones' : 'Original'}
           </span>
@@ -464,7 +479,7 @@ async function loadGallery(token, container, cameraIdFilter = '') {
 
       const zoomTrigger = card.querySelector('.admin-gal-thumb-wrapper');
       zoomTrigger.addEventListener('click', () => {
-        openLightbox(item);
+        openLightbox(item, token);
       });
 
       grid.appendChild(card);
@@ -477,10 +492,13 @@ async function loadGallery(token, container, cameraIdFilter = '') {
 /**
  * Open Lightbox Modal
  */
-function openLightbox(item) {
+function openLightbox(item, token) {
   if (activeLightbox && activeLightbox.parentNode) {
     activeLightbox.parentNode.removeChild(activeLightbox);
   }
+
+  const rawUrl = resolveMediaUrl(item.url_raw, token);
+  const annotatedUrl = resolveMediaUrl(item.url_annotated, token);
 
   const lightbox = document.createElement('div');
   lightbox.className = 'admin-lightbox active';
@@ -497,15 +515,15 @@ function openLightbox(item) {
       </div>
 
       <div class="admin-lightbox-body">
-        <img src="${item.url_raw}" alt="${item.filename}" class="admin-lightbox-img" />
+        <img src="${rawUrl}" alt="${item.filename}" class="admin-lightbox-img" />
       </div>
 
       <div class="admin-lightbox-footer">
-        <a href="${item.url_raw}" target="_blank" download="${item.filename}" class="admin-lightbox-action">
+        <a href="${rawUrl}" target="_blank" download="${item.filename}" class="admin-lightbox-action">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
           <span>Descargar</span>
         </a>
-        <a href="${item.url_annotated}" target="_blank" class="admin-lightbox-action">
+        <a href="${annotatedUrl}" target="_blank" class="admin-lightbox-action">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
           <span>Ver con detecciones</span>
         </a>
