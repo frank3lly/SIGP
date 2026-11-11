@@ -656,66 +656,108 @@
 
     @keyframes driveCentralLane {
       0% {
-        transform: translate(50px, 34px) rotate(58.5deg);
+        transform: translate(71.5px, 20px) rotate(85deg);
         opacity: 0;
       }
       4% {
         opacity: 1;
       }
-      86% {
+      25% {
+        transform: translate(73px, 58px) rotate(82deg);
+      }
+      48% {
+        transform: translate(78px, 94px) rotate(76deg);
+      }
+      68% {
+        transform: translate(87px, 125px) rotate(68deg);
+      }
+      84% {
+        transform: translate(97px, 148px) rotate(61deg);
+      }
+      95% {
+        transform: translate(107px, 166px) rotate(61deg);
         opacity: 1;
       }
-      94%, 100% {
-        transform: translate(128px, 162px) rotate(58.5deg);
+      100% {
+        transform: translate(109px, 170px) rotate(61deg);
         opacity: 0;
       }
     }
 
-    @keyframes driveEastLane {
+    @keyframes driveOutboundLane {
       0% {
-        transform: translate(92px, 42px) rotate(58.5deg);
+        transform: translate(108px, 164px) rotate(-117deg);
         opacity: 0;
       }
       4% {
         opacity: 1;
       }
-      86% {
+      18% {
+        transform: translate(98px, 144px) rotate(-112deg);
+      }
+      38% {
+        transform: translate(88.5px, 120px) rotate(-105deg);
+      }
+      62% {
+        transform: translate(80.5px, 90px) rotate(-100deg);
+      }
+      85% {
+        transform: translate(74.5px, 56px) rotate(-92deg);
+      }
+      95% {
+        transform: translate(73.5px, 22px) rotate(-92deg);
         opacity: 1;
       }
-      94%, 100% {
-        transform: translate(146px, 132px) rotate(58.5deg);
+      100% {
+        transform: translate(73px, 16px) rotate(-92deg);
         opacity: 0;
       }
     }
 
-    @keyframes driveWestLane {
+    @keyframes driveNorthwestEntry {
       0% {
-        transform: translate(32px, 64px) rotate(58.5deg);
+        transform: translate(40px, 42px) rotate(-34deg);
         opacity: 0;
       }
-      4% {
+      3% {
         opacity: 1;
       }
-      86% {
+      14% {
+        transform: translate(55px, 32px) rotate(10deg);
+      }
+      28% {
+        transform: translate(71px, 35px) rotate(82deg);
+      }
+      50% {
+        transform: translate(75px, 65px) rotate(81deg);
+      }
+      70% {
+        transform: translate(81px, 102px) rotate(72deg);
+      }
+      85% {
+        transform: translate(92px, 136px) rotate(65deg);
+      }
+      96% {
+        transform: translate(106px, 166px) rotate(65deg);
         opacity: 1;
       }
-      94%, 100% {
-        transform: translate(82px, 146px) rotate(58.5deg);
+      100% {
+        transform: translate(108px, 170px) rotate(65deg);
         opacity: 0;
       }
     }
 
     .ambient-car.car-1 {
-      animation: driveCentralLane 22s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+      animation: driveCentralLane 24s cubic-bezier(0.4, 0, 0.2, 1) infinite;
     }
 
     .ambient-car.car-2 {
-      animation: driveEastLane 26s cubic-bezier(0.35, 0, 0.25, 1) 9s infinite;
+      animation: driveOutboundLane 26s cubic-bezier(0.4, 0, 0.2, 1) 8s infinite;
       opacity: 0;
     }
 
     .ambient-car.car-3 {
-      animation: driveWestLane 28s cubic-bezier(0.35, 0, 0.25, 1) 18s infinite;
+      animation: driveNorthwestEntry 28s cubic-bezier(0.4, 0, 0.2, 1) 16s infinite;
       opacity: 0;
     }
 
@@ -2886,10 +2928,8 @@
     flex: 1;
     min-width: 0;
   }
-}
 
-@media (max-width: 640px) {
-  /* Bottom Sheet Drawer for Spot Details */
+  /* Bottom Sheet Drawer for Spot Details (Mobile & Tablet <= 768px) */
   .drawer {
     top: auto;
     bottom: 0;
@@ -2897,12 +2937,16 @@
     right: 0;
     width: 100%;
     max-width: 100%;
-    height: auto;
+    height: 75vh;
     max-height: 85vh;
     border-radius: 20px 20px 0 0;
-    box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 -10px 35px rgba(0, 0, 0, 0.28);
     transform: translateY(100%);
     transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 200;
   }
 
   .drawer.active {
@@ -2911,35 +2955,91 @@
 
   .sheet-drag-handle {
     display: block;
-    width: 38px;
+    width: 40px;
     height: 4px;
     border-radius: 2px;
     background: #cbd5e1;
     margin: 10px auto 2px;
+    flex-shrink: 0;
   }
 
   .drawer-header {
-    padding: 10px 18px 12px;
+    flex-shrink: 0;
+    padding: 10px 18px 10px;
   }
 
   .drawer-header-info h2 {
-    font-size: 17px;
+    font-size: 16.5px;
   }
 
   .drawer-body {
-    padding: 14px 18px;
-    gap: 14px;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+    padding: 12px 18px 16px;
+    gap: 12px;
+  }
+
+  .drawer-card {
+    padding: 12px 14px;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .drawer-card-icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .drawer-card-icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .drawer-card-text h3 {
+    font-size: 14px;
+  }
+
+  .drawer-card-text p {
+    font-size: 11.5px;
+  }
+
+  .details-table {
+    flex-shrink: 0;
+  }
+
+  .detail-row {
+    padding: 9px 12px;
+    font-size: 12px;
+  }
+
+  .drawer-camera-section {
+    margin-top: 4px;
+    padding: 12px;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .camera-preview-box {
+    max-height: 175px;
   }
 
   .drawer-footer {
-    padding: 12px 18px calc(14px + env(safe-area-inset-bottom, 0px));
+    flex-shrink: 0;
+    padding: 10px 18px calc(12px + env(safe-area-inset-bottom, 0px));
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
   }
 
   .btn-maps {
     height: 44px;
     font-size: 13.5px;
   }
+}
 
+@media (max-width: 640px) {
   /* Analytics Modal */
   .analytics-modal {
     width: 95%;

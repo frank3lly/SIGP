@@ -253,7 +253,7 @@ export class ViewportController {
       const deltaPixelX = e.touches[0].clientX - this.dragStartMouseX;
       const deltaPixelY = e.touches[0].clientY - this.dragStartMouseY;
 
-      if (!this.hasMovedSignificantly && Math.hypot(deltaPixelX, deltaPixelY) > 5) {
+      if (!this.hasMovedSignificantly && Math.hypot(deltaPixelX, deltaPixelY) > 10) {
         this.hasMovedSignificantly = true;
       }
 

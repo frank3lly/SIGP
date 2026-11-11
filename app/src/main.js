@@ -229,8 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
       camData.spots.forEach((sp) => {
         const slotId = mapCameraSpotToSlotId(camId, sp.spot_id);
         if (slotId && currentSpots[slotId]) {
-          const newStatus = sp.occupied ? 'occupied' : 'free';
+          let newStatus = sp.occupied ? 'occupied' : 'free';
           const newConf = sp.confidence ? sp.confidence * 100 : 94.0;
+          if (sp.status === 'warning' || (sp.confidence != null && sp.confidence < 0.65)) {
+            newStatus = 'warning';
+          }
           currentSpots[slotId] = {
             ...currentSpots[slotId],
             status: newStatus,
