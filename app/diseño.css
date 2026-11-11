@@ -591,17 +591,33 @@
       filter: drop-shadow(0 0 4px #ffffff);
     }
 
+    @keyframes activeSpotBeacon {
+      0%, 100% {
+        stroke: #38bdf8;
+        stroke-width: 1.6px;
+        filter: drop-shadow(0 0 3px #0284c7) drop-shadow(0 0 8px rgba(56, 189, 248, 0.9));
+      }
+      50% {
+        stroke: #facc15;
+        stroke-width: 2.1px;
+        filter: drop-shadow(0 0 6px #facc15) drop-shadow(0 0 14px rgba(250, 204, 21, 1));
+      }
+    }
+
     .spot-node.active-spot .spot-rect,
     .spot-node.active-spot .spot-poly {
-      stroke: #2563eb !important;
-      stroke-width: 0.85px !important;
-      filter: drop-shadow(0 0 4px rgba(37, 99, 235, 0.9)) !important;
+      stroke: #38bdf8 !important;
+      stroke-width: 1.8px !important;
+      filter: drop-shadow(0 0 4px #0284c7) drop-shadow(0 0 10px rgba(56, 189, 248, 0.95)) !important;
+      animation: activeSpotBeacon 1.4s infinite ease-in-out !important;
     }
 
     .spot-node.active-spot .spot-num,
     .spot-node.active-spot .spot-badge {
-      font-weight: 800;
+      font-weight: 900 !important;
       fill: #ffffff !important;
+      font-size: 2.1px !important;
+      filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.8)) !important;
     }
 
     .spot-node.dimmed {

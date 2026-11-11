@@ -4,9 +4,20 @@
  */
 
 import { CONFIG } from './config.js';
+import { spotsDatabase } from './spots-data.js';
 
 export function getSpotCentroid(spotElement, layerElement) {
   try {
+    const spotId = spotElement ? spotElement.getAttribute('data-id') : null;
+    if (spotId && spotsDatabase[spotId] && typeof spotsDatabase[spotId].cx === 'number') {
+      return {
+        cx: spotsDatabase[spotId].cx,
+        cy: spotsDatabase[spotId].cy,
+        width: 3.3,
+        height: 7.8,
+      };
+    }
+
     const bbox = spotElement.getBBox();
     const localX = bbox.x + bbox.width / 2;
     const localY = bbox.y + bbox.height / 2;
@@ -291,8 +302,8 @@ export class ViewportController {
   }
 
   clampBounds() {
-    const maxPanX = this.viewBoxWidth * 0.75 * this.scale;
-    const maxPanY = this.viewBoxHeight * 0.75 * this.scale;
+    const maxPanX = this.viewBoxWidth * 1.35 * this.scale;
+    const maxPanY = this.viewBoxHeight * 1.35 * this.scale;
     this.x = Math.max(-maxPanX, Math.min(maxPanX, this.x));
     this.y = Math.max(-maxPanY, Math.min(maxPanY, this.y));
   }
@@ -352,7 +363,7 @@ export class ViewportController {
     this.animId = requestAnimationFrame(animate);
   }
 
-  zoomToSpot(cx, cy, targetScale = 2.25, durationMs = 450) {
+  zoomToSpot(cx, cy, targetScale = 2.85, durationMs = 450) {
     this.cancelAnimation();
 
     const startScale = this.scale;
@@ -364,9 +375,9 @@ export class ViewportController {
 
     if (typeof window !== 'undefined') {
       if (window.innerWidth <= 768) {
-        effectiveCenterY = this.viewBoxCenterY - 18;
+        effectiveCenterY = this.viewBoxCenterY - 32;
       } else {
-        effectiveCenterX = this.viewBoxCenterX - 10;
+        effectiveCenterX = this.viewBoxCenterX - 28;
       }
     }
 

@@ -9,7 +9,9 @@ export const spotsDatabase = {
     "lng": -69.31077717718787,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_01"
+    "camera_spot_id": "spot_01",
+    "cx": 17.93,
+    "cy": 95.98
   },
   "L1-A02": {
     "id": "L1-A02",
@@ -21,7 +23,9 @@ export const spotsDatabase = {
     "lng": -69.3107228469566,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_02"
+    "camera_spot_id": "spot_02",
+    "cx": 20.95,
+    "cy": 94.13
   },
   "L1-A03": {
     "id": "L1-A03",
@@ -33,7 +37,9 @@ export const spotsDatabase = {
     "lng": -69.31066851672533,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_03"
+    "camera_spot_id": "spot_03",
+    "cx": 23.97,
+    "cy": 92.28
   },
   "L1-A04": {
     "id": "L1-A04",
@@ -45,7 +51,9 @@ export const spotsDatabase = {
     "lng": -69.31061418649405,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_04"
+    "camera_spot_id": "spot_04",
+    "cx": 26.99,
+    "cy": 90.43
   },
   "L1-A05": {
     "id": "L1-A05",
@@ -57,7 +65,9 @@ export const spotsDatabase = {
     "lng": -69.31055985626278,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_05"
+    "camera_spot_id": "spot_05",
+    "cx": 30.01,
+    "cy": 88.58
   },
   "L1-A06": {
     "id": "L1-A06",
@@ -69,7 +79,9 @@ export const spotsDatabase = {
     "lng": -69.3105055260315,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_06"
+    "camera_spot_id": "spot_06",
+    "cx": 33.03,
+    "cy": 86.73
   },
   "L1-A07": {
     "id": "L1-A07",
@@ -81,7 +93,9 @@ export const spotsDatabase = {
     "lng": -69.31045119580023,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_07"
+    "camera_spot_id": "spot_07",
+    "cx": 36.04,
+    "cy": 84.89
   },
   "L1-A08": {
     "id": "L1-A08",
@@ -93,7 +107,9 @@ export const spotsDatabase = {
     "lng": -69.31039686556896,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_08"
+    "camera_spot_id": "spot_08",
+    "cx": 39.06,
+    "cy": 83.04
   },
   "L1-A09": {
     "id": "L1-A09",
@@ -105,7 +121,9 @@ export const spotsDatabase = {
     "lng": -69.31034253533768,
     "ui_num": "09",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_09"
+    "camera_spot_id": "spot_09",
+    "cx": 42.08,
+    "cy": 81.19
   },
   "L1-B01": {
     "id": "L1-B01",
@@ -117,7 +135,9 @@ export const spotsDatabase = {
     "lng": -69.31069629441005,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_10"
+    "camera_spot_id": "spot_10",
+    "cx": 22.43,
+    "cy": 103.32
   },
   "L1-B02": {
     "id": "L1-B02",
@@ -129,7 +149,9 @@ export const spotsDatabase = {
     "lng": -69.31064196417879,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_11"
+    "camera_spot_id": "spot_11",
+    "cx": 25.45,
+    "cy": 101.47
   },
   "L1-B03": {
     "id": "L1-B03",
@@ -141,7 +163,9 @@ export const spotsDatabase = {
     "lng": -69.3105876339475,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_12"
+    "camera_spot_id": "spot_12",
+    "cx": 28.46,
+    "cy": 99.62
   },
   "L1-B04": {
     "id": "L1-B04",
@@ -153,7 +177,9 @@ export const spotsDatabase = {
     "lng": -69.31053330371623,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_13"
+    "camera_spot_id": "spot_13",
+    "cx": 31.48,
+    "cy": 97.77
   },
   "L1-B05": {
     "id": "L1-B05",
@@ -165,7 +191,9 @@ export const spotsDatabase = {
     "lng": -69.31047897348496,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_14"
+    "camera_spot_id": "spot_14",
+    "cx": 34.5,
+    "cy": 95.92
   },
   "L1-B06": {
     "id": "L1-B06",
@@ -177,7 +205,9 @@ export const spotsDatabase = {
     "lng": -69.31042464325368,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_15"
+    "camera_spot_id": "spot_15",
+    "cx": 37.52,
+    "cy": 94.07
   },
   "L1-B07": {
     "id": "L1-B07",
@@ -189,7 +219,9 @@ export const spotsDatabase = {
     "lng": -69.31037031302242,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_16"
+    "camera_spot_id": "spot_16",
+    "cx": 40.54,
+    "cy": 92.22
   },
   "L1-B08": {
     "id": "L1-B08",
@@ -201,7 +233,9 @@ export const spotsDatabase = {
     "lng": -69.31031598279114,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_17"
+    "camera_spot_id": "spot_17",
+    "cx": 43.56,
+    "cy": 90.37
   },
   "L1-B09": {
     "id": "L1-B09",
@@ -213,7 +247,9 @@ export const spotsDatabase = {
     "lng": -69.31026165255987,
     "ui_num": "09",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_18"
+    "camera_spot_id": "spot_18",
+    "cx": 46.57,
+    "cy": 88.52
   },
   "L2-A01": {
     "id": "L2-A01",
@@ -225,7 +261,9 @@ export const spotsDatabase = {
     "lng": -69.31055305979334,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_19"
+    "camera_spot_id": "spot_19",
+    "cx": 30.39,
+    "cy": 118.72
   },
   "L2-A02": {
     "id": "L2-A02",
@@ -237,7 +275,9 @@ export const spotsDatabase = {
     "lng": -69.31049872956206,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_20"
+    "camera_spot_id": "spot_20",
+    "cx": 33.4,
+    "cy": 116.87
   },
   "L2-A03": {
     "id": "L2-A03",
@@ -249,7 +289,9 @@ export const spotsDatabase = {
     "lng": -69.31044439933079,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_21"
+    "camera_spot_id": "spot_21",
+    "cx": 36.42,
+    "cy": 115.02
   },
   "L2-A04": {
     "id": "L2-A04",
@@ -261,7 +303,9 @@ export const spotsDatabase = {
     "lng": -69.31039006909951,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_22"
+    "camera_spot_id": "spot_22",
+    "cx": 39.44,
+    "cy": 113.17
   },
   "L2-A05": {
     "id": "L2-A05",
@@ -273,7 +317,9 @@ export const spotsDatabase = {
     "lng": -69.31033573886825,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_23"
+    "camera_spot_id": "spot_23",
+    "cx": 42.46,
+    "cy": 111.32
   },
   "L2-A06": {
     "id": "L2-A06",
@@ -285,7 +331,9 @@ export const spotsDatabase = {
     "lng": -69.31028140863697,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_24"
+    "camera_spot_id": "spot_24",
+    "cx": 45.48,
+    "cy": 109.47
   },
   "L2-A07": {
     "id": "L2-A07",
@@ -297,7 +345,9 @@ export const spotsDatabase = {
     "lng": -69.3102270784057,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_25"
+    "camera_spot_id": "spot_25",
+    "cx": 48.5,
+    "cy": 107.62
   },
   "L2-A08": {
     "id": "L2-A08",
@@ -309,7 +359,9 @@ export const spotsDatabase = {
     "lng": -69.31017274817442,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_26"
+    "camera_spot_id": "spot_26",
+    "cx": 51.51,
+    "cy": 105.77
   },
   "L2-A09": {
     "id": "L2-A09",
@@ -321,7 +373,9 @@ export const spotsDatabase = {
     "lng": -69.31011841794314,
     "ui_num": "09",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_27"
+    "camera_spot_id": "spot_27",
+    "cx": 54.53,
+    "cy": 103.92
   },
   "L2-B01": {
     "id": "L2-B01",
@@ -333,7 +387,9 @@ export const spotsDatabase = {
     "lng": -69.31047217701551,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_28"
+    "camera_spot_id": "spot_28",
+    "cx": 34.88,
+    "cy": 126.05
   },
   "L2-B02": {
     "id": "L2-B02",
@@ -345,7 +401,9 @@ export const spotsDatabase = {
     "lng": -69.31041784678425,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_29"
+    "camera_spot_id": "spot_29",
+    "cx": 37.9,
+    "cy": 124.2
   },
   "L2-B03": {
     "id": "L2-B03",
@@ -357,7 +415,9 @@ export const spotsDatabase = {
     "lng": -69.31036351655297,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_30"
+    "camera_spot_id": "spot_30",
+    "cx": 40.92,
+    "cy": 122.35
   },
   "L2-B04": {
     "id": "L2-B04",
@@ -369,7 +429,9 @@ export const spotsDatabase = {
     "lng": -69.3103091863217,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_31"
+    "camera_spot_id": "spot_31",
+    "cx": 43.93,
+    "cy": 120.5
   },
   "L2-B05": {
     "id": "L2-B05",
@@ -381,7 +443,9 @@ export const spotsDatabase = {
     "lng": -69.31025485609042,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_32"
+    "camera_spot_id": "spot_32",
+    "cx": 46.95,
+    "cy": 118.65
   },
   "L2-B06": {
     "id": "L2-B06",
@@ -393,7 +457,9 @@ export const spotsDatabase = {
     "lng": -69.31020052585914,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_33"
+    "camera_spot_id": "spot_33",
+    "cx": 49.97,
+    "cy": 116.8
   },
   "L2-B07": {
     "id": "L2-B07",
@@ -405,7 +471,9 @@ export const spotsDatabase = {
     "lng": -69.31014619562788,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_34"
+    "camera_spot_id": "spot_34",
+    "cx": 52.99,
+    "cy": 114.95
   },
   "L2-B08": {
     "id": "L2-B08",
@@ -417,7 +485,9 @@ export const spotsDatabase = {
     "lng": -69.3100918653966,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_35"
+    "camera_spot_id": "spot_35",
+    "cx": 56.01,
+    "cy": 113.1
   },
   "L2-B09": {
     "id": "L2-B09",
@@ -429,7 +499,9 @@ export const spotsDatabase = {
     "lng": -69.31003753516534,
     "ui_num": "09",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_36"
+    "camera_spot_id": "spot_36",
+    "cx": 59.03,
+    "cy": 111.26
   },
   "L3-A01": {
     "id": "L3-A01",
@@ -441,7 +513,9 @@ export const spotsDatabase = {
     "lng": -69.31034215599631,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_85"
+    "camera_spot_id": "spot_85",
+    "cx": 42.1,
+    "cy": 139.29
   },
   "L3-A02": {
     "id": "L3-A02",
@@ -453,7 +527,9 @@ export const spotsDatabase = {
     "lng": -69.31028782576503,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_86"
+    "camera_spot_id": "spot_86",
+    "cx": 45.12,
+    "cy": 137.44
   },
   "L3-A03": {
     "id": "L3-A03",
@@ -465,7 +541,9 @@ export const spotsDatabase = {
     "lng": -69.31023349553377,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_87"
+    "camera_spot_id": "spot_87",
+    "cx": 48.14,
+    "cy": 135.59
   },
   "L3-A04": {
     "id": "L3-A04",
@@ -477,7 +555,9 @@ export const spotsDatabase = {
     "lng": -69.31017916530249,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_88"
+    "camera_spot_id": "spot_88",
+    "cx": 51.16,
+    "cy": 133.74
   },
   "L3-A05": {
     "id": "L3-A05",
@@ -489,7 +569,9 @@ export const spotsDatabase = {
     "lng": -69.31012483507122,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_89"
+    "camera_spot_id": "spot_89",
+    "cx": 54.18,
+    "cy": 131.89
   },
   "L3-A06": {
     "id": "L3-A06",
@@ -501,7 +583,9 @@ export const spotsDatabase = {
     "lng": -69.31007050483994,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_90"
+    "camera_spot_id": "spot_90",
+    "cx": 57.19,
+    "cy": 130.04
   },
   "L3-A07": {
     "id": "L3-A07",
@@ -513,7 +597,9 @@ export const spotsDatabase = {
     "lng": -69.31001617460868,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_91"
+    "camera_spot_id": "spot_91",
+    "cx": 60.21,
+    "cy": 128.19
   },
   "L3-A08": {
     "id": "L3-A08",
@@ -525,7 +611,9 @@ export const spotsDatabase = {
     "lng": -69.3099618443774,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_92"
+    "camera_spot_id": "spot_92",
+    "cx": 63.23,
+    "cy": 126.35
   },
   "L3-A09": {
     "id": "L3-A09",
@@ -537,7 +625,9 @@ export const spotsDatabase = {
     "lng": -69.30990751414613,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 66.25,
+    "cy": 124.5
   },
   "L3-B01": {
     "id": "L3-B01",
@@ -549,7 +639,9 @@ export const spotsDatabase = {
     "lng": -69.31026127321849,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_93"
+    "camera_spot_id": "spot_93",
+    "cx": 46.6,
+    "cy": 146.63
   },
   "L3-B02": {
     "id": "L3-B02",
@@ -561,7 +653,9 @@ export const spotsDatabase = {
     "lng": -69.31020694298722,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_94"
+    "camera_spot_id": "spot_94",
+    "cx": 49.61,
+    "cy": 144.78
   },
   "L3-B03": {
     "id": "L3-B03",
@@ -573,7 +667,9 @@ export const spotsDatabase = {
     "lng": -69.31015261275594,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_95"
+    "camera_spot_id": "spot_95",
+    "cx": 52.63,
+    "cy": 142.93
   },
   "L3-B04": {
     "id": "L3-B04",
@@ -585,7 +681,9 @@ export const spotsDatabase = {
     "lng": -69.31009828252468,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_96"
+    "camera_spot_id": "spot_96",
+    "cx": 55.65,
+    "cy": 141.08
   },
   "L3-B05": {
     "id": "L3-B05",
@@ -597,7 +695,9 @@ export const spotsDatabase = {
     "lng": -69.3100439522934,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_97"
+    "camera_spot_id": "spot_97",
+    "cx": 58.67,
+    "cy": 139.23
   },
   "L3-B06": {
     "id": "L3-B06",
@@ -609,7 +709,9 @@ export const spotsDatabase = {
     "lng": -69.30998962206213,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_98"
+    "camera_spot_id": "spot_98",
+    "cx": 61.69,
+    "cy": 137.38
   },
   "L3-B07": {
     "id": "L3-B07",
@@ -621,7 +723,9 @@ export const spotsDatabase = {
     "lng": -69.30993529183085,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_99"
+    "camera_spot_id": "spot_99",
+    "cx": 64.71,
+    "cy": 135.53
   },
   "L3-B08": {
     "id": "L3-B08",
@@ -633,7 +737,9 @@ export const spotsDatabase = {
     "lng": -69.30988096159957,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_100"
+    "camera_spot_id": "spot_100",
+    "cx": 67.72,
+    "cy": 133.68
   },
   "L3-B09": {
     "id": "L3-B09",
@@ -645,7 +751,9 @@ export const spotsDatabase = {
     "lng": -69.30982663136831,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 70.74,
+    "cy": 131.83
   },
   "L4-A01": {
     "id": "L4-A01",
@@ -657,7 +765,9 @@ export const spotsDatabase = {
     "lng": -69.31011928989963,
     "ui_num": "01",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 54.48,
+    "cy": 159.34
   },
   "L4-A02": {
     "id": "L4-A02",
@@ -669,7 +779,9 @@ export const spotsDatabase = {
     "lng": -69.31006495966837,
     "ui_num": "02",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 57.5,
+    "cy": 157.49
   },
   "L4-A03": {
     "id": "L4-A03",
@@ -681,7 +793,9 @@ export const spotsDatabase = {
     "lng": -69.31001062943709,
     "ui_num": "03",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 60.52,
+    "cy": 155.64
   },
   "L4-A04": {
     "id": "L4-A04",
@@ -693,7 +807,9 @@ export const spotsDatabase = {
     "lng": -69.30995629920582,
     "ui_num": "04",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 63.54,
+    "cy": 153.79
   },
   "L4-A05": {
     "id": "L4-A05",
@@ -705,7 +821,9 @@ export const spotsDatabase = {
     "lng": -69.30990196897454,
     "ui_num": "05",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 66.56,
+    "cy": 151.94
   },
   "L4-A06": {
     "id": "L4-A06",
@@ -717,7 +835,9 @@ export const spotsDatabase = {
     "lng": -69.30984763874328,
     "ui_num": "06",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 69.58,
+    "cy": 150.09
   },
   "L4-A07": {
     "id": "L4-A07",
@@ -729,7 +849,9 @@ export const spotsDatabase = {
     "lng": -69.309793308512,
     "ui_num": "07",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 72.59,
+    "cy": 148.24
   },
   "L4-A08": {
     "id": "L4-A08",
@@ -741,7 +863,9 @@ export const spotsDatabase = {
     "lng": -69.30973897828073,
     "ui_num": "08",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 75.61,
+    "cy": 146.39
   },
   "L4-A09": {
     "id": "L4-A09",
@@ -753,7 +877,9 @@ export const spotsDatabase = {
     "lng": -69.30968464804945,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 78.63,
+    "cy": 144.54
   },
   "L4-B01": {
     "id": "L4-B01",
@@ -765,7 +891,9 @@ export const spotsDatabase = {
     "lng": -69.31003840712182,
     "ui_num": "01",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 58.98,
+    "cy": 166.67
   },
   "L4-B02": {
     "id": "L4-B02",
@@ -777,7 +905,9 @@ export const spotsDatabase = {
     "lng": -69.30998407689054,
     "ui_num": "02",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 62.0,
+    "cy": 164.82
   },
   "L4-B03": {
     "id": "L4-B03",
@@ -789,7 +919,9 @@ export const spotsDatabase = {
     "lng": -69.30992974665928,
     "ui_num": "03",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 65.01,
+    "cy": 162.97
   },
   "L4-B04": {
     "id": "L4-B04",
@@ -801,7 +933,9 @@ export const spotsDatabase = {
     "lng": -69.309875416428,
     "ui_num": "04",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 68.03,
+    "cy": 161.12
   },
   "L4-B05": {
     "id": "L4-B05",
@@ -813,7 +947,9 @@ export const spotsDatabase = {
     "lng": -69.30982108619673,
     "ui_num": "05",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 71.05,
+    "cy": 159.27
   },
   "L4-B06": {
     "id": "L4-B06",
@@ -825,7 +961,9 @@ export const spotsDatabase = {
     "lng": -69.30976675596546,
     "ui_num": "06",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 74.07,
+    "cy": 157.42
   },
   "L4-B07": {
     "id": "L4-B07",
@@ -837,7 +975,9 @@ export const spotsDatabase = {
     "lng": -69.30971242573418,
     "ui_num": "07",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 77.09,
+    "cy": 155.58
   },
   "L4-B08": {
     "id": "L4-B08",
@@ -849,7 +989,9 @@ export const spotsDatabase = {
     "lng": -69.30965809550291,
     "ui_num": "08",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 80.11,
+    "cy": 153.73
   },
   "L4-B09": {
     "id": "L4-B09",
@@ -861,7 +1003,9 @@ export const spotsDatabase = {
     "lng": -69.30960376527163,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 83.12,
+    "cy": 151.88
   },
   "LW-top-01": {
     "id": "LW-top-01",
@@ -873,7 +1017,9 @@ export const spotsDatabase = {
     "lng": -69.31051572227469,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_37"
+    "camera_spot_id": "spot_37",
+    "cx": 32.46,
+    "cy": 66.66
   },
   "LW-top-02": {
     "id": "LW-top-02",
@@ -885,7 +1031,9 @@ export const spotsDatabase = {
     "lng": -69.31045867279617,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_38"
+    "camera_spot_id": "spot_38",
+    "cx": 35.63,
+    "cy": 64.78
   },
   "LW-top-03": {
     "id": "LW-top-03",
@@ -897,7 +1045,9 @@ export const spotsDatabase = {
     "lng": -69.31040162331766,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_39"
+    "camera_spot_id": "spot_39",
+    "cx": 38.8,
+    "cy": 62.9
   },
   "LW-top-04": {
     "id": "LW-top-04",
@@ -909,7 +1059,9 @@ export const spotsDatabase = {
     "lng": -69.31034457383915,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_40"
+    "camera_spot_id": "spot_40",
+    "cx": 41.97,
+    "cy": 61.02
   },
   "LW-top-05": {
     "id": "LW-top-05",
@@ -921,7 +1073,9 @@ export const spotsDatabase = {
     "lng": -69.31028752436063,
     "ui_num": "05",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 45.14,
+    "cy": 59.13
   },
   "LW-top-06": {
     "id": "LW-top-06",
@@ -933,7 +1087,9 @@ export const spotsDatabase = {
     "lng": -69.3102304748821,
     "ui_num": "06",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 48.31,
+    "cy": 57.25
   },
   "LW-top-07": {
     "id": "LW-top-07",
@@ -945,7 +1101,9 @@ export const spotsDatabase = {
     "lng": -69.31017342540359,
     "ui_num": "07",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 51.48,
+    "cy": 55.37
   },
   "LW-top-08": {
     "id": "LW-top-08",
@@ -957,7 +1115,9 @@ export const spotsDatabase = {
     "lng": -69.31011637592508,
     "ui_num": "08",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 54.65,
+    "cy": 53.49
   },
   "LW-top-09": {
     "id": "LW-top-09",
@@ -969,7 +1129,9 @@ export const spotsDatabase = {
     "lng": -69.31005932644656,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 57.82,
+    "cy": 51.61
   },
   "LW-top-10": {
     "id": "LW-top-10",
@@ -981,7 +1143,9 @@ export const spotsDatabase = {
     "lng": -69.31000227696805,
     "ui_num": "10",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 60.98,
+    "cy": 49.72
   },
   "LW-top-11": {
     "id": "LW-top-11",
@@ -993,7 +1157,9 @@ export const spotsDatabase = {
     "lng": -69.30994522748954,
     "ui_num": "11",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 64.15,
+    "cy": 47.84
   },
   "LE-top-01": {
     "id": "LE-top-01",
@@ -1005,7 +1171,9 @@ export const spotsDatabase = {
     "lng": -69.3094756822747,
     "ui_num": "01",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 90.24,
+    "cy": 31.97
   },
   "LE-top-02": {
     "id": "LE-top-02",
@@ -1017,7 +1185,9 @@ export const spotsDatabase = {
     "lng": -69.30941863279618,
     "ui_num": "02",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 93.41,
+    "cy": 30.09
   },
   "LE-top-03": {
     "id": "LE-top-03",
@@ -1029,7 +1199,9 @@ export const spotsDatabase = {
     "lng": -69.30936158331765,
     "ui_num": "03",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 96.58,
+    "cy": 28.21
   },
   "LE-top-04": {
     "id": "LE-top-04",
@@ -1041,7 +1213,9 @@ export const spotsDatabase = {
     "lng": -69.30930453383914,
     "ui_num": "04",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 99.75,
+    "cy": 26.33
   },
   "LE-top-05": {
     "id": "LE-top-05",
@@ -1053,7 +1227,9 @@ export const spotsDatabase = {
     "lng": -69.30924748436063,
     "ui_num": "05",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 102.92,
+    "cy": 24.44
   },
   "LE-top-06": {
     "id": "LE-top-06",
@@ -1065,7 +1241,9 @@ export const spotsDatabase = {
     "lng": -69.30919043488211,
     "ui_num": "06",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 106.09,
+    "cy": 22.56
   },
   "LE-top-07": {
     "id": "LE-top-07",
@@ -1077,7 +1255,9 @@ export const spotsDatabase = {
     "lng": -69.3091333854036,
     "ui_num": "07",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 109.26,
+    "cy": 20.68
   },
   "LE-top-08": {
     "id": "LE-top-08",
@@ -1089,7 +1269,9 @@ export const spotsDatabase = {
     "lng": -69.30907633592508,
     "ui_num": "08",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 112.43,
+    "cy": 18.8
   },
   "LE-top-09": {
     "id": "LE-top-09",
@@ -1101,7 +1283,9 @@ export const spotsDatabase = {
     "lng": -69.30901928644656,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 115.6,
+    "cy": 16.92
   },
   "LE-top-10": {
     "id": "LE-top-10",
@@ -1113,7 +1297,9 @@ export const spotsDatabase = {
     "lng": -69.30896223696804,
     "ui_num": "10",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 118.76,
+    "cy": 15.03
   },
   "LE-top-11": {
     "id": "LE-top-11",
@@ -1125,7 +1311,9 @@ export const spotsDatabase = {
     "lng": -69.30890518748953,
     "ui_num": "11",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 121.93,
+    "cy": 13.15
   },
   "R1-A01": {
     "id": "R1-A01",
@@ -1137,7 +1325,9 @@ export const spotsDatabase = {
     "lng": -69.30962026766181,
     "ui_num": "01",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_01"
+    "camera_spot_id": "spot_01",
+    "cx": 82.21,
+    "cy": 58.14
   },
   "R1-A02": {
     "id": "R1-A02",
@@ -1149,7 +1339,9 @@ export const spotsDatabase = {
     "lng": -69.30956022815201,
     "ui_num": "02",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_02"
+    "camera_spot_id": "spot_02",
+    "cx": 85.54,
+    "cy": 56.09
   },
   "R1-A03": {
     "id": "R1-A03",
@@ -1161,7 +1353,9 @@ export const spotsDatabase = {
     "lng": -69.30950020398971,
     "ui_num": "03",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_03"
+    "camera_spot_id": "spot_03",
+    "cx": 88.88,
+    "cy": 54.05
   },
   "R1-A04": {
     "id": "R1-A04",
@@ -1173,7 +1367,9 @@ export const spotsDatabase = {
     "lng": -69.3094401644799,
     "ui_num": "04",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_04"
+    "camera_spot_id": "spot_04",
+    "cx": 92.21,
+    "cy": 52.0
   },
   "R1-A05": {
     "id": "R1-A05",
@@ -1185,7 +1381,9 @@ export const spotsDatabase = {
     "lng": -69.30938014031761,
     "ui_num": "05",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_05"
+    "camera_spot_id": "spot_05",
+    "cx": 95.55,
+    "cy": 49.96
   },
   "R1-A06": {
     "id": "R1-A06",
@@ -1197,7 +1395,9 @@ export const spotsDatabase = {
     "lng": -69.3093201008078,
     "ui_num": "06",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_06"
+    "camera_spot_id": "spot_06",
+    "cx": 98.88,
+    "cy": 47.92
   },
   "R1-A07": {
     "id": "R1-A07",
@@ -1209,7 +1409,9 @@ export const spotsDatabase = {
     "lng": -69.3092600766455,
     "ui_num": "07",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_07"
+    "camera_spot_id": "spot_07",
+    "cx": 102.22,
+    "cy": 45.87
   },
   "R1-A08": {
     "id": "R1-A08",
@@ -1221,7 +1423,9 @@ export const spotsDatabase = {
     "lng": -69.3092000371357,
     "ui_num": "08",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_08"
+    "camera_spot_id": "spot_08",
+    "cx": 105.55,
+    "cy": 43.83
   },
   "R1-A09": {
     "id": "R1-A09",
@@ -1233,7 +1437,9 @@ export const spotsDatabase = {
     "lng": -69.3091400129734,
     "ui_num": "09",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_09"
+    "camera_spot_id": "spot_09",
+    "cx": 108.89,
+    "cy": 41.79
   },
   "R1-A10": {
     "id": "R1-A10",
@@ -1245,7 +1451,9 @@ export const spotsDatabase = {
     "lng": -69.3090799734636,
     "ui_num": "10",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_10"
+    "camera_spot_id": "spot_10",
+    "cx": 112.22,
+    "cy": 39.74
   },
   "R1-A11": {
     "id": "R1-A11",
@@ -1257,7 +1465,9 @@ export const spotsDatabase = {
     "lng": -69.3090199493013,
     "ui_num": "11",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_11"
+    "camera_spot_id": "spot_11",
+    "cx": 115.56,
+    "cy": 37.7
   },
   "R1-A12": {
     "id": "R1-A12",
@@ -1269,7 +1479,9 @@ export const spotsDatabase = {
     "lng": -69.30895990979148,
     "ui_num": "12",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_12"
+    "camera_spot_id": "spot_12",
+    "cx": 118.89,
+    "cy": 35.65
   },
   "R1-A13": {
     "id": "R1-A13",
@@ -1281,7 +1493,9 @@ export const spotsDatabase = {
     "lng": -69.3088998856292,
     "ui_num": "13",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_13"
+    "camera_spot_id": "spot_13",
+    "cx": 122.23,
+    "cy": 33.61
   },
   "R1-A14": {
     "id": "R1-A14",
@@ -1293,7 +1507,9 @@ export const spotsDatabase = {
     "lng": -69.30883984611938,
     "ui_num": "14",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_14"
+    "camera_spot_id": "spot_14",
+    "cx": 125.56,
+    "cy": 31.57
   },
   "R1-B01": {
     "id": "R1-B01",
@@ -1305,7 +1521,9 @@ export const spotsDatabase = {
     "lng": -69.309539384884,
     "ui_num": "01",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_15"
+    "camera_spot_id": "spot_15",
+    "cx": 86.7,
+    "cy": 65.47
   },
   "R1-B02": {
     "id": "R1-B02",
@@ -1317,7 +1535,9 @@ export const spotsDatabase = {
     "lng": -69.30947934537419,
     "ui_num": "02",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_16"
+    "camera_spot_id": "spot_16",
+    "cx": 90.04,
+    "cy": 63.43
   },
   "R1-B03": {
     "id": "R1-B03",
@@ -1329,7 +1549,9 @@ export const spotsDatabase = {
     "lng": -69.30941932121189,
     "ui_num": "03",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_17"
+    "camera_spot_id": "spot_17",
+    "cx": 93.37,
+    "cy": 61.38
   },
   "R1-B04": {
     "id": "R1-B04",
@@ -1341,7 +1563,9 @@ export const spotsDatabase = {
     "lng": -69.30935928170209,
     "ui_num": "04",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_18"
+    "camera_spot_id": "spot_18",
+    "cx": 96.71,
+    "cy": 59.34
   },
   "R1-B05": {
     "id": "R1-B05",
@@ -1353,7 +1577,9 @@ export const spotsDatabase = {
     "lng": -69.30929925753979,
     "ui_num": "05",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_19"
+    "camera_spot_id": "spot_19",
+    "cx": 100.04,
+    "cy": 57.29
   },
   "R1-B06": {
     "id": "R1-B06",
@@ -1365,7 +1591,9 @@ export const spotsDatabase = {
     "lng": -69.30923921802997,
     "ui_num": "06",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_20"
+    "camera_spot_id": "spot_20",
+    "cx": 103.38,
+    "cy": 55.25
   },
   "R1-B07": {
     "id": "R1-B07",
@@ -1377,7 +1605,9 @@ export const spotsDatabase = {
     "lng": -69.30917919386769,
     "ui_num": "07",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_21"
+    "camera_spot_id": "spot_21",
+    "cx": 106.71,
+    "cy": 53.21
   },
   "R1-B08": {
     "id": "R1-B08",
@@ -1389,7 +1619,9 @@ export const spotsDatabase = {
     "lng": -69.30911915435787,
     "ui_num": "08",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_22"
+    "camera_spot_id": "spot_22",
+    "cx": 110.05,
+    "cy": 51.16
   },
   "R1-B09": {
     "id": "R1-B09",
@@ -1401,7 +1633,9 @@ export const spotsDatabase = {
     "lng": -69.30905913019558,
     "ui_num": "09",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_23"
+    "camera_spot_id": "spot_23",
+    "cx": 113.38,
+    "cy": 49.12
   },
   "R1-B10": {
     "id": "R1-B10",
@@ -1413,7 +1647,9 @@ export const spotsDatabase = {
     "lng": -69.30899909068577,
     "ui_num": "10",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_24"
+    "camera_spot_id": "spot_24",
+    "cx": 116.72,
+    "cy": 47.08
   },
   "R1-B11": {
     "id": "R1-B11",
@@ -1425,7 +1661,9 @@ export const spotsDatabase = {
     "lng": -69.30893906652348,
     "ui_num": "11",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_25"
+    "camera_spot_id": "spot_25",
+    "cx": 120.05,
+    "cy": 45.03
   },
   "R1-B12": {
     "id": "R1-B12",
@@ -1437,7 +1675,9 @@ export const spotsDatabase = {
     "lng": -69.30887902701367,
     "ui_num": "12",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_26"
+    "camera_spot_id": "spot_26",
+    "cx": 123.39,
+    "cy": 42.99
   },
   "R1-B13": {
     "id": "R1-B13",
@@ -1449,7 +1689,9 @@ export const spotsDatabase = {
     "lng": -69.30881900285138,
     "ui_num": "13",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_27"
+    "camera_spot_id": "spot_27",
+    "cx": 126.72,
+    "cy": 40.94
   },
   "R1-B14": {
     "id": "R1-B14",
@@ -1461,7 +1703,9 @@ export const spotsDatabase = {
     "lng": -69.30875896334156,
     "ui_num": "14",
     "camera_id": "cam_01",
-    "camera_spot_id": "spot_28"
+    "camera_spot_id": "spot_28",
+    "cx": 130.06,
+    "cy": 38.9
   },
   "R2-A01": {
     "id": "R2-A01",
@@ -1473,7 +1717,9 @@ export const spotsDatabase = {
     "lng": -69.30938973718787,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_01"
+    "camera_spot_id": "spot_01",
+    "cx": 95.01,
+    "cy": 79.06
   },
   "R2-A02": {
     "id": "R2-A02",
@@ -1485,7 +1731,9 @@ export const spotsDatabase = {
     "lng": -69.30932969767805,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_02"
+    "camera_spot_id": "spot_02",
+    "cx": 98.35,
+    "cy": 77.02
   },
   "R2-A03": {
     "id": "R2-A03",
@@ -1497,7 +1745,9 @@ export const spotsDatabase = {
     "lng": -69.30926967351577,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_03"
+    "camera_spot_id": "spot_03",
+    "cx": 101.68,
+    "cy": 74.98
   },
   "R2-A04": {
     "id": "R2-A04",
@@ -1509,7 +1759,9 @@ export const spotsDatabase = {
     "lng": -69.30920963400595,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_04"
+    "camera_spot_id": "spot_04",
+    "cx": 105.02,
+    "cy": 72.93
   },
   "R2-A05": {
     "id": "R2-A05",
@@ -1521,7 +1773,9 @@ export const spotsDatabase = {
     "lng": -69.30914960984366,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_05"
+    "camera_spot_id": "spot_05",
+    "cx": 108.36,
+    "cy": 70.89
   },
   "R2-A06": {
     "id": "R2-A06",
@@ -1533,7 +1787,9 @@ export const spotsDatabase = {
     "lng": -69.30908957033385,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_06"
+    "camera_spot_id": "spot_06",
+    "cx": 111.69,
+    "cy": 68.84
   },
   "R2-A07": {
     "id": "R2-A07",
@@ -1545,7 +1801,9 @@ export const spotsDatabase = {
     "lng": -69.30902954617156,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_07"
+    "camera_spot_id": "spot_07",
+    "cx": 115.03,
+    "cy": 66.8
   },
   "R2-A08": {
     "id": "R2-A08",
@@ -1557,7 +1815,9 @@ export const spotsDatabase = {
     "lng": -69.30896950666174,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_08"
+    "camera_spot_id": "spot_08",
+    "cx": 118.36,
+    "cy": 64.76
   },
   "R2-A09": {
     "id": "R2-A09",
@@ -1569,7 +1829,9 @@ export const spotsDatabase = {
     "lng": -69.30890948249946,
     "ui_num": "09",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_09"
+    "camera_spot_id": "spot_09",
+    "cx": 121.7,
+    "cy": 62.71
   },
   "R2-A10": {
     "id": "R2-A10",
@@ -1581,7 +1843,9 @@ export const spotsDatabase = {
     "lng": -69.30884944298964,
     "ui_num": "10",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_10"
+    "camera_spot_id": "spot_10",
+    "cx": 125.03,
+    "cy": 60.67
   },
   "R2-A11": {
     "id": "R2-A11",
@@ -1593,7 +1857,9 @@ export const spotsDatabase = {
     "lng": -69.30878941882736,
     "ui_num": "11",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_11"
+    "camera_spot_id": "spot_11",
+    "cx": 128.37,
+    "cy": 58.63
   },
   "R2-A12": {
     "id": "R2-A12",
@@ -1605,7 +1871,9 @@ export const spotsDatabase = {
     "lng": -69.30872937931754,
     "ui_num": "12",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_12"
+    "camera_spot_id": "spot_12",
+    "cx": 131.7,
+    "cy": 56.58
   },
   "R2-A13": {
     "id": "R2-A13",
@@ -1617,7 +1885,9 @@ export const spotsDatabase = {
     "lng": -69.30866935515525,
     "ui_num": "13",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_13"
+    "camera_spot_id": "spot_13",
+    "cx": 135.04,
+    "cy": 54.54
   },
   "R2-A14": {
     "id": "R2-A14",
@@ -1629,7 +1899,9 @@ export const spotsDatabase = {
     "lng": -69.30860931564544,
     "ui_num": "14",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_14"
+    "camera_spot_id": "spot_14",
+    "cx": 138.37,
+    "cy": 52.49
   },
   "R2-B01": {
     "id": "R2-B01",
@@ -1641,7 +1913,9 @@ export const spotsDatabase = {
     "lng": -69.30930885441005,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_15"
+    "camera_spot_id": "spot_15",
+    "cx": 99.51,
+    "cy": 86.4
   },
   "R2-B02": {
     "id": "R2-B02",
@@ -1653,7 +1927,9 @@ export const spotsDatabase = {
     "lng": -69.30924881490024,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_16"
+    "camera_spot_id": "spot_16",
+    "cx": 102.84,
+    "cy": 84.35
   },
   "R2-B03": {
     "id": "R2-B03",
@@ -1665,7 +1941,9 @@ export const spotsDatabase = {
     "lng": -69.30918879073795,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_17"
+    "camera_spot_id": "spot_17",
+    "cx": 106.18,
+    "cy": 82.31
   },
   "R2-B04": {
     "id": "R2-B04",
@@ -1677,7 +1955,9 @@ export const spotsDatabase = {
     "lng": -69.30912875122813,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_18"
+    "camera_spot_id": "spot_18",
+    "cx": 109.51,
+    "cy": 80.26
   },
   "R2-B05": {
     "id": "R2-B05",
@@ -1689,7 +1969,9 @@ export const spotsDatabase = {
     "lng": -69.30906872706585,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_19"
+    "camera_spot_id": "spot_19",
+    "cx": 112.85,
+    "cy": 78.22
   },
   "R2-B06": {
     "id": "R2-B06",
@@ -1701,7 +1983,9 @@ export const spotsDatabase = {
     "lng": -69.30900868755603,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_20"
+    "camera_spot_id": "spot_20",
+    "cx": 116.18,
+    "cy": 76.18
   },
   "R2-B07": {
     "id": "R2-B07",
@@ -1713,7 +1997,9 @@ export const spotsDatabase = {
     "lng": -69.30894866339374,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_21"
+    "camera_spot_id": "spot_21",
+    "cx": 119.52,
+    "cy": 74.13
   },
   "R2-B08": {
     "id": "R2-B08",
@@ -1725,7 +2011,9 @@ export const spotsDatabase = {
     "lng": -69.30888862388393,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_22"
+    "camera_spot_id": "spot_22",
+    "cx": 122.85,
+    "cy": 72.09
   },
   "R2-B09": {
     "id": "R2-B09",
@@ -1737,7 +2025,9 @@ export const spotsDatabase = {
     "lng": -69.30882859972164,
     "ui_num": "09",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_23"
+    "camera_spot_id": "spot_23",
+    "cx": 126.19,
+    "cy": 70.05
   },
   "R2-B10": {
     "id": "R2-B10",
@@ -1749,7 +2039,9 @@ export const spotsDatabase = {
     "lng": -69.30876856021183,
     "ui_num": "10",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_24"
+    "camera_spot_id": "spot_24",
+    "cx": 129.52,
+    "cy": 68.0
   },
   "R2-B11": {
     "id": "R2-B11",
@@ -1761,7 +2053,9 @@ export const spotsDatabase = {
     "lng": -69.30870853604954,
     "ui_num": "11",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_25"
+    "camera_spot_id": "spot_25",
+    "cx": 132.86,
+    "cy": 65.96
   },
   "R2-B12": {
     "id": "R2-B12",
@@ -1773,7 +2067,9 @@ export const spotsDatabase = {
     "lng": -69.30864849653972,
     "ui_num": "12",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_26"
+    "camera_spot_id": "spot_26",
+    "cx": 136.19,
+    "cy": 63.91
   },
   "R2-B13": {
     "id": "R2-B13",
@@ -1785,7 +2081,9 @@ export const spotsDatabase = {
     "lng": -69.30858847237744,
     "ui_num": "13",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_27"
+    "camera_spot_id": "spot_27",
+    "cx": 139.53,
+    "cy": 61.87
   },
   "R2-B14": {
     "id": "R2-B14",
@@ -1797,7 +2095,9 @@ export const spotsDatabase = {
     "lng": -69.30852843286762,
     "ui_num": "14",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_28"
+    "camera_spot_id": "spot_28",
+    "cx": 142.86,
+    "cy": 59.83
   },
   "R3-A01": {
     "id": "R3-A01",
@@ -1809,7 +2109,9 @@ export const spotsDatabase = {
     "lng": -69.30918449168763,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_29"
+    "camera_spot_id": "spot_29",
+    "cx": 106.42,
+    "cy": 103.11
   },
   "R3-A02": {
     "id": "R3-A02",
@@ -1821,7 +2123,9 @@ export const spotsDatabase = {
     "lng": -69.30912445217783,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_30"
+    "camera_spot_id": "spot_30",
+    "cx": 109.75,
+    "cy": 101.07
   },
   "R3-A03": {
     "id": "R3-A03",
@@ -1833,7 +2137,9 @@ export const spotsDatabase = {
     "lng": -69.30906442801553,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_31"
+    "camera_spot_id": "spot_31",
+    "cx": 113.09,
+    "cy": 99.03
   },
   "R3-A04": {
     "id": "R3-A04",
@@ -1845,7 +2151,9 @@ export const spotsDatabase = {
     "lng": -69.30900438850571,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_32"
+    "camera_spot_id": "spot_32",
+    "cx": 116.42,
+    "cy": 96.98
   },
   "R3-A05": {
     "id": "R3-A05",
@@ -1857,7 +2165,9 @@ export const spotsDatabase = {
     "lng": -69.30894436434343,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_33"
+    "camera_spot_id": "spot_33",
+    "cx": 119.76,
+    "cy": 94.94
   },
   "R3-A06": {
     "id": "R3-A06",
@@ -1869,7 +2179,9 @@ export const spotsDatabase = {
     "lng": -69.30888432483361,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_34"
+    "camera_spot_id": "spot_34",
+    "cx": 123.09,
+    "cy": 92.89
   },
   "R3-A07": {
     "id": "R3-A07",
@@ -1881,7 +2193,9 @@ export const spotsDatabase = {
     "lng": -69.30882430067132,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_35"
+    "camera_spot_id": "spot_35",
+    "cx": 126.43,
+    "cy": 90.85
   },
   "R3-A08": {
     "id": "R3-A08",
@@ -1893,7 +2207,9 @@ export const spotsDatabase = {
     "lng": -69.30876426116151,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_36"
+    "camera_spot_id": "spot_36",
+    "cx": 129.76,
+    "cy": 88.81
   },
   "R3-A09": {
     "id": "R3-A09",
@@ -1905,7 +2221,9 @@ export const spotsDatabase = {
     "lng": -69.30870423699922,
     "ui_num": "09",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_37"
+    "camera_spot_id": "spot_37",
+    "cx": 133.1,
+    "cy": 86.76
   },
   "R3-A10": {
     "id": "R3-A10",
@@ -1917,7 +2235,9 @@ export const spotsDatabase = {
     "lng": -69.3086441974894,
     "ui_num": "10",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_38"
+    "camera_spot_id": "spot_38",
+    "cx": 136.43,
+    "cy": 84.72
   },
   "R3-A11": {
     "id": "R3-A11",
@@ -1929,7 +2249,9 @@ export const spotsDatabase = {
     "lng": -69.30858417332712,
     "ui_num": "11",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_39"
+    "camera_spot_id": "spot_39",
+    "cx": 139.77,
+    "cy": 82.68
   },
   "R3-A12": {
     "id": "R3-A12",
@@ -1941,7 +2263,9 @@ export const spotsDatabase = {
     "lng": -69.3085241338173,
     "ui_num": "12",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_40"
+    "camera_spot_id": "spot_40",
+    "cx": 143.1,
+    "cy": 80.63
   },
   "R3-A13": {
     "id": "R3-A13",
@@ -1953,7 +2277,9 @@ export const spotsDatabase = {
     "lng": -69.30846410965502,
     "ui_num": "13",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_41"
+    "camera_spot_id": "spot_41",
+    "cx": 146.44,
+    "cy": 78.59
   },
   "R3-A14": {
     "id": "R3-A14",
@@ -1965,7 +2291,9 @@ export const spotsDatabase = {
     "lng": -69.3084040701452,
     "ui_num": "14",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_42"
+    "camera_spot_id": "spot_42",
+    "cx": 149.77,
+    "cy": 76.54
   },
   "R3-B01": {
     "id": "R3-B01",
@@ -1977,7 +2305,9 @@ export const spotsDatabase = {
     "lng": -69.30910360890982,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_43"
+    "camera_spot_id": "spot_43",
+    "cx": 110.91,
+    "cy": 110.45
   },
   "R3-B02": {
     "id": "R3-B02",
@@ -1989,7 +2319,9 @@ export const spotsDatabase = {
     "lng": -69.3090435694,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_44"
+    "camera_spot_id": "spot_44",
+    "cx": 114.25,
+    "cy": 108.4
   },
   "R3-B03": {
     "id": "R3-B03",
@@ -2001,7 +2333,9 @@ export const spotsDatabase = {
     "lng": -69.30898354523771,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_45"
+    "camera_spot_id": "spot_45",
+    "cx": 117.58,
+    "cy": 106.36
   },
   "R3-B04": {
     "id": "R3-B04",
@@ -2013,7 +2347,9 @@ export const spotsDatabase = {
     "lng": -69.3089235057279,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_46"
+    "camera_spot_id": "spot_46",
+    "cx": 120.92,
+    "cy": 104.31
   },
   "R3-B05": {
     "id": "R3-B05",
@@ -2025,7 +2361,9 @@ export const spotsDatabase = {
     "lng": -69.30886348156561,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_47"
+    "camera_spot_id": "spot_47",
+    "cx": 124.25,
+    "cy": 102.27
   },
   "R3-B06": {
     "id": "R3-B06",
@@ -2037,7 +2375,9 @@ export const spotsDatabase = {
     "lng": -69.30880344205579,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_48"
+    "camera_spot_id": "spot_48",
+    "cx": 127.59,
+    "cy": 100.23
   },
   "R3-B07": {
     "id": "R3-B07",
@@ -2049,7 +2389,9 @@ export const spotsDatabase = {
     "lng": -69.30874341789351,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_49"
+    "camera_spot_id": "spot_49",
+    "cx": 130.92,
+    "cy": 98.18
   },
   "R3-B08": {
     "id": "R3-B08",
@@ -2061,7 +2403,9 @@ export const spotsDatabase = {
     "lng": -69.30868337838369,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_50"
+    "camera_spot_id": "spot_50",
+    "cx": 134.26,
+    "cy": 96.14
   },
   "R3-B09": {
     "id": "R3-B09",
@@ -2073,7 +2417,9 @@ export const spotsDatabase = {
     "lng": -69.3086233542214,
     "ui_num": "09",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_51"
+    "camera_spot_id": "spot_51",
+    "cx": 137.59,
+    "cy": 94.1
   },
   "R3-B10": {
     "id": "R3-B10",
@@ -2085,7 +2431,9 @@ export const spotsDatabase = {
     "lng": -69.30856331471159,
     "ui_num": "10",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_52"
+    "camera_spot_id": "spot_52",
+    "cx": 140.93,
+    "cy": 92.05
   },
   "R3-B11": {
     "id": "R3-B11",
@@ -2097,7 +2445,9 @@ export const spotsDatabase = {
     "lng": -69.3085032905493,
     "ui_num": "11",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_53"
+    "camera_spot_id": "spot_53",
+    "cx": 144.26,
+    "cy": 90.01
   },
   "R3-B12": {
     "id": "R3-B12",
@@ -2109,7 +2459,9 @@ export const spotsDatabase = {
     "lng": -69.30844325103949,
     "ui_num": "12",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_54"
+    "camera_spot_id": "spot_54",
+    "cx": 147.6,
+    "cy": 87.96
   },
   "R3-B13": {
     "id": "R3-B13",
@@ -2121,7 +2473,9 @@ export const spotsDatabase = {
     "lng": -69.3083832268772,
     "ui_num": "13",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_55"
+    "camera_spot_id": "spot_55",
+    "cx": 150.93,
+    "cy": 85.92
   },
   "R3-B14": {
     "id": "R3-B14",
@@ -2133,7 +2487,9 @@ export const spotsDatabase = {
     "lng": -69.30832318736738,
     "ui_num": "14",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_56"
+    "camera_spot_id": "spot_56",
+    "cx": 154.27,
+    "cy": 83.88
   },
   "R4-A01": {
     "id": "R4-A01",
@@ -2145,7 +2501,9 @@ export const spotsDatabase = {
     "lng": -69.3089782174062,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_57"
+    "camera_spot_id": "spot_57",
+    "cx": 117.88,
+    "cy": 123.74
   },
   "R4-A02": {
     "id": "R4-A02",
@@ -2157,7 +2515,9 @@ export const spotsDatabase = {
     "lng": -69.30891466096082,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_58"
+    "camera_spot_id": "spot_58",
+    "cx": 121.41,
+    "cy": 122.06
   },
   "R4-A03": {
     "id": "R4-A03",
@@ -2169,7 +2529,9 @@ export const spotsDatabase = {
     "lng": -69.3088510882689,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_59"
+    "camera_spot_id": "spot_59",
+    "cx": 124.94,
+    "cy": 120.37
   },
   "R4-A04": {
     "id": "R4-A04",
@@ -2181,7 +2543,9 @@ export const spotsDatabase = {
     "lng": -69.30878753182351,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_60"
+    "camera_spot_id": "spot_60",
+    "cx": 128.47,
+    "cy": 118.69
   },
   "R4-A05": {
     "id": "R4-A05",
@@ -2193,7 +2557,9 @@ export const spotsDatabase = {
     "lng": -69.30872397537813,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_61"
+    "camera_spot_id": "spot_61",
+    "cx": 132.0,
+    "cy": 117.01
   },
   "R4-A06": {
     "id": "R4-A06",
@@ -2205,7 +2571,9 @@ export const spotsDatabase = {
     "lng": -69.30866040268621,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_62"
+    "camera_spot_id": "spot_62",
+    "cx": 135.53,
+    "cy": 115.32
   },
   "R4-A07": {
     "id": "R4-A07",
@@ -2217,7 +2585,9 @@ export const spotsDatabase = {
     "lng": -69.30859684624083,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_63"
+    "camera_spot_id": "spot_63",
+    "cx": 139.06,
+    "cy": 113.64
   },
   "R4-A08": {
     "id": "R4-A08",
@@ -2229,7 +2599,9 @@ export const spotsDatabase = {
     "lng": -69.30853328979545,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_64"
+    "camera_spot_id": "spot_64",
+    "cx": 142.6,
+    "cy": 111.95
   },
   "R4-A09": {
     "id": "R4-A09",
@@ -2241,7 +2613,9 @@ export const spotsDatabase = {
     "lng": -69.30846973335007,
     "ui_num": "09",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_65"
+    "camera_spot_id": "spot_65",
+    "cx": 146.13,
+    "cy": 110.27
   },
   "R4-A10": {
     "id": "R4-A10",
@@ -2253,7 +2627,9 @@ export const spotsDatabase = {
     "lng": -69.30840616065815,
     "ui_num": "10",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_66"
+    "camera_spot_id": "spot_66",
+    "cx": 149.66,
+    "cy": 108.58
   },
   "R4-A11": {
     "id": "R4-A11",
@@ -2265,7 +2641,9 @@ export const spotsDatabase = {
     "lng": -69.30834260421277,
     "ui_num": "11",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_67"
+    "camera_spot_id": "spot_67",
+    "cx": 153.19,
+    "cy": 106.9
   },
   "R4-A12": {
     "id": "R4-A12",
@@ -2277,7 +2655,9 @@ export const spotsDatabase = {
     "lng": -69.30827904776739,
     "ui_num": "12",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_68"
+    "camera_spot_id": "spot_68",
+    "cx": 156.72,
+    "cy": 105.22
   },
   "R4-A13": {
     "id": "R4-A13",
@@ -2289,7 +2669,9 @@ export const spotsDatabase = {
     "lng": -69.30821547507547,
     "ui_num": "13",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_69"
+    "camera_spot_id": "spot_69",
+    "cx": 160.25,
+    "cy": 103.53
   },
   "R4-A14": {
     "id": "R4-A14",
@@ -2301,7 +2683,9 @@ export const spotsDatabase = {
     "lng": -69.30815191863009,
     "ui_num": "14",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_70"
+    "camera_spot_id": "spot_70",
+    "cx": 163.78,
+    "cy": 101.85
   },
   "R4-B01": {
     "id": "R4-B01",
@@ -2313,7 +2697,9 @@ export const spotsDatabase = {
     "lng": -69.30891157428842,
     "ui_num": "01",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_71"
+    "camera_spot_id": "spot_71",
+    "cx": 121.58,
+    "cy": 131.51
   },
   "R4-B02": {
     "id": "R4-B02",
@@ -2325,7 +2711,9 @@ export const spotsDatabase = {
     "lng": -69.30884801784303,
     "ui_num": "02",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_72"
+    "camera_spot_id": "spot_72",
+    "cx": 125.11,
+    "cy": 129.82
   },
   "R4-B03": {
     "id": "R4-B03",
@@ -2337,7 +2725,9 @@ export const spotsDatabase = {
     "lng": -69.30878444515112,
     "ui_num": "03",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_73"
+    "camera_spot_id": "spot_73",
+    "cx": 128.64,
+    "cy": 128.14
   },
   "R4-B04": {
     "id": "R4-B04",
@@ -2349,7 +2739,9 @@ export const spotsDatabase = {
     "lng": -69.30872088870574,
     "ui_num": "04",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_74"
+    "camera_spot_id": "spot_74",
+    "cx": 132.17,
+    "cy": 126.45
   },
   "R4-B05": {
     "id": "R4-B05",
@@ -2361,7 +2753,9 @@ export const spotsDatabase = {
     "lng": -69.30865733226035,
     "ui_num": "05",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_75"
+    "camera_spot_id": "spot_75",
+    "cx": 135.7,
+    "cy": 124.77
   },
   "R4-B06": {
     "id": "R4-B06",
@@ -2373,7 +2767,9 @@ export const spotsDatabase = {
     "lng": -69.30859375956844,
     "ui_num": "06",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_76"
+    "camera_spot_id": "spot_76",
+    "cx": 139.24,
+    "cy": 123.08
   },
   "R4-B07": {
     "id": "R4-B07",
@@ -2385,7 +2781,9 @@ export const spotsDatabase = {
     "lng": -69.30853020312306,
     "ui_num": "07",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_77"
+    "camera_spot_id": "spot_77",
+    "cx": 142.77,
+    "cy": 121.4
   },
   "R4-B08": {
     "id": "R4-B08",
@@ -2397,7 +2795,9 @@ export const spotsDatabase = {
     "lng": -69.30846664667767,
     "ui_num": "08",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_78"
+    "camera_spot_id": "spot_78",
+    "cx": 146.3,
+    "cy": 119.72
   },
   "R4-B09": {
     "id": "R4-B09",
@@ -2409,7 +2809,9 @@ export const spotsDatabase = {
     "lng": -69.30840309023229,
     "ui_num": "09",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_79"
+    "camera_spot_id": "spot_79",
+    "cx": 149.83,
+    "cy": 118.03
   },
   "R4-B10": {
     "id": "R4-B10",
@@ -2421,7 +2823,9 @@ export const spotsDatabase = {
     "lng": -69.30833951754036,
     "ui_num": "10",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_80"
+    "camera_spot_id": "spot_80",
+    "cx": 153.36,
+    "cy": 116.35
   },
   "R4-B11": {
     "id": "R4-B11",
@@ -2433,7 +2837,9 @@ export const spotsDatabase = {
     "lng": -69.30827596109498,
     "ui_num": "11",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_81"
+    "camera_spot_id": "spot_81",
+    "cx": 156.89,
+    "cy": 114.66
   },
   "R4-B12": {
     "id": "R4-B12",
@@ -2445,7 +2851,9 @@ export const spotsDatabase = {
     "lng": -69.3082124046496,
     "ui_num": "12",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_82"
+    "camera_spot_id": "spot_82",
+    "cx": 160.42,
+    "cy": 112.98
   },
   "R4-B13": {
     "id": "R4-B13",
@@ -2457,7 +2865,9 @@ export const spotsDatabase = {
     "lng": -69.30814883195768,
     "ui_num": "13",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_83"
+    "camera_spot_id": "spot_83",
+    "cx": 163.95,
+    "cy": 111.29
   },
   "R4-B14": {
     "id": "R4-B14",
@@ -2469,7 +2879,9 @@ export const spotsDatabase = {
     "lng": -69.3080852755123,
     "ui_num": "14",
     "camera_id": "cam_03",
-    "camera_spot_id": "spot_84"
+    "camera_spot_id": "spot_84",
+    "cx": 167.48,
+    "cy": 109.61
   },
   "R-bot-01": {
     "id": "R-bot-01",
@@ -2481,7 +2893,9 @@ export const spotsDatabase = {
     "lng": -69.30862769395331,
     "ui_num": "01",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 137.35,
+    "cy": 141.43
   },
   "R-bot-02": {
     "id": "R-bot-02",
@@ -2493,7 +2907,9 @@ export const spotsDatabase = {
     "lng": -69.30855993535722,
     "ui_num": "02",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 141.11,
+    "cy": 139.91
   },
   "R-bot-03": {
     "id": "R-bot-03",
@@ -2505,7 +2921,9 @@ export const spotsDatabase = {
     "lng": -69.30849217676113,
     "ui_num": "03",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 144.88,
+    "cy": 138.38
   },
   "R-bot-04": {
     "id": "R-bot-04",
@@ -2517,7 +2935,9 @@ export const spotsDatabase = {
     "lng": -69.30842441816505,
     "ui_num": "04",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 148.64,
+    "cy": 136.86
   },
   "R-bot-05": {
     "id": "R-bot-05",
@@ -2529,7 +2949,9 @@ export const spotsDatabase = {
     "lng": -69.30835665956894,
     "ui_num": "05",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 152.41,
+    "cy": 135.34
   },
   "R-bot-06": {
     "id": "R-bot-06",
@@ -2541,7 +2963,9 @@ export const spotsDatabase = {
     "lng": -69.30828890097285,
     "ui_num": "06",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 156.17,
+    "cy": 133.82
   },
   "R-bot-07": {
     "id": "R-bot-07",
@@ -2553,7 +2977,9 @@ export const spotsDatabase = {
     "lng": -69.30822114237677,
     "ui_num": "07",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 159.94,
+    "cy": 132.3
   },
   "R-bot-08": {
     "id": "R-bot-08",
@@ -2565,7 +2991,9 @@ export const spotsDatabase = {
     "lng": -69.30815338378068,
     "ui_num": "08",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 163.7,
+    "cy": 130.78
   },
   "R-bot-09": {
     "id": "R-bot-09",
@@ -2577,7 +3005,9 @@ export const spotsDatabase = {
     "lng": -69.30808562518457,
     "ui_num": "09",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 167.47,
+    "cy": 129.26
   },
   "R-bot-10": {
     "id": "R-bot-10",
@@ -2589,7 +3019,9 @@ export const spotsDatabase = {
     "lng": -69.30801786658849,
     "ui_num": "10",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 171.23,
+    "cy": 127.74
   },
   "R-aux-01": {
     "id": "R-aux-01",
@@ -2601,7 +3033,9 @@ export const spotsDatabase = {
     "lng": -69.3088671272151,
     "ui_num": "01",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 124.05,
+    "cy": 146.72
   },
   "R-aux-02": {
     "id": "R-aux-02",
@@ -2613,7 +3047,9 @@ export const spotsDatabase = {
     "lng": -69.30880339415761,
     "ui_num": "02",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 127.59,
+    "cy": 145.32
   },
   "R-aux-03": {
     "id": "R-aux-03",
@@ -2625,6 +3061,8 @@ export const spotsDatabase = {
     "lng": -69.30873966110012,
     "ui_num": "03",
     "camera_id": null,
-    "camera_spot_id": null
+    "camera_spot_id": null,
+    "cx": 131.13,
+    "cy": 143.93
   }
 };

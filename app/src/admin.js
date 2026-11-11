@@ -453,6 +453,11 @@ function renderMappingSection(store, container) {
         setTimeout(() => {
           const node = document.querySelector(`.spot-node[data-id="${slotId}"]`);
           if (node) {
+            const spots = store.getState().spots || {};
+            const spotData = spots[slotId];
+            if (window.SGIPViewport && spotData && typeof spotData.cx === 'number') {
+              window.SGIPViewport.zoomToSpot(spotData.cx, spotData.cy, 2.85);
+            }
             node.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
           }
         }, 90);

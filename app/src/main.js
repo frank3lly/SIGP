@@ -38,6 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnResetZoom = document.getElementById('btnResetZoom');
 
   const viewport = new ViewportController(mapContainer, null, zoomLayer, zoomBadge);
+  window.SGIPViewport = viewport;
 
   if (btnZoomIn) {
     btnZoomIn.addEventListener('click', (e) => {
