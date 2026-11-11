@@ -12,10 +12,15 @@ import { initDrawer, openSpot, closeDrawer } from './drawer.js';
 import { isAdminRouteRequested, initAdmin } from './admin.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialize Reactive Store with cloned spots
+  // 1. Initialize Reactive Store with cloned spots (default to 'unknown' until server provides live telemetry)
   const initialSpots = {};
   for (const [id, data] of Object.entries(spotsDatabase)) {
-    initialSpots[id] = { ...data };
+    initialSpots[id] = {
+      ...data,
+      status: 'unknown',
+      hasServerData: false,
+      conf: null,
+    };
   }
 
   const store = new Store({
@@ -175,15 +180,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (spot.status === 'free') freeCount++;
       else if (spot.status === 'occupied') occCount++;
-      else warnCount++;
+      else if (spot.status === 'warning') warnCount++;
 
-      node.setAttribute('data-status', spot.status);
-      node.setAttribute('data-conf', (spot.conf || 94.0).toFixed(1));
+      node.setAttribute('data-status', spot.status || 'unknown');
+      if (spot.hasServerData && spot.conf != null) {
+        node.setAttribute('data-conf', spot.conf.toFixed(1));
+      } else {
+        node.removeAttribute('data-conf');
+      }
 
       const rect = node.querySelector('rect');
       if (rect) {
-        rect.classList.remove('free', 'occupied', 'warning');
-        rect.classList.add(spot.status);
+        rect.classList.remove('free', 'occupied', 'warning', 'unknown');
+        rect.classList.add(spot.status || 'unknown');
       }
 
       if (state.filter === 'all') {
@@ -225,6 +234,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ...currentSpots[slotId],
             status: newStatus,
             conf: newConf,
+            hasServerData: true,
             battery: camData.battery_percentage ?? currentSpots[slotId].battery,
           };
           hasChanges = true;

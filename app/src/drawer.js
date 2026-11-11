@@ -78,11 +78,11 @@ export function openSpot(spotId, node, store) {
   if (drawerZone) drawerZone.textContent = spot.zone;
   if (drawerId) drawerId.textContent = spot.id;
   if (drawerLoc) drawerLoc.textContent = spot.zone + ' (' + spot.side + ')';
-  if (drawerConf) drawerConf.textContent = (spot.conf || 94.0).toFixed(0) + '%';
+  if (drawerConf) drawerConf.textContent = (spot.hasServerData && spot.conf != null) ? spot.conf.toFixed(0) + '%' : 'N/A';
   if (drawerGps) drawerGps.textContent = spot.lat.toFixed(6) + ', ' + spot.lng.toFixed(6);
 
   if (drawerCard) {
-    drawerCard.className = 'drawer-card ' + spot.status;
+    drawerCard.className = 'drawer-card ' + (spot.status || 'unknown');
   }
 
   if (spot.status === 'free') {
@@ -93,9 +93,13 @@ export function openSpot(spotId, node, store) {
     if (drawerStatusText) drawerStatusText.textContent = 'Ocupado';
     if (drawerStatusDesc) drawerStatusDesc.textContent = 'Espacio ocupado';
     if (drawerCardIcon) drawerCardIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
-  } else {
+  } else if (spot.status === 'warning') {
     if (drawerStatusText) drawerStatusText.textContent = 'Por confirmar';
     if (drawerStatusDesc) drawerStatusDesc.textContent = 'Estado en verificación';
+    if (drawerCardIcon) drawerCardIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
+  } else {
+    if (drawerStatusText) drawerStatusText.textContent = 'Info no disponible';
+    if (drawerStatusDesc) drawerStatusDesc.textContent = 'Sin datos del sensor o cámara no conectada';
     if (drawerCardIcon) drawerCardIcon.innerHTML = '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>';
   }
 
@@ -108,14 +112,14 @@ export function openSpot(spotId, node, store) {
   if (camInfo && drawerCameraSection) {
     drawerCameraSection.style.display = 'flex';
     if (drawerCamName) drawerCamName.textContent = camInfo.cameraName;
-    if (spot.battery !== undefined && spot.battery !== null) {
+    if (spot.hasServerData && spot.battery !== undefined && spot.battery !== null) {
       if (drawerCamBattery) drawerCamBattery.style.display = 'flex';
       if (drawerCamBatteryVal) drawerCamBatteryVal.textContent = Math.round(spot.battery) + '%';
     } else {
       if (drawerCamBattery) drawerCamBattery.style.display = 'none';
     }
 
-    if (state.isConnected) {
+    if (state.isConnected && spot.hasServerData) {
       if (drawerCameraImg) drawerCameraImg.style.display = 'none';
       if (drawerCameraEmpty) drawerCameraEmpty.style.display = 'flex';
       if (drawerCameraMsg) drawerCameraMsg.textContent = 'Cargando imagen...';

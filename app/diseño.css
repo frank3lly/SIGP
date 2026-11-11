@@ -562,6 +562,12 @@
     .spot-node[data-status="warning"] .spot-rect {
       fill: var(--color-warning);
     }
+    .spot-node[data-status="unknown"] .spot-rect,
+    .spot-node:not([data-status]) .spot-rect,
+    .spot-rect.unknown {
+      fill: #64748b;
+      stroke: #475569;
+    }
 
     .spot-num {
       font-size: 1.85px;
@@ -724,6 +730,15 @@
       background: var(--color-warning-bg);
       border-color: var(--color-warning-border);
       color: #b45309;
+    }
+
+    .drawer-card.unknown {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+      color: #64748b;
+    }
+    .drawer-card.unknown .drawer-card-icon {
+      color: #64748b;
     }
 
     .drawer-card-icon {
