@@ -10,6 +10,7 @@ import { PollingManager, fetchAnalyticsSummary, fetchAnalyticsTimeline } from '.
 import { ViewportController, getSpotCentroid } from './viewport.js';
 import { initDrawer, openSpot, closeDrawer } from './drawer.js';
 import { isAdminRouteRequested, initAdmin } from './admin.js';
+import { AmbientCarManager } from './ambient-cars.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   // 1. Initialize Reactive Store with cloned spots (default to 'unknown' until server provides live telemetry)
@@ -59,7 +60,15 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Spot Drawer initialization
+  // 3. Ambient Living Vehicles (randomized corridor routing + collision avoidance)
+  const ambientVehicles = document.getElementById('ambientVehicles');
+  if (ambientVehicles) {
+    const ambientCarManager = new AmbientCarManager(ambientVehicles, 3);
+    ambientCarManager.init();
+    window.SGIPAmbientCars = ambientCarManager;
+  }
+
+  // 4. Spot Drawer initialization
   initDrawer({
     onClose: () => {
       store.setState({ activeSpotId: null });
@@ -231,7 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (slotId && currentSpots[slotId]) {
           let newStatus = sp.occupied ? 'occupied' : 'free';
           const newConf = sp.confidence ? sp.confidence * 100 : 94.0;
-          if (sp.status === 'warning' || (sp.confidence != null && sp.confidence < 0.65)) {
+          if (sp.status === 'warning' || (sp.occupied && sp.confidence != null && sp.confidence < 0.60)) {
             newStatus = 'warning';
           }
           currentSpots[slotId] = {
