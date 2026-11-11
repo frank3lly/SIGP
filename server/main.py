@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from server.routers.admin import router as admin_router
 from server.routers.analytics import router as analytics_router
 from server.routers.status import router as status_router
 from server.routers.upload import router as upload_router
@@ -56,6 +57,7 @@ app.mount("/storage/images", StaticFiles(directory="storage/images"), name="imag
 app.include_router(upload_router)
 app.include_router(status_router)
 app.include_router(analytics_router)
+app.include_router(admin_router)
 
 
 @app.get("/", tags=["General"])

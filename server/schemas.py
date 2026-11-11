@@ -115,3 +115,59 @@ class TimelineBucketItem(BaseModel):
     occupancy_rate: Optional[float] = None
     sample_count: Optional[int] = None
 
+
+class AdminLoginRequest(BaseModel):
+    username: str = Field(..., description="Administrator username")
+    password: str = Field(..., description="Administrator password")
+
+
+class AdminLoginResponse(BaseModel):
+    status: str = Field(default="authenticated")
+    token: str = Field(..., description="Session Bearer token")
+    expires_at: float = Field(..., description="UNIX timestamp when session expires")
+    user: str = Field(..., description="Username")
+
+
+class AdminSessionValidateResponse(BaseModel):
+    user: str = Field(..., description="Username")
+    valid: bool = Field(default=True)
+    expires_at: float = Field(..., description="UNIX timestamp when session expires")
+
+
+class AdminLogoutResponse(BaseModel):
+    status: str = Field(default="logged_out")
+
+
+class GalleryItem(BaseModel):
+    id: str = Field(..., description="Unique item identifier")
+    camera_id: str = Field(..., description="Source camera ID")
+    timestamp: float = Field(..., description="File modification or capture timestamp")
+    date_str: str = Field(..., description="Human-readable datetime string")
+    size_bytes: int = Field(default=0, description="File size in bytes")
+    filename: str = Field(..., description="Image file name")
+    url_raw: str = Field(..., description="URL to view raw image")
+    url_annotated: str = Field(..., description="URL to view annotated frame")
+
+
+class GalleryResponse(BaseModel):
+    total: int = Field(..., description="Total available images")
+    limit: int = Field(default=30, description="Items returned per page")
+    offset: int = Field(default=0, description="Pagination offset")
+    items: List[GalleryItem] = Field(default_factory=list, description="List of gallery photos")
+
+
+class AdminCameraStatus(BaseModel):
+    camera_id: str = Field(..., description="Camera identifier")
+    name: str = Field(default="", description="Camera human-readable name")
+    status: str = Field(default="offline", description="Online/offline status")
+    last_seen_timestamp: Optional[float] = Field(default=None, description="Timestamp of last activity")
+    seconds_since_last_seen: Optional[float] = Field(default=None, description="Seconds elapsed since last seen")
+    battery_percentage: Optional[float] = Field(default=None, description="Battery percentage (0.0 - 100.0)")
+    battery_voltage: Optional[float] = Field(default=None, description="Battery voltage in Volts")
+    config: CameraHotConfig = Field(default_factory=CameraHotConfig, description="Dynamic hot-configuration")
+
+
+class AdminCameraListResponse(BaseModel):
+    cameras: List[AdminCameraStatus] = Field(default_factory=list, description="Fleet cameras list")
+
+
