@@ -1,0 +1,49 @@
+# ============================================================================
+# Dockerfile.hf — Hugging Face Spaces Production Container (FastAPI + YOLOv8)
+# Target Architecture: CPU-optimized (16 GB Dedicated RAM, 2 vCPUs)
+# ============================================================================
+
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=7860
+
+# Install system dependencies for OpenCV and networking
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    libgomp1 \
+    curl \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for Hugging Face security compliance (UID 1000)
+RUN useradd -m -u 1000 user
+USER user
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH
+
+WORKDIR /home/user/app
+
+# Install lightweight CPU-only PyTorch to minimize image build time and size
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cpu
+
+# Copy project dependency manifest and install
+COPY --chown=user:user requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application source code
+COPY --chown=user:user . .
+
+# Ensure storage directories exist with proper user permissions
+RUN mkdir -p storage/images tests/output tests/reports
+
+# Pre-cache YOLOv8n model weights during image build to avoid runtime delays
+RUN python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+
+EXPOSE 7860
+
+# Launch Uvicorn bound to Hugging Face mandatory port 7860
+CMD ["uvicorn", "server.main:app", "--host", "0.0.0.0", "--port", "7860"]

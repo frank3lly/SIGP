@@ -4,7 +4,7 @@
  * Protocolo: HTTP/1.1 POST Multipart Form-Data -> FastAPI (/api/v1/upload/{camera_id})
  */
 
-// Version definitiva
+// Versión definitiva con Hot-Config, Heartbeat y Calibración Óptica Adaptativa DEFINITIVA
 #include <Arduino.h>
 #include <WiFi.h>
 #include <WiFiClientSecure.h>
@@ -23,26 +23,20 @@ const char* WIFI_SSID     = "Ezequiel";
 const char* WIFI_PASSWORD = "Ezequiel23101609";
 
 // Configuración del Servidor Central FastAPI
-// Modo 1: Cloud Deployment (Hugging Face Spaces): "thegxnster-parqueame-server.hf.space", puerto 443, USE_HTTPS=true
-// Modo 2: Local Network Discovery via mDNS / LAN: "parqueame.local" o IP "192.168.1.29", puerto 8000, USE_HTTPS=false
 const char* SERVER_HOST   = "192.168.1.29";
 const uint16_t SERVER_PORT = 8000;
 const bool USE_HTTPS      = false;
 const char* CAMERA_ID     = "cam_01";
 
-// Tiempos de ciclo y variables dinámicas de Hot-Configuration
-const uint32_t DEFAULT_INTERVAL_SECONDS = 30;
-uint32_t currentIntervalSeconds         = DEFAULT_INTERVAL_SECONDS;
-bool     cameraIsActive                 = true;
-uint8_t  currentQuality                 = 12;
+// Variables dinámicas de Hot-Configuration (persisten en memoria RTC durante Deep Sleep)
+const uint32_t DEFAULT_INTERVAL_SECONDS      = 30;
+RTC_DATA_ATTR uint32_t currentIntervalSeconds = DEFAULT_INTERVAL_SECONDS;
+RTC_DATA_ATTR bool     cameraIsActive         = true;
+RTC_DATA_ATTR uint8_t  currentQuality         = 8;
 
 const uint32_t WIFI_TIMEOUT_MS      = 10000;
 const uint32_t HTTP_TIMEOUT_MS      = 10000;
 const char*    MULTIPART_BOUNDARY   = "----ParqueameBoundary7MA4YWxkTrZu0gW";
-
-// Fotogramas de calentamiento para que el sensor estabilice luz y elimine el tono verde
-const int      WARMUP_FRAMES        = 8;
-const int      WARMUP_DELAY_MS      = 120;
 
 // ============================================================================
 // 2. DEFINICIÓN DE PINES HARDWARE (XIAO ESP32-S3 SENSE - OV2640)
@@ -74,8 +68,9 @@ const int      WARMUP_DELAY_MS      = 120;
 // 3. VARIABLES DE ESTADO Y MEMORIA RTC
 // ============================================================================
 RTC_DATA_ATTR uint32_t bootCount = 0;
-unsigned long lastCaptureTime = 0;
+unsigned long lastCycleStartMillis = 0;
 bool cameraReady = false;
+bool isFirstCaptureSinceBoot = true;
 
 struct BatteryTelemetry {
   float voltage;
@@ -83,7 +78,7 @@ struct BatteryTelemetry {
 };
 
 // ============================================================================
-// 4. FUNCIONES AUXILIARES DE HARDWARE, ÓPTICA Y TELEMETRÍA
+// 4. FUNCIONES AUXILIARES DE HARDWARE, ÓPTICA ADAPTATIVA Y TELEMETRÍA
 // ============================================================================
 
 BatteryTelemetry readBatteryTelemetry() {
@@ -113,10 +108,34 @@ BatteryTelemetry readBatteryTelemetry() {
 }
 
 /**
- * Descarta fotogramas previos para obligar al DSP del OV2640 a converger
- * en exposición (AEC) y balance de blancos (AWB), eliminando el tinte verde.
+ * Estabilización Óptica Adaptativa (AEC / AWB / Vaciamiento de PSRAM)
+ * Calcula automáticamente cuántos fotogramas descartar y qué pausa aplicar
+ * dependiendo de si el sensor acaba de encenderse o del intervalo actual.
  */
-void stabilizeSensorAWB(int framesToFlush, int delayMs) {
+void stabilizeSensorAdaptive(bool coldStart, uint32_t intervalSec) {
+  int framesToFlush = 2;
+  int delayMs       = 40;
+
+  if (coldStart || !DEV_MODE) {
+    // El sensor acaba de energizarse (arranque en frío o despertar de Deep Sleep):
+    // Necesita convergencia completa de ganancia analógica y balance de blancos.
+    framesToFlush = 10;
+    delayMs       = 100;
+  } else if (intervalSec <= 10) {
+    // Intervalo ultrarrápido (ej. 5s - 10s) con sensor ya encendido:
+    // Solo vaciamos los 2 framebuffers de la PSRAM para obtener el fotograma actual sin retrasar el ciclo.
+    framesToFlush = 2;
+    delayMs       = 40;
+  } else if (intervalSec <= 30) {
+    // Intervalo medio (11s - 30s): reajuste ligero ante cambios de luz.
+    framesToFlush = 4;
+    delayMs       = 65;
+  } else {
+    // Intervalo largo (> 30s): la iluminación exterior pudo cambiar notablemente.
+    framesToFlush = 6;
+    delayMs       = 80;
+  }
+
   for (int i = 0; i < framesToFlush; i++) {
     camera_fb_t* fb = esp_camera_fb_get();
     if (fb != NULL) {
@@ -156,7 +175,7 @@ bool initCamera() {
   config.xclk_freq_hz = 10000000;
   config.pixel_format = PIXFORMAT_JPEG;
 
-  // Pre-reserva de buffer UXGA (1600x1200) en PSRAM con calidad alta (8)
+  // Pre-reserva de buffer UXGA (1600x1200) en PSRAM para admitir cualquier calidad JPEG (4 a 63) sin FB-OVF
   if (psramFound()) {
     config.frame_size   = FRAMESIZE_UXGA;
     config.jpeg_quality = 8;
@@ -177,42 +196,38 @@ bool initCamera() {
     return false;
   }
 
-  // Configuración avanzada del ISP del sensor OV2640 para eliminar imagen negra/verde
+  // Configuración avanzada del ISP del sensor OV2640
   sensor_t* s = esp_camera_sensor_get();
   if (s != NULL) {
     s->set_framesize(s, FRAMESIZE_SXGA); // 1280x1024 (Amplitud completa 4:3 en HD)
-    s->set_quality(s, 8);
+    s->set_quality(s, currentQuality);
 
-    // Balance de blancos automático (elimina el tinte verde)
+    // Balance de blancos automático
     s->set_whitebal(s, 1);
     s->set_awb_gain(s, 1);
-    s->set_wb_mode(s, 0);        // 0 = Auto White Balance
+    s->set_wb_mode(s, 0);
 
-    // Exposición automática extendida para interiores/tarde/noche
-    s->set_exposure_ctrl(s, 1);  // AEC activo
-    s->set_aec2(s, 1);           // DSP de exposición nocturna activo
-    s->set_ae_level(s, 1);       // Compensación de exposición (+1 evita subexposición oscura)
+    // Exposición automática extendida
+    s->set_exposure_ctrl(s, 1);
+    s->set_aec2(s, 1);
+    s->set_ae_level(s, 1);
 
-    // Ganancia automática (ISO) ampliada hasta 32x para condiciones de poca luz
+    // Ganancia automática (ISO) hasta 32x para poca luz
     s->set_gain_ctrl(s, 1);
     s->set_gainceiling(s, GAINCEILING_32X);
 
     // Correcciones ópticas de curva Gamma y lente
-    s->set_brightness(s, 1);     // Ligero refuerzo de brillo (+1)
+    s->set_brightness(s, 1);
     s->set_contrast(s, 0);
     s->set_saturation(s, 0);
-    s->set_special_effect(s, 0); // 0 = Color natural RGB
-    s->set_bpc(s, 1);            // Corrección de píxeles negros defectuosos
-    s->set_wpc(s, 1);            // Corrección de píxeles blancos calientes
-    s->set_raw_gma(s, 1);        // Curva Gamma activa (crítico para levantar tonos medios)
-    s->set_lenc(s, 1);           // Corrección de sombreado de lente (ilumina las esquinas)
+    s->set_special_effect(s, 0);
+    s->set_bpc(s, 1);
+    s->set_wpc(s, 1);
+    s->set_raw_gma(s, 1);
+    s->set_lenc(s, 1);
   }
 
-  Serial.println("[CAMARA] Calibrando sensor (AWB/AEC inicial)...");
-  delay(500);
-  stabilizeSensorAWB(10, 120);
-
-  Serial.println("[CAMARA] OV2640 lista en alta definicion SXGA (1280x1024), Calidad 8.");
+  Serial.println("[CAMARA] OV2640 inicializada en alta definicion SXGA (1280x1024).");
   return true;
 }
 
@@ -242,6 +257,147 @@ bool connectWiFi() {
   } else {
     Serial.println("[WIFI] ERROR: Tiempo de espera agotado (10 s).");
     return false;
+  }
+}
+
+/**
+ * Parsea el JSON de Hot-Configuration recibido desde el servidor
+ * y aplica los cambios en caliente (interval_seconds, active, quality).
+ */
+void parseAndApplyHotConfig(const String& rawResponse) {
+  int jsonStart = rawResponse.indexOf('{');
+  if (jsonStart < 0) {
+    Serial.println("[HOT-CONFIG] ADVERTENCIA: No se encontro cuerpo JSON en la respuesta.");
+    return;
+  }
+
+  String responseBody = rawResponse.substring(jsonStart);
+
+  // 1. Extraer interval_seconds
+  int idxInterval = responseBody.indexOf("\"interval_seconds\"");
+  if (idxInterval >= 0) {
+    int colon = responseBody.indexOf(':', idxInterval);
+    if (colon > 0) {
+      int start = colon + 1;
+      while (start < (int)responseBody.length() &&
+             (responseBody.charAt(start) == ' ' || responseBody.charAt(start) == '\n' || responseBody.charAt(start) == '\r')) {
+        start++;
+      }
+      int end = start;
+      while (end < (int)responseBody.length() && isDigit(responseBody.charAt(end))) {
+        end++;
+      }
+      if (end > start) {
+        uint32_t newInterval = (uint32_t)responseBody.substring(start, end).toInt();
+        if (newInterval >= 5 && newInterval <= 3600) {
+          if (newInterval != currentIntervalSeconds) {
+            Serial.printf("[HOT-CONFIG] >>> Intervalo actualizado de %u s a %u s <<<\n",
+                          currentIntervalSeconds, newInterval);
+            currentIntervalSeconds = newInterval;
+          }
+        }
+      }
+    }
+  }
+
+  // 2. Extraer active
+  int idxActive = responseBody.indexOf("\"active\"");
+  if (idxActive >= 0) {
+    int colon = responseBody.indexOf(':', idxActive);
+    if (colon > 0) {
+      int start = colon + 1;
+      while (start < (int)responseBody.length() &&
+             (responseBody.charAt(start) == ' ' || responseBody.charAt(start) == '\n' || responseBody.charAt(start) == '\r')) {
+        start++;
+      }
+      if (responseBody.substring(start).startsWith("false")) {
+        if (cameraIsActive) {
+          Serial.println("[HOT-CONFIG] >>> Estado de camara actualizado a INACTIVA (pause) <<<");
+          cameraIsActive = false;
+        }
+      } else if (responseBody.substring(start).startsWith("true")) {
+        if (!cameraIsActive) {
+          Serial.println("[HOT-CONFIG] >>> Estado de camara actualizado a ACTIVA <<<");
+          cameraIsActive = true;
+        }
+      }
+    }
+  }
+
+  // 3. Extraer quality y aplicarlo al sensor OV2640 en caliente
+  int idxQuality = responseBody.indexOf("\"quality\"");
+  if (idxQuality >= 0) {
+    int colon = responseBody.indexOf(':', idxQuality);
+    if (colon > 0) {
+      int start = colon + 1;
+      while (start < (int)responseBody.length() &&
+             (responseBody.charAt(start) == ' ' || responseBody.charAt(start) == '\n' || responseBody.charAt(start) == '\r')) {
+        start++;
+      }
+      int end = start;
+      while (end < (int)responseBody.length() && isDigit(responseBody.charAt(end))) {
+        end++;
+      }
+      if (end > start) {
+        int newQuality = responseBody.substring(start, end).toInt();
+        if (newQuality >= 4 && newQuality <= 63 && (uint8_t)newQuality != currentQuality) {
+          currentQuality = (uint8_t)newQuality;
+          sensor_t* s = esp_camera_sensor_get();
+          if (s != NULL) {
+            s->set_quality(s, currentQuality);
+            // Descartar 1 fotograma inmediatamente para que el nuevo factor de cuantización JPEG tome efecto
+            camera_fb_t* flushFb = esp_camera_fb_get();
+            if (flushFb != NULL) esp_camera_fb_return(flushFb);
+          }
+          Serial.printf("[HOT-CONFIG] >>> Calidad JPEG actualizada a %u <<<\n", currentQuality);
+        }
+      }
+    }
+  }
+}
+
+/**
+ * Consulta ligera GET /api/v1/cameras/{id}/config cuando la cámara está en pausa (active=false)
+ */
+void pollRemoteConfigHeartbeat() {
+  if (!connectWiFi()) return;
+
+  WiFiClient plainClient;
+  WiFiClientSecure secureClient;
+  WiFiClient* clientPtr = USE_HTTPS ? (WiFiClient*)&secureClient : &plainClient;
+  if (USE_HTTPS) secureClient.setInsecure();
+
+  WiFiClient& client = *clientPtr;
+  client.setTimeout(HTTP_TIMEOUT_MS / 1000);
+
+  if (!client.connect(SERVER_HOST, SERVER_PORT, HTTP_TIMEOUT_MS)) {
+    Serial.println("[HEARTBEAT] No se pudo conectar al servidor para verificar estado.");
+    return;
+  }
+
+  client.printf("GET /api/v1/cameras/%s/config HTTP/1.1\r\n", CAMERA_ID);
+  client.printf("Host: %s:%u\r\n", SERVER_HOST, SERVER_PORT);
+  client.print("Connection: close\r\n\r\n");
+
+  unsigned long waitStart = millis();
+  while (!client.available() && (millis() - waitStart < HTTP_TIMEOUT_MS)) {
+    delay(10);
+  }
+
+  String rawResponse = "";
+  unsigned long lastByteTime = millis();
+  while (millis() - lastByteTime < 300) {
+    while (client.available()) {
+      rawResponse += (char)client.read();
+      lastByteTime = millis();
+    }
+    if (!client.connected() && !client.available()) break;
+    delay(5);
+  }
+  client.stop();
+
+  if (rawResponse.length() > 0) {
+    parseAndApplyHotConfig(rawResponse);
   }
 }
 
@@ -307,96 +463,52 @@ bool dispatchFrame(camera_fb_t* fb, const BatteryTelemetry& telemetry) {
 
   client.print(bodyTail);
 
+  // 1. Esperar primer byte de respuesta
   unsigned long waitStart = millis();
-  while (client.connected() && !client.available()) {
-    if (millis() - waitStart > HTTP_TIMEOUT_MS) {
-      Serial.println("[HTTP] ERROR: Timeout esperando respuesta del servidor.");
-      client.stop();
-      return false;
-    }
+  while (!client.available() && (millis() - waitStart < HTTP_TIMEOUT_MS)) {
     delay(10);
   }
 
-  String statusLine = client.readStringUntil('\n');
-  statusLine.trim();
-  Serial.printf("[HTTP] Respuesta del servidor: %s\n", statusLine.c_str());
-
-  // Leer encabezados HTTP hasta línea vacía
-  while (client.connected() && client.available()) {
-    String headerLine = client.readStringUntil('\n');
-    headerLine.trim();
-    if (headerLine.length() == 0) {
-      break;
-    }
+  if (!client.available()) {
+    Serial.println("[HTTP] ERROR: Timeout esperando respuesta del servidor.");
+    client.stop();
+    return false;
   }
 
-  // Leer cuerpo JSON para extraer Hot-Configuration
-  String responseBody = "";
-  while (client.connected() && client.available()) {
-    char c = client.read();
-    responseBody += c;
+  // 2. Leer TODA la respuesta HTTP (headers + JSON body) de corrido
+  String rawResponse = "";
+  rawResponse.reserve(1024);
+  unsigned long lastByteTime = millis();
+
+  while (millis() - lastByteTime < 350) {
+    while (client.available()) {
+      rawResponse += (char)client.read();
+      lastByteTime = millis();
+    }
+    if (!client.connected() && !client.available()) {
+      delay(40);
+      if (!client.available()) break;
+    }
+    delay(5);
   }
   client.stop();
 
-  if (responseBody.length() > 0) {
-    Serial.printf("[HOT-CONFIG] Payload recibido: %s\n", responseBody.c_str());
+  // Extraer primera línea de estado (soporta HTTP/1.0 y HTTP/1.1)
+  int firstNewline = rawResponse.indexOf('\n');
+  String statusLine = (firstNewline > 0) ? rawResponse.substring(0, firstNewline) : rawResponse;
+  statusLine.trim();
+  Serial.printf("[HTTP] Respuesta del servidor: %s\n", statusLine.c_str());
 
-    // 1. Extraer interval_seconds
-    int idxInterval = responseBody.indexOf("\"interval_seconds\":");
-    if (idxInterval >= 0) {
-      int start = idxInterval + 19;
-      int end = responseBody.indexOf(",", start);
-      if (end < 0) end = responseBody.indexOf("}", start);
-      if (end > start) {
-        uint32_t newInterval = responseBody.substring(start, end).toInt();
-        if (newInterval >= 5 && newInterval <= 3600) {
-          if (newInterval != currentIntervalSeconds) {
-            Serial.printf("[HOT-CONFIG] Intervalo actualizado dinamicamente de %u s a %u s\n",
-                          currentIntervalSeconds, newInterval);
-            currentIntervalSeconds = newInterval;
-          }
-        }
-      }
-    }
+  bool isSuccess = (statusLine.indexOf("200") > 0) || (statusLine.indexOf("201") > 0);
 
-    // 2. Extraer active
-    int idxActive = responseBody.indexOf("\"active\":");
-    if (idxActive >= 0) {
-      int start = idxActive + 9;
-      while (start < responseBody.length() && responseBody.charAt(start) == ' ') start++;
-      if (responseBody.substring(start).startsWith("false")) {
-        if (cameraIsActive) {
-          Serial.println("[HOT-CONFIG] Estado de camara actualizado a INACTIVA (pause).");
-          cameraIsActive = false;
-        }
-      } else if (responseBody.substring(start).startsWith("true")) {
-        if (!cameraIsActive) {
-          Serial.println("[HOT-CONFIG] Estado de camara actualizado a ACTIVA.");
-          cameraIsActive = true;
-        }
-      }
-    }
+  // 3. Procesar Hot-Configuration del JSON recibido
+  parseAndApplyHotConfig(rawResponse);
 
-    // 3. Extraer quality
-    int idxQuality = responseBody.indexOf("\"quality\":");
-    if (idxQuality >= 0) {
-      int start = idxQuality + 10;
-      int end = responseBody.indexOf(",", start);
-      if (end < 0) end = responseBody.indexOf("}", start);
-      if (end > start) {
-        int newQuality = responseBody.substring(start, end).toInt();
-        if (newQuality >= 1 && newQuality <= 63) {
-          currentQuality = (uint8_t)newQuality;
-        }
-      }
-    }
-  }
-
-  return statusLine.startsWith("HTTP/1.1 200") || statusLine.startsWith("HTTP/1.1 201");
+  return isSuccess;
 }
 
 /**
- * Ejecuta el ciclo de Estabilización + Captura (Estado 4), Despacho (Estado 5) y Limpieza (Estado 6)
+ * Ejecuta el ciclo de Estabilización Adaptativa + Captura (Estado 4), Despacho (Estado 5) y Limpieza (Estado 6)
  */
 void executeCaptureAndDispatchCycle() {
   if (!cameraReady) {
@@ -405,8 +517,9 @@ void executeCaptureAndDispatchCycle() {
   }
 
   if (!cameraIsActive) {
-    Serial.printf("[HOT-CONFIG] Camara en pausa remota (active=false). Omitiendo captura. Espera heartbeat: %u s.\n",
+    Serial.printf("[HOT-CONFIG] Camara en pausa remota (active=false). Consultando heartbeat (intervalo=%u s)...\n",
                   currentIntervalSeconds);
+    pollRemoteConfigHeartbeat();
     return;
   }
 
@@ -416,11 +529,13 @@ void executeCaptureAndDispatchCycle() {
   }
 
   BatteryTelemetry telemetry = readBatteryTelemetry();
-  Serial.printf("[TELEMETRIA] Bateria: %.1f%% (%.2f V) | PSRAM libre: %u bytes\n",
-                telemetry.percentage, telemetry.voltage, (unsigned int)ESP.getFreePsram());
+  Serial.printf("[TELEMETRIA] Bateria: %.1f%% (%.2f V) | Intervalo: %u s | Calidad: %u | PSRAM libre: %u bytes\n",
+                telemetry.percentage, telemetry.voltage, currentIntervalSeconds, currentQuality,
+                (unsigned int)ESP.getFreePsram());
 
-  // ESTADO 4: CAPTURE (Con estabilización previa de exposición y balance de blancos)
-  stabilizeSensorAWB(WARMUP_FRAMES, WARMUP_DELAY_MS);
+  // ESTADO 4: CAPTURE (Con estabilización automática adaptada al estado térmico/óptico y al intervalo)
+  stabilizeSensorAdaptive(isFirstCaptureSinceBoot, currentIntervalSeconds);
+  isFirstCaptureSinceBoot = false;
 
   camera_fb_t* fb = esp_camera_fb_get();
   if (fb == NULL) {
@@ -445,6 +560,7 @@ void executeCaptureAndDispatchCycle() {
 
 void enterProductionDeepSleep() {
   Serial.printf("[SLEEP] Apagando Wi-Fi y entrando en Deep Sleep por %u s...\n", currentIntervalSeconds);
+  delay(200);
   WiFi.disconnect(true);
   WiFi.mode(WIFI_OFF);
   Serial.flush();
@@ -497,8 +613,8 @@ void setup() {
   connectWiFi();
 
   if (DEV_MODE) {
+    lastCycleStartMillis = millis();
     executeCaptureAndDispatchCycle();
-    lastCaptureTime = millis();
   } else {
     executeCaptureAndDispatchCycle();
     enterProductionDeepSleep();
@@ -507,10 +623,11 @@ void setup() {
 
 void loop() {
   if (DEV_MODE) {
-    if (millis() - lastCaptureTime >= (currentIntervalSeconds * 1000UL)) {
-      lastCaptureTime = millis();
+    // Mide el intervalo de inicio a inicio (compensando automáticamente lo que tardó la captura y el envío HTTP)
+    if (millis() - lastCycleStartMillis >= (currentIntervalSeconds * 1000UL)) {
+      lastCycleStartMillis = millis();
       executeCaptureAndDispatchCycle();
     }
-    delay(50);
+    delay(20);
   }
 }

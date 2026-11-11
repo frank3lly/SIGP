@@ -595,5 +595,12 @@
         ]
       ]
     }
-  ]
+  ],
+  "hot_config": {
+    "interval_seconds": 5,
+    "active": true,
+    "quality": 12,
+    "firmware_version": "1.0.0"
+  },
+  "test_mode": true
 }
