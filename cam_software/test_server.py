@@ -467,6 +467,7 @@ def run(host="0.0.0.0", port=8000, fotos_dir=None, interval=30, quality=12, inac
     CameraUploadHandler.default_quality = quality
     CameraUploadHandler.default_active = not inactive
 
+    HTTPServer.allow_reuse_address = True
     server = HTTPServer((host, port), CameraUploadHandler)
     print("=" * 70)
     print("  PARQUEAME - Servidor de prueba para fotos de cámara")

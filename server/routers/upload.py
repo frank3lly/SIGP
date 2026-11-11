@@ -152,15 +152,7 @@ async def upload_camera_frame(
             detail="Invalid image encoding. File could not be decoded as an image.",
         )
 
-    # 3. Hardware Audit: Store real hardware frame for diagnostic inspection
-    raw_hardware_path = Path(f"storage/cameras/raw_{camera_id}.jpg")
-    try:
-        raw_hardware_path.parent.mkdir(parents=True, exist_ok=True)
-        raw_hardware_path.write_bytes(contents)
-        ts_str = datetime.now().strftime("%Y%m%d_%H%M%S")
-        (raw_hardware_path.parent / f"{camera_id}_{ts_str}.jpg").write_bytes(contents)
-    except Exception as e:
-        logger.warning(f"Failed to save raw hardware frame for '{camera_id}': {e}")
+    # 3. Hardware Ingestion: Store real hardware frame in RAM
     server_state.record_raw_image(camera_id, contents)
 
     # 4. Decoupled Test Mode: Check if test mode is enabled globally or per-camera
@@ -215,24 +207,20 @@ async def upload_camera_frame(
             voltage=voltage,
         )
 
+    # 5. Record upload into in-memory rolling gallery (no disk storage)
+    server_state.record_upload_for_gallery(
+        camera_id=camera_id,
+        raw_bytes=contents,
+        annotated_bytes=annotated_bytes,
+        timestamp=occupancy_resp.timestamp,
+    )
+
     logger.info(
         f"Camera '{camera_id}' processed in {occupancy_resp.inference_time_ms:.1f}ms: "
         f"{occupancy_resp.occupied_count} occupied, {occupancy_resp.free_count} free."
     )
 
-    # 5. Maintain rolling annotated JPEG buffer on disk
-    image_path = None
-    if annotated_bytes:
-        try:
-            images_dir = Path("storage/images")
-            images_dir.mkdir(parents=True, exist_ok=True)
-            saved_file = images_dir / f"latest_{camera_id}.jpg"
-            saved_file.write_bytes(annotated_bytes)
-            image_path = str(saved_file)
-        except Exception as e:
-            logger.warning(f"Failed to save rolling annotated frame for '{camera_id}': {e}")
-
-    # 6. Persist detection event to SQLite database
+    # 6. Persist detection event metadata to SQLite database (no image on disk or DB)
     try:
         await asyncio.to_thread(
             record_detection_event,
@@ -244,7 +232,7 @@ async def upload_camera_frame(
             spots=occupancy_resp.spots,
             battery_percentage=battery,
             battery_voltage=voltage,
-            image_path=image_path,
+            image_path=None,
         )
     except Exception as e:
         logger.error(f"Failed to record detection event to SQLite: {e}")
@@ -278,29 +266,6 @@ def get_camera_hot_config(camera_id: str) -> CameraHotConfig:
     return server_state.get_camera_hot_config(camera_id)
 
 
-@router.put(
-    "/api/v1/cameras/{camera_id}/config",
-    response_model=CameraHotConfig,
-    status_code=status.HTTP_200_OK,
-    summary="Update dynamic hot-configuration for camera",
-)
-def update_camera_hot_config(
-    camera_id: str,
-    payload: CameraHotConfig,
-) -> CameraHotConfig:
-    if camera_id not in server_state.camera_configs:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Camera '{camera_id}' not found in registered configurations.",
-        )
-    server_state.set_camera_hot_config(camera_id, payload)
-    logger.info(
-        f"Updated hot-config for camera '{camera_id}': interval={payload.interval_seconds}s, "
-        f"active={payload.active}, quality={payload.quality}"
-    )
-    return payload
-
-
 @router.get(
     "/api/v1/cameras/{camera_id}/raw",
     status_code=status.HTTP_200_OK,
@@ -325,14 +290,6 @@ def get_camera_raw_image(camera_id: str) -> Response:
         )
 
     raw_bytes = server_state.get_camera_raw_image(camera_id)
-    if not raw_bytes:
-        raw_path = Path(f"storage/cameras/raw_{camera_id}.jpg")
-        if raw_path.exists():
-            try:
-                raw_bytes = raw_path.read_bytes()
-            except Exception:
-                pass
-
     if not raw_bytes:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

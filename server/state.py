@@ -38,6 +38,9 @@ class ServerState:
         self.latest_battery: Dict[str, Dict[str, Any]] = {}
         self.sample_indices: Dict[str, int] = {}
         self.admin_sessions: Dict[str, Dict[str, Any]] = {}
+        self.gallery_items: List[GalleryItem] = []
+        self.gallery_images: Dict[str, bytes] = {}
+        self.max_gallery_items: int = 50
         self._test_mode_override: Optional[bool] = None
         self.lock = threading.Lock()
 
@@ -283,22 +286,93 @@ class ServerState:
         expires_at = time.time() + duration_seconds
         with self.lock:
             self.admin_sessions[token] = {"user": user, "expires_at": expires_at}
+        try:
+            from storage.repository import save_admin_session
+            save_admin_session(token=token, username=user, expires_at=expires_at)
+        except Exception as e:
+            logger.warning(f"Failed to persist admin session to SQLite: {e}")
         return expires_at
 
     def validate_admin_session(self, token: str) -> Optional[Dict[str, Any]]:
+        now = time.time()
         with self.lock:
             session = self.admin_sessions.get(token)
-            if not session:
-                return None
-            if time.time() < session["expires_at"]:
+            if session and session["expires_at"] > now:
                 return session
-            # Expired
-            del self.admin_sessions[token]
-            return None
+            if session:
+                del self.admin_sessions[token]
+
+        try:
+            from storage.repository import get_admin_session
+            db_session = get_admin_session(token)
+            if db_session:
+                with self.lock:
+                    self.admin_sessions[token] = db_session
+                return db_session
+        except Exception as e:
+            logger.warning(f"Failed to query admin session from SQLite: {e}")
+        return None
 
     def remove_admin_session(self, token: str) -> None:
         with self.lock:
             self.admin_sessions.pop(token, None)
+        try:
+            from storage.repository import delete_admin_session
+            delete_admin_session(token)
+        except Exception as e:
+            logger.warning(f"Failed to delete admin session from SQLite: {e}")
+
+    def record_upload_for_gallery(
+        self,
+        camera_id: str,
+        raw_bytes: bytes,
+        annotated_bytes: Optional[bytes] = None,
+        timestamp: Optional[float] = None,
+    ) -> GalleryItem:
+        """Registers a camera upload in memory for the administrative gallery without writing files to disk."""
+        if timestamp is None:
+            timestamp = time.time()
+
+        dt = datetime.fromtimestamp(timestamp)
+        ts_str = dt.strftime("%Y%m%d_%H%M%S")
+        millis = int((timestamp - int(timestamp)) * 1000)
+        item_id = f"{camera_id}_{ts_str}_{millis:03d}"
+        raw_filename = f"{item_id}_raw.jpg"
+        ann_filename = f"{item_id}_annotated.jpg"
+
+        url_raw = f"/api/v1/admin/gallery/image/{raw_filename}"
+        url_annotated = (
+            f"/api/v1/admin/gallery/image/{ann_filename}"
+            if annotated_bytes
+            else f"/api/v1/cameras/{camera_id}/image"
+        )
+
+        item = GalleryItem(
+            id=item_id,
+            camera_id=camera_id,
+            timestamp=timestamp,
+            date_str=dt.strftime("%Y-%m-%d %H:%M:%S"),
+            size_bytes=len(raw_bytes),
+            filename=raw_filename,
+            url_raw=url_raw,
+            url_annotated=url_annotated,
+        )
+
+        with self.lock:
+            self.gallery_images[raw_filename] = raw_bytes
+            self.gallery_images[item_id] = raw_bytes
+            if annotated_bytes:
+                self.gallery_images[ann_filename] = annotated_bytes
+
+            self.gallery_items.insert(0, item)
+
+            while len(self.gallery_items) > self.max_gallery_items:
+                evicted = self.gallery_items.pop()
+                self.gallery_images.pop(evicted.filename, None)
+                self.gallery_images.pop(evicted.id, None)
+                self.gallery_images.pop(f"{evicted.id}_annotated.jpg", None)
+
+        return item
 
     def get_gallery_catalog(
         self,
@@ -306,91 +380,28 @@ class ServerState:
         limit: int = 30,
         offset: int = 0,
     ) -> GalleryResponse:
-        candidates: List[GalleryItem] = []
-        dirs = [
-            Path("storage/cameras"),
-            Path("storage/images"),
-            Path("cam_software/fotos"),
-        ]
-        seen_files = set()
-        for d in dirs:
-            if not d.exists() or not d.is_dir():
-                continue
-            for p in d.iterdir():
-                if p.is_file() and p.suffix.lower() in (".jpg", ".jpeg", ".png"):
-                    fname = p.name
-                    if fname in seen_files:
-                        continue
-                    seen_files.add(fname)
+        """Retrieves a paginated catalog of rolling images held strictly in memory."""
+        with self.lock:
+            if camera_id:
+                items = [it for it in self.gallery_items if it.camera_id == camera_id]
+            else:
+                items = list(self.gallery_items)
 
-                    # Determine camera_id
-                    cid = None
-                    if fname.startswith("raw_"):
-                        cid = fname.replace("raw_", "").replace(p.suffix, "")
-                    elif fname.startswith("latest_"):
-                        cid = fname.replace("latest_", "").replace(p.suffix, "")
-                    elif "_" in fname:
-                        parts = fname.split("_")
-                        candidate_prefix = f"{parts[0]}_{parts[1]}" if len(parts) > 1 else parts[0]
-                        if candidate_prefix in self.camera_configs:
-                            cid = candidate_prefix
-                        elif parts[0] in self.camera_configs:
-                            cid = parts[0]
-                        else:
-                            cid = "cam_01"
-                    else:
-                        cid = "cam_01"
-
-                    if camera_id and cid != camera_id:
-                        continue
-
-                    # Timestamp
-                    mtime = p.stat().st_mtime
-                    ts = mtime
-                    match = re.search(r"(\d{4})(\d{2})(\d{2})_(\d{2})(\d{2})(\d{2})", fname)
-                    if match:
-                        try:
-                            dt = datetime(
-                                int(match.group(1)),
-                                int(match.group(2)),
-                                int(match.group(3)),
-                                int(match.group(4)),
-                                int(match.group(5)),
-                                int(match.group(6)),
-                            )
-                            ts = dt.timestamp()
-                        except Exception:
-                            pass
-
-                    date_str = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
-                    size = p.stat().st_size
-                    item_id = p.stem
-
-                    if fname == f"raw_{cid}.jpg":
-                        url_raw = f"/api/v1/cameras/{cid}/raw"
-                        url_annotated = f"/api/v1/cameras/{cid}/image"
-                    else:
-                        url_raw = f"/api/v1/admin/gallery/image/{fname}"
-                        url_annotated = f"/api/v1/cameras/{cid}/image"
-
-                    candidates.append(
-                        GalleryItem(
-                            id=item_id,
-                            camera_id=cid,
-                            timestamp=ts,
-                            date_str=date_str,
-                            size_bytes=size,
-                            filename=fname,
-                            url_raw=url_raw,
-                            url_annotated=url_annotated,
-                        )
-                    )
-
-        # Sort reverse-chronological by timestamp
-        candidates.sort(key=lambda x: x.timestamp, reverse=True)
-        total = len(candidates)
-        paged = candidates[offset : offset + limit]
+        total = len(items)
+        paged = items[offset : offset + limit]
         return GalleryResponse(total=total, limit=limit, offset=offset, items=paged)
+
+    def get_gallery_image(self, identifier: str) -> Optional[bytes]:
+        """Retrieves raw or annotated image bytes from the rolling in-memory buffer."""
+        with self.lock:
+            if identifier in self.gallery_images:
+                return self.gallery_images[identifier]
+            stem = Path(identifier).stem
+            if stem in self.gallery_images:
+                return self.gallery_images[stem]
+            if f"{stem}.jpg" in self.gallery_images:
+                return self.gallery_images[f"{stem}.jpg"]
+            return None
 
     def get_admin_cameras(self) -> List[AdminCameraStatus]:
         now = time.time()

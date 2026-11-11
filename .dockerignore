@@ -18,7 +18,6 @@ __pycache__/
 
 # Mounted volumes and runtime outputs
 tests/output/
-test/reports/
 tests/reports/
 storage/images/*
 storage/*.db

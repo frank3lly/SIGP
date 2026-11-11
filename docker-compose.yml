@@ -14,7 +14,6 @@ services:
       - ./config/cameras:/workspace/config/cameras
       - ./storage:/workspace/storage
       - ./test-samples:/workspace/test-samples:ro
-      - ./test/reports:/workspace/test/reports
       - ./tests/reports:/workspace/tests/reports
       - ./tests/output:/workspace/tests/output
     environment:

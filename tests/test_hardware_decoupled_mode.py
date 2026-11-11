@@ -38,6 +38,11 @@ def run_tests() -> int:
     print("PARQUEAME HARDWARE-DECOUPLED TEST MODE VERIFICATION SUITE")
     print("=" * 70)
 
+    # Clean any leftover disk artifacts
+    raw_disk_check = Path("storage/cameras/raw_cam_01.jpg")
+    if raw_disk_check.exists():
+        raw_disk_check.unlink()
+
     with TestClient(app) as client:
         # -------------------------------------------------------------
         # TC-HDM-01: Baseline Live Mode (PARQUEAME_TEST_MODE = False)
@@ -63,11 +68,10 @@ def run_tests() -> int:
         assert raw_res.content == blank_frame_bytes, "Raw endpoint bytes do not match uploaded frame"
         print("  [✓] GET /api/v1/cameras/cam_01/raw returned exact raw hardware bytes.")
 
-        # Verify disk file persistence for raw image
+        # Verify no disk file was written (memory-only retention policy)
         raw_disk_path = Path("storage/cameras/raw_cam_01.jpg")
-        assert raw_disk_path.exists(), "storage/cameras/raw_cam_01.jpg was not created on disk"
-        assert raw_disk_path.read_bytes() == blank_frame_bytes, "Disk raw file bytes do not match upload"
-        print("  [✓] Hardware raw image persisted to storage/cameras/raw_cam_01.jpg.")
+        assert not raw_disk_path.exists(), "storage/cameras/raw_cam_01.jpg should NOT be written to disk"
+        print("  [✓] Zero disk writes verified: frame held exclusively in RAM cache.")
 
         # -------------------------------------------------------------
         # TC-HDM-02: Hardware-Decoupled Test Mode Activation

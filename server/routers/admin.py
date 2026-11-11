@@ -127,30 +127,26 @@ def admin_gallery(
 @router.get(
     "/gallery/image/{filename}",
     status_code=status.HTTP_200_OK,
-    summary="Serve full-resolution diagnostic image from gallery archive",
+    summary="Serve full-resolution diagnostic image from in-memory gallery",
 )
 def get_gallery_image(
     filename: str,
     _: dict = Depends(get_current_admin),
 ) -> Response:
     safe_name = Path(filename).name
-    search_dirs = [
-        Path("storage/cameras"),
-        Path("storage/images"),
-        Path("cam_software/fotos"),
-    ]
-    for d in search_dirs:
-        candidate = d / safe_name
-        if candidate.exists() and candidate.is_file():
-            mime_type, _ = mimetypes.guess_type(str(candidate))
-            return Response(
-                content=candidate.read_bytes(),
-                media_type=mime_type or "image/jpeg",
-                headers={
-                    "Cache-Control": "public, max-age=3600",
-                },
-            )
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found in gallery.")
+    img_bytes = server_state.get_gallery_image(safe_name)
+    if img_bytes:
+        return Response(
+            content=img_bytes,
+            media_type="image/jpeg",
+            headers={
+                "Cache-Control": "public, max-age=3600",
+            },
+        )
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND,
+        detail="Image not found in gallery.",
+    )
 
 
 @router.get(

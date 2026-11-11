@@ -56,17 +56,34 @@ def run_tests() -> int:
         assert up_data["config"]["active"] is True
         print("  [✓] Upload response embeds valid hot-config object.")
 
-        # 3. Dynamic Hot-Configuration Update via PUT
-        print("\n[Phase 3] Updating hot-config dynamically via PUT...")
+        # 3. Dynamic Hot-Configuration Update via Authenticated Admin PUT
+        print("\n[Phase 3] Updating hot-config dynamically via Authenticated Admin PUT...")
         new_config = {
             "interval_seconds": 45,
             "active": False,
             "quality": 15,
             "firmware_version": "1.0.1",
         }
+        # Verify unauthenticated direct PUT is blocked
+        unauth_put = client.put("/api/v1/cameras/cam_01/config", json=new_config)
+        assert unauth_put.status_code in [404, 405]
+        print("  [✓] Unauthenticated direct PUT /api/v1/cameras/cam_01/config rejected as expected.")
+
+        # Authenticate via admin
+        os.environ["PARQUEAME_ADMIN_USER"] = "admin"
+        os.environ["PARQUEAME_ADMIN_PASSWORD"] = "parqueame_secret_2026"
+        login_res = client.post(
+            "/api/v1/admin/login",
+            json={"username": "admin", "password": "parqueame_secret_2026"},
+        )
+        assert login_res.status_code == 200
+        admin_token = login_res.json()["token"]
+        auth_headers = {"Authorization": f"Bearer {admin_token}"}
+
         put_res = client.put(
-            "/api/v1/cameras/cam_01/config",
+            "/api/v1/admin/cameras/cam_01/config",
             json=new_config,
+            headers=auth_headers,
         )
         assert put_res.status_code == 200, f"PUT config failed: {put_res.text}"
         put_data = put_res.json()
@@ -94,7 +111,7 @@ def run_tests() -> int:
         print("\n[Phase 5] Verifying 404 for unknown camera ID...")
         err_res = client.get("/api/v1/cameras/unknown_cam/config")
         assert err_res.status_code == 404
-        err_put = client.put("/api/v1/cameras/unknown_cam/config", json=new_config)
+        err_put = client.put("/api/v1/admin/cameras/unknown_cam/config", json=new_config, headers=auth_headers)
         assert err_put.status_code == 404
         print("  [✓] Non-existent camera IDs properly rejected with 404.")
 

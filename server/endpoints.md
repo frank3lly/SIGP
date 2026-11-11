@@ -20,7 +20,10 @@
   }
   ```
 
-### POST /api/v1/cameras/{camera_id}/battery
+### POST /api/v1/cameras/{camera_id}/battery (Deprecated)
+> [!NOTE]
+> Deprecated in favor of the primary frame upload query parameters `POST /api/v1/upload/{camera_id}?battery=...&voltage=...`.
+
 - **Gets:**
   - Path: `camera_id` (str)
   - Body (application/json):
@@ -260,3 +263,138 @@
     ]
   }
   ```
+
+---
+
+# Administrative & Fleet Management Endpoints
+
+All endpoints under `/api/v1/admin` require authentication via a Bearer token in the `Authorization` header (`Authorization: Bearer <token>`) or via query parameter `?token=<token>` for media asset tags.
+
+### POST /api/v1/admin/login
+- **Gets:**
+  - Body (application/json):
+  ```json
+  {
+    "username": "admin",
+    "password": "..."
+  }
+  ```
+- **Vomits:**
+  - JSON (200 OK):
+  ```json
+  {
+    "status": "authenticated",
+    "token": "a1b2c3d4...",
+    "expires_at": 1700028800.0,
+    "user": "admin"
+  }
+  ```
+
+### GET /api/v1/admin/me
+- **Gets:**
+  - Headers: `Authorization: Bearer <token>`
+- **Vomits:**
+  - JSON (200 OK):
+  ```json
+  {
+    "user": "admin",
+    "valid": true,
+    "expires_at": 1700028800.0
+  }
+  ```
+
+### POST /api/v1/admin/logout
+- **Gets:**
+  - Headers: `Authorization: Bearer <token>`
+- **Vomits:**
+  - JSON (200 OK):
+  ```json
+  {
+    "status": "logged_out"
+  }
+  ```
+
+### GET /api/v1/admin/cameras
+- **Gets:**
+  - Headers: `Authorization: Bearer <token>`
+- **Vomits:**
+  - JSON (200 OK):
+  ```json
+  {
+    "cameras": [
+      {
+        "camera_id": "cam_01",
+        "name": "UFPR04 Campus Lot - Cam 01",
+        "status": "online",
+        "last_seen_timestamp": 1700000000.0,
+        "seconds_since_last_seen": 15.2,
+        "battery_percentage": 94.5,
+        "battery_voltage": 4.12,
+        "config": {
+          "interval_seconds": 30,
+          "active": true,
+          "quality": 12,
+          "firmware_version": "1.0.0"
+        }
+      }
+    ]
+  }
+  ```
+
+### PUT /api/v1/admin/cameras/{camera_id}/config
+- **Gets:**
+  - Path: `camera_id` (str)
+  - Headers: `Authorization: Bearer <token>`
+  - Body (application/json):
+  ```json
+  {
+    "interval_seconds": 45,
+    "active": true,
+    "quality": 14,
+    "firmware_version": "1.0.1"
+  }
+  ```
+- **Vomits:**
+  - JSON (200 OK):
+  ```json
+  {
+    "interval_seconds": 45,
+    "active": true,
+    "quality": 14,
+    "firmware_version": "1.0.1"
+  }
+  ```
+
+### GET /api/v1/admin/gallery
+- **Gets:**
+  - Headers: `Authorization: Bearer <token>`
+  - Query: `camera_id` (str, optional), `limit` (int, default 30), `offset` (int, default 0)
+- **Vomits:**
+  - JSON (200 OK):
+  ```json
+  {
+    "total": 12,
+    "limit": 30,
+    "offset": 0,
+    "items": [
+      {
+        "id": "cam_01_20261111_123000_123",
+        "camera_id": "cam_01",
+        "timestamp": 1700000000.0,
+        "date_str": "2026-11-11 12:30:00",
+        "size_bytes": 102400,
+        "filename": "cam_01_20261111_123000_123_raw.jpg",
+        "url_raw": "/api/v1/admin/gallery/image/cam_01_20261111_123000_123_raw.jpg",
+        "url_annotated": "/api/v1/admin/gallery/image/cam_01_20261111_123000_123_annotated.jpg"
+      }
+    ]
+  }
+  ```
+
+### GET /api/v1/admin/gallery/image/{filename}
+- **Gets:**
+  - Path: `filename` (str)
+  - Headers: `Authorization: Bearer <token>` OR Query `?token=<token>`
+- **Vomits:**
+  - Binary `image/jpeg` (200 OK) directly from in-memory rolling buffer.
+

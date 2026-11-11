@@ -31,4 +31,4 @@ shell:
 
 clean:
 	$(COMPOSE) down -v
-	rm -rf tests/output/* test/reports/* tests/reports/*
+	rm -rf tests/output/* tests/reports/*

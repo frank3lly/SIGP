@@ -233,3 +233,23 @@ For offline frontend UI design and unit testing, mock fixtures can be used direc
   }
 }
 ```
+
+---
+
+## 5. Administrative & Fleet Management API
+
+The administrative layer provides authenticated fleet control, dynamic camera reconfigurations, and a hardware photo gallery buffered strictly in memory (zero persistent disk writes).
+
+### Authentication
+Protected endpoints require an `Authorization: Bearer <token>` header or query param `?token=<token>` (for image elements). Tokens are verified against SQLite-backed persistent sessions.
+
+| Endpoint | Method | Role | Auth Required |
+|:---|:---|:---|:---|
+| `/api/v1/admin/login` | `POST` | Authenticate administrator credentials | No |
+| `/api/v1/admin/me` | `GET` | Validate active session token | Yes (`Bearer`) |
+| `/api/v1/admin/logout` | `POST` | Invalidate session token | Yes (`Bearer`) |
+| `/api/v1/admin/cameras` | `GET` | List camera fleet status and hot-configs | Yes (`Bearer`) |
+| `/api/v1/admin/cameras/{id}/config` | `PUT` | Update camera interval, quality, and active state | Yes (`Bearer`) |
+| `/api/v1/admin/gallery` | `GET` | Retrieve in-memory rolling photo gallery items | Yes (`Bearer`) |
+| `/api/v1/admin/gallery/image/{name}` | `GET` | Stream raw or annotated frame bytes from RAM | Yes (`Bearer` / `?token=`) |
+

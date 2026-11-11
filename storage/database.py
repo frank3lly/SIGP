@@ -35,9 +35,17 @@ CREATE TABLE IF NOT EXISTS spot_history (
     timestamp REAL NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS admin_sessions (
+    token TEXT PRIMARY KEY,
+    username TEXT NOT NULL,
+    expires_at REAL NOT NULL,
+    created_at REAL NOT NULL
+);
+
 CREATE INDEX IF NOT EXISTS idx_camera_logs_cam_time ON camera_logs(camera_id, timestamp);
 CREATE INDEX IF NOT EXISTS idx_spot_history_spot_time ON spot_history(camera_id, spot_id, timestamp);
 CREATE INDEX IF NOT EXISTS idx_spot_history_log ON spot_history(log_id);
+CREATE INDEX IF NOT EXISTS idx_admin_sessions_exp ON admin_sessions(expires_at);
 """
 
 

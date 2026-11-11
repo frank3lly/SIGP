@@ -163,6 +163,65 @@ class TestAdminAPI(unittest.TestCase):
         self.assertEqual(res_with_token.status_code, 404)
         self.assertIn("Image not found in gallery", res_with_token.json()["detail"])
 
+    def test_08_sqlite_session_persistence(self):
+        # 1. Login
+        login_res = self.client.post(
+            "/api/v1/admin/login",
+            json={"username": "admin", "password": "parqueame_secret_2026"},
+        )
+        token = login_res.json()["token"]
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # 2. Simulate server worker restart / cache eviction by wiping in-memory dictionary
+        server_state.admin_sessions.clear()
+
+        # 3. Request should still succeed via SQLite backing store
+        me_res = self.client.get("/api/v1/admin/me", headers=headers)
+        self.assertEqual(me_res.status_code, 200)
+        self.assertEqual(me_res.json()["user"], "admin")
+
+    def test_09_in_memory_gallery_upload_and_retrieval(self):
+        import cv2
+        import numpy as np
+
+        # 1. Login
+        login_res = self.client.post(
+            "/api/v1/admin/login",
+            json={"username": "admin", "password": "parqueame_secret_2026"},
+        )
+        token = login_res.json()["token"]
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # 2. Ingest camera upload
+        dummy_img = np.zeros((480, 640, 3), dtype=np.uint8)
+        _, buf = cv2.imencode(".jpg", dummy_img)
+        raw_bytes = buf.tobytes()
+
+        up_res = self.client.post(
+            "/api/v1/upload/cam_01",
+            files={"file": ("snap.jpg", raw_bytes, "image/jpeg")},
+        )
+        self.assertEqual(up_res.status_code, 200)
+
+        # 3. Query gallery
+        gallery_res = self.client.get("/api/v1/admin/gallery", headers=headers)
+        self.assertEqual(gallery_res.status_code, 200)
+        items = gallery_res.json()["items"]
+        self.assertGreater(len(items), 0)
+
+        top_item = items[0]
+        self.assertEqual(top_item["camera_id"], "cam_01")
+
+        # 4. Fetch raw image from in-memory gallery
+        raw_filename = top_item["filename"]
+        img_res = self.client.get(f"/api/v1/admin/gallery/image/{raw_filename}", headers=headers)
+        self.assertEqual(img_res.status_code, 200)
+        self.assertEqual(img_res.content, raw_bytes)
+
+        # 5. Verify zero disk writes
+        disk_files = list(Path("storage/cameras").glob("*.jpg"))
+        self.assertEqual(len(disk_files), 0, "No raw frames should be written to storage/cameras")
+
 
 if __name__ == "__main__":
     unittest.main()

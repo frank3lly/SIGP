@@ -3,7 +3,6 @@ set -e
 
 # Ensure storage directories exist
 mkdir -p /workspace/storage/images
-mkdir -p /workspace/test/reports
 mkdir -p /workspace/tests/output
 mkdir -p /workspace/tests/reports
 
