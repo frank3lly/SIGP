@@ -423,6 +423,36 @@
       justify-content: center;
       align-items: center;
       padding: 24px 20px 48px;
+      cursor: grab;
+      touch-action: none;
+    }
+
+    .canvas-viewport.is-dragging {
+      cursor: grabbing !important;
+      user-select: none;
+    }
+
+    .canvas-viewport.is-dragging #zoomLayer {
+      transition: none !important;
+    }
+
+    @keyframes mapGlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(48px) scale(0.96);
+      }
+      60% {
+        opacity: 0.9;
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .map-viewport-entering {
+      animation: mapGlideUp 750ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      will-change: transform, opacity;
     }
 
     .map-svg {

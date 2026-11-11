@@ -65,6 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
   spotNodes.forEach((node) => {
     node.addEventListener('click', (e) => {
       e.stopPropagation();
+      if (viewport.hasMovedSignificantly) {
+        return;
+      }
       const spotId = node.getAttribute('data-id');
       openSpot(spotId, node, store);
     });
