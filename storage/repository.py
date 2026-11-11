@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+import time
 from typing import Any, Dict, List, Optional, Union
 
 from storage.database import DEFAULT_DB_PATH, get_db_connection
@@ -206,3 +207,57 @@ def get_system_summary_stats(
             "last_log_time": time_stats[1] if time_stats else None,
             "active_cameras": cams,
         }
+
+
+def save_admin_session(
+    token: str,
+    username: str,
+    expires_at: float,
+    db_path: Optional[Union[str, Path]] = None,
+) -> None:
+    """Persists an administrative session token to the SQLite database."""
+    now = time.time()
+    with get_db_connection(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            """
+            INSERT OR REPLACE INTO admin_sessions (token, username, expires_at, created_at)
+            VALUES (?, ?, ?, ?);
+            """,
+            (token, username, float(expires_at), now),
+        )
+        conn.commit()
+
+
+def get_admin_session(
+    token: str,
+    db_path: Optional[Union[str, Path]] = None,
+) -> Optional[Dict[str, Any]]:
+    """Retrieves an admin session by token, automatically purging expired sessions."""
+    now = time.time()
+    with get_db_connection(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute(
+            "SELECT token, username, expires_at FROM admin_sessions WHERE token = ?;",
+            (token,),
+        )
+        row = cursor.fetchone()
+        if not row:
+            return None
+        if row["expires_at"] < now:
+            cursor.execute("DELETE FROM admin_sessions WHERE token = ?;", (token,))
+            conn.commit()
+            return None
+        return {"user": row["username"], "expires_at": row["expires_at"]}
+
+
+def delete_admin_session(
+    token: str,
+    db_path: Optional[Union[str, Path]] = None,
+) -> None:
+    """Deletes an admin session from SQLite upon logout."""
+    with get_db_connection(db_path) as conn:
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM admin_sessions WHERE token = ?;", (token,))
+        conn.commit()
+

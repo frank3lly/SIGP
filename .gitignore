@@ -17,6 +17,7 @@ runs/
 # Data & Storage
 storage/data/
 storage/images/
+storage/cameras/
 cam_software/fotos/
 *.sqlite
 *.sqlite3
@@ -28,10 +29,11 @@ uploads/
 .vscode/
 .DS_Store
 *.log
-__*
-test*
-verify*
-__specs__
+docker-compose.override.yml
+__specs__/
+test-samples/
+tests/output/
+tests/reports/
 
 # Dependencias de Node.js
 node_modules/

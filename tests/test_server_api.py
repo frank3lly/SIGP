@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import sys
 from fastapi.testclient import TestClient
 
@@ -16,11 +17,21 @@ def run_tests() -> int:
     print("Stage 300: Central Server API Test Suite")
     print("=" * 60)
 
-    sample_img_path = "test-samples/vga_sample_campus_01.jpg"
-    assert os.path.exists(sample_img_path), f"Missing test image '{sample_img_path}'"
+    sample_img_path = Path("test-samples/vga_sample_campus_01.jpg")
+    if not sample_img_path.exists():
+        cam_files = list(Path("test-samples/cam_01").glob("*.jpg"))
+        if cam_files:
+            sample_img_path = cam_files[0]
 
-    with open(sample_img_path, "rb") as f:
-        sample_img_bytes = f.read()
+    if sample_img_path.exists():
+        with open(sample_img_path, "rb") as f:
+            sample_img_bytes = f.read()
+    else:
+        import cv2
+        import numpy as np
+        dummy = np.zeros((720, 1280, 3), dtype=np.uint8)
+        _, buf = cv2.imencode(".jpg", dummy)
+        sample_img_bytes = buf.tobytes()
 
     with TestClient(app) as client:
         # ---------------------------------------------------------

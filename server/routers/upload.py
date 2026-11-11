@@ -1,17 +1,18 @@
 import asyncio
+from datetime import datetime
 import logging
 from pathlib import Path
 from typing import Optional, Tuple
 
 import cv2
 import numpy as np
-from fastapi import APIRouter, File, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, Response, UploadFile, status
 
 from detection.config_loader import CameraConfig
 from detection.detector import VehicleDetector
 from detection.occupancy import OccupancyResponse, evaluate_occupancy
 from detection.visualizer import draw_detection_overlay
-from server.schemas import UploadResponse
+from server.schemas import CameraHotConfig, UploadResponse
 from server.state import server_state
 from storage.repository import record_detection_event
 
@@ -19,15 +20,61 @@ logger = logging.getLogger("parqueame.server.upload")
 router = APIRouter(tags=["Ingestion"])
 
 
+def normalize_frame_to_reference(
+    image: np.ndarray,
+    reference_resolution: Tuple[int, int],
+) -> Tuple[np.ndarray, bool]:
+    """Normalizes an incoming image frame to match the camera's calibrated reference resolution.
+    
+    Args:
+        image: Decoded BGR image matrix from camera upload.
+        reference_resolution: Expected (width, height) tuple from CameraConfig.
+        
+    Returns:
+        Tuple containing:
+            - Normalized image matrix matching (reference_width, reference_height).
+            - Boolean flag indicating whether a resize operation was performed.
+    """
+    ref_w, ref_h = reference_resolution
+    curr_h, curr_w = image.shape[:2]
+
+    if (curr_w, curr_h) == (ref_w, ref_h):
+        return image, False
+
+    # Choose optimal interpolation method based on scale factor
+    if curr_w > ref_w or curr_h > ref_h:
+        interpolation = cv2.INTER_AREA
+    else:
+        interpolation = cv2.INTER_LINEAR
+
+    resized_image = cv2.resize(image, (ref_w, ref_h), interpolation=interpolation)
+    return resized_image, True
+
+
 def process_frame_sync(
     image: np.ndarray,
     camera_cfg: CameraConfig,
     detector: VehicleDetector,
 ) -> Tuple[OccupancyResponse, bytes]:
-    """Synchronous CPU/GPU worker running detection and spatial math."""
-    spots = camera_cfg.to_detection_spots()
-    detections, latency_ms = detector.detect(image)
+    """Synchronous CPU/GPU worker running detection and spatial math with dimension normalization."""
+    # 1. Normalize frame to camera calibration reference resolution
+    normalized_image, was_resized = normalize_frame_to_reference(
+        image, 
+        tuple(camera_cfg.reference_resolution)
+    )
+    if was_resized:
+        logger.info(
+            f"[{camera_cfg.camera_id}] Ingested frame ({image.shape[1]}x{image.shape[0]}) "
+            f"automatically normalized to reference ({camera_cfg.reference_resolution[0]}x{camera_cfg.reference_resolution[1]})."
+        )
 
+    # 2. Extract spot definitions in calibrated space
+    spots = camera_cfg.to_detection_spots()
+
+    # 3. Execute object detection on normalized image
+    detections, latency_ms = detector.detect(normalized_image)
+
+    # 4. Evaluate point-in-polygon occupancy
     occupancy_resp = evaluate_occupancy(
         spots=spots,
         detections=detections,
@@ -35,8 +82,9 @@ def process_frame_sync(
         inference_time_ms=latency_ms,
     )
 
+    # 5. Render detection overlay on normalized image
     annotated = draw_detection_overlay(
-        image=image,
+        image=normalized_image,
         occupancy_response=occupancy_resp,
         spots=spots,
         detections=detections,
@@ -44,6 +92,7 @@ def process_frame_sync(
         draw_hud=True,
     )
 
+    # 6. Encode annotated JPEG for web frontend consumption
     success, buffer = cv2.imencode(
         ".jpg",
         annotated,
@@ -103,11 +152,38 @@ async def upload_camera_frame(
             detail="Invalid image encoding. File could not be decoded as an image.",
         )
 
-    # 3. Dispatch synchronous vision workload to threadpool
+    # 3. Hardware Ingestion: Store real hardware frame in RAM
+    server_state.record_raw_image(camera_id, contents)
+
+    # 4. Decoupled Test Mode: Check if test mode is enabled globally or per-camera
+    is_test_mode = server_state.test_mode_enabled or getattr(camera_cfg, "test_mode_enabled", False)
+    if is_test_mode:
+        custom_dir = getattr(camera_cfg, "test_mode_sample_dir", None)
+        sample_path = server_state.get_next_sample_frame(camera_id, sample_dir=custom_dir)
+        if sample_path and sample_path.exists():
+            detection_image = cv2.imread(str(sample_path))
+            if detection_image is None or detection_image.size == 0:
+                logger.warning(
+                    f"[{camera_id}] Failed to decode sample image {sample_path}. Falling back to live image."
+                )
+                detection_image = image
+            else:
+                logger.info(
+                    f"[{camera_id}] Hardware-decoupled test mode active: swapped live frame with sample {sample_path.name}"
+                )
+        else:
+            logger.warning(
+                f"[{camera_id}] Test mode active but no sample frames found. Falling back to live image."
+            )
+            detection_image = image
+    else:
+        detection_image = image
+
+    # 5. Dispatch synchronous vision workload to threadpool
     try:
         occupancy_resp, annotated_bytes = await asyncio.to_thread(
             process_frame_sync,
-            image,
+            detection_image,
             camera_cfg,
             server_state.detector,
         )
@@ -131,24 +207,20 @@ async def upload_camera_frame(
             voltage=voltage,
         )
 
+    # 5. Record upload into in-memory rolling gallery (no disk storage)
+    server_state.record_upload_for_gallery(
+        camera_id=camera_id,
+        raw_bytes=contents,
+        annotated_bytes=annotated_bytes,
+        timestamp=occupancy_resp.timestamp,
+    )
+
     logger.info(
         f"Camera '{camera_id}' processed in {occupancy_resp.inference_time_ms:.1f}ms: "
         f"{occupancy_resp.occupied_count} occupied, {occupancy_resp.free_count} free."
     )
 
-    # 5. Maintain rolling annotated JPEG buffer on disk
-    image_path = None
-    if annotated_bytes:
-        try:
-            images_dir = Path("storage/images")
-            images_dir.mkdir(parents=True, exist_ok=True)
-            saved_file = images_dir / f"latest_{camera_id}.jpg"
-            saved_file.write_bytes(annotated_bytes)
-            image_path = str(saved_file)
-        except Exception as e:
-            logger.warning(f"Failed to save rolling annotated frame for '{camera_id}': {e}")
-
-    # 6. Persist detection event to SQLite database
+    # 6. Persist detection event metadata to SQLite database (no image on disk or DB)
     try:
         await asyncio.to_thread(
             record_detection_event,
@@ -160,12 +232,13 @@ async def upload_camera_frame(
             spots=occupancy_resp.spots,
             battery_percentage=battery,
             battery_voltage=voltage,
-            image_path=image_path,
+            image_path=None,
         )
     except Exception as e:
         logger.error(f"Failed to record detection event to SQLite: {e}")
 
-    # 7. Return summary
+    # 7. Return summary with dynamic hot-config
+    hot_config = server_state.get_camera_hot_config(camera_id)
     return UploadResponse(
         status="success",
         camera_id=camera_id,
@@ -174,4 +247,61 @@ async def upload_camera_frame(
         total_spots=occupancy_resp.total_spots,
         occupied_spots=occupancy_resp.occupied_count,
         free_spots=occupancy_resp.free_count,
+        config=hot_config,
+    )
+
+
+@router.get(
+    "/api/v1/cameras/{camera_id}/config",
+    response_model=CameraHotConfig,
+    status_code=status.HTTP_200_OK,
+    summary="Get dynamic hot-configuration for camera",
+)
+def get_camera_hot_config(camera_id: str) -> CameraHotConfig:
+    if camera_id not in server_state.camera_configs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Camera '{camera_id}' not found in registered configurations.",
+        )
+    return server_state.get_camera_hot_config(camera_id)
+
+
+@router.get(
+    "/api/v1/cameras/{camera_id}/raw",
+    status_code=status.HTTP_200_OK,
+    summary="Get latest raw uploaded camera image without annotations",
+    responses={
+        200: {
+            "content": {"image/jpeg": {}},
+            "description": "Latest raw camera JPEG image.",
+        },
+        404: {"description": "Camera not found or no raw image uploaded yet."},
+    },
+)
+@router.get(
+    "/cameras/{camera_id}/raw",
+    include_in_schema=False,
+)
+def get_camera_raw_image(camera_id: str) -> Response:
+    if camera_id not in server_state.camera_configs:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Camera '{camera_id}' not found in registered configurations.",
+        )
+
+    raw_bytes = server_state.get_camera_raw_image(camera_id)
+    if not raw_bytes:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"No raw image has been uploaded yet for camera '{camera_id}'.",
+        )
+
+    return Response(
+        content=raw_bytes,
+        media_type="image/jpeg",
+        headers={
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": "0",
+        },
     )

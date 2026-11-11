@@ -49,10 +49,14 @@ def get_camera_flow_analytics(
     status_code=status.HTTP_200_OK,
     summary="Get time-binned occupancy series for frontend timeline charts",
 )
+@router.get(
+    "/cameras/{camera_id}/timeline",
+    response_model=List[TimelineBucketItem],
+    status_code=status.HTTP_200_OK,
+    summary="Get time-binned occupancy series for a specific camera",
+)
 def get_timeline_chart_data(
-    camera_id: Optional[str] = Query(
-        default=None, description="Optional filter by camera ID"
-    ),
+    camera_id: Optional[str] = None,
     hours: float = Query(
         default=2.0, ge=0.1, le=168.0, description="Window in hours"
     ),

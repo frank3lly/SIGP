@@ -55,7 +55,8 @@ def get_camera_status(camera_id: str) -> CameraStatusResponse:
     "/api/v1/cameras/{camera_id}/battery",
     response_model=BatteryReportResponse,
     status_code=status.HTTP_200_OK,
-    summary="Report camera battery level and voltage telemetry",
+    summary="Report camera battery level and voltage telemetry (Deprecated: use POST /api/v1/upload/{camera_id}?battery=...)",
+    deprecated=True,
 )
 def report_camera_battery(
     camera_id: str,

@@ -1,0 +1,45 @@
+version: "3.8"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: parqueame:latest
+    container_name: parqueame_server
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./config/cameras:/workspace/config/cameras
+      - ./storage:/workspace/storage
+      - ./test-samples:/workspace/test-samples:ro
+      - ./tests/reports:/workspace/tests/reports
+      - ./tests/output:/workspace/tests/output
+    environment:
+      - PYTHONUNBUFFERED=1
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/api/v1/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+  simulator:
+    image: parqueame:latest
+    container_name: parqueame_simulator
+    depends_on:
+      server:
+        condition: service_healthy
+    volumes:
+      - ./test-samples:/workspace/test-samples:ro
+    command: ["simulate", "--server-url", "http://server:8000", "--loop", "--interval", "5.0"]
+    profiles:
+      - simulation

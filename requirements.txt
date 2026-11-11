@@ -15,5 +15,8 @@ uvicorn[standard]>=0.30.0
 python-multipart>=0.0.9
 pydantic>=2.8.0
 
+# Database Persistence (PostgreSQL / Neon)
+psycopg2-binary>=2.9.9
+
 # Configuration & Utilities
 pyyaml>=6.0.2
