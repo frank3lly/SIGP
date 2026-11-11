@@ -1464,7 +1464,88 @@
       </g> <!-- end R-aux -->
         </g>
 
+        <!-- Ambient Living Vehicles Layer -->
+        <g id="ambientVehicles" class="ambient-layer" pointer-events="none">
+          <!-- Car 1: Pearl White Cruiser (Central Lane) -->
+          <g class="ambient-car car-1">
+            <rect class="car-shadow" x="-1.5" y="-2.7" width="3.0" height="5.4" rx="1.0" />
+            <rect class="car-body" x="-1.35" y="-2.6" width="2.7" height="5.2" rx="0.8" fill="#f8fafc" stroke="#cbd5e1" stroke-width="0.25" />
+            <rect class="car-windshield" x="-1.05" y="-0.4" width="2.1" height="0.85" rx="0.25" fill="#334155" />
+            <rect class="car-rear" x="-1.0" y="-2.1" width="2.0" height="0.6" rx="0.2" fill="#334155" />
+            <rect class="car-roof" x="-1.1" y="-1.35" width="2.2" height="1.7" rx="0.4" fill="#e2e8f0" />
+            <circle class="car-headlight" cx="-0.85" cy="2.35" r="0.28" fill="#fef08a" />
+            <circle class="car-headlight" cx="0.85" cy="2.35" r="0.28" fill="#fef08a" />
+            <circle class="car-taillight" cx="-0.85" cy="-2.45" r="0.26" fill="#ef4444" />
+            <circle class="car-taillight" cx="0.85" cy="-2.45" r="0.26" fill="#ef4444" />
+          </g>
+
+          <!-- Car 2: Navy Blue Sedan (East Lane) -->
+          <g class="ambient-car car-2">
+            <rect class="car-shadow" x="-1.5" y="-2.7" width="3.0" height="5.4" rx="1.0" />
+            <rect class="car-body" x="-1.35" y="-2.6" width="2.7" height="5.2" rx="0.8" fill="#1e3a8a" stroke="#1d4ed8" stroke-width="0.25" />
+            <rect class="car-windshield" x="-1.05" y="-0.4" width="2.1" height="0.85" rx="0.25" fill="#1e293b" />
+            <rect class="car-rear" x="-1.0" y="-2.1" width="2.0" height="0.6" rx="0.2" fill="#1e293b" />
+            <rect class="car-roof" x="-1.1" y="-1.35" width="2.2" height="1.7" rx="0.4" fill="#2563eb" />
+            <circle class="car-headlight" cx="-0.85" cy="2.35" r="0.28" fill="#fef08a" />
+            <circle class="car-headlight" cx="0.85" cy="2.35" r="0.28" fill="#fef08a" />
+            <circle class="car-taillight" cx="-0.85" cy="-2.45" r="0.26" fill="#ef4444" />
+            <circle class="car-taillight" cx="0.85" cy="-2.45" r="0.26" fill="#ef4444" />
+          </g>
+
+          <!-- Car 3: Slate Silver Compact (West Lane) -->
+          <g class="ambient-car car-3">
+            <rect class="car-shadow" x="-1.4" y="-2.5" width="2.8" height="5.0" rx="0.9" />
+            <rect class="car-body" x="-1.25" y="-2.4" width="2.5" height="4.8" rx="0.75" fill="#64748b" stroke="#475569" stroke-width="0.25" />
+            <rect class="car-windshield" x="-0.95" y="-0.35" width="1.9" height="0.8" rx="0.2" fill="#0f172a" />
+            <rect class="car-rear" x="-0.9" y="-1.95" width="1.8" height="0.55" rx="0.2" fill="#0f172a" />
+            <rect class="car-roof" x="-1.0" y="-1.25" width="2.0" height="1.55" rx="0.35" fill="#94a3b8" />
+            <circle class="car-headlight" cx="-0.75" cy="2.15" r="0.26" fill="#fef08a" />
+            <circle class="car-headlight" cx="0.75" cy="2.15" r="0.26" fill="#fef08a" />
+            <circle class="car-taillight" cx="-0.75" cy="-2.25" r="0.24" fill="#ef4444" />
+            <circle class="car-taillight" cx="0.75" cy="-2.25" r="0.24" fill="#ef4444" />
+          </g>
+        </g>
+
       </g> <!-- end zoomLayer -->
+
+      <!-- Ambient Sky Layer (Birds & Gentle Breeze) -->
+      <g id="ambientSky" class="ambient-sky" pointer-events="none">
+        <!-- Flocking Birds -->
+        <g class="ambient-flock">
+          <!-- Bird 1 (Leader) -->
+          <g transform="translate(0, 0)">
+            <ellipse class="bird-shadow" cx="0" cy="8" rx="1.2" ry="0.4" />
+            <path class="bird-silhouette" d="M -2.2,0.8 Q -1.1,-0.7 0,0.1 Q 1.1,-0.7 2.2,0.8" />
+          </g>
+          <!-- Bird 2 -->
+          <g transform="translate(-4.5, -3)">
+            <ellipse class="bird-shadow" cx="0" cy="8" rx="1.0" ry="0.35" />
+            <path class="bird-silhouette" d="M -1.8,0.7 Q -0.9,-0.6 0,0.1 Q 0.9,-0.6 1.8,0.7" />
+          </g>
+          <!-- Bird 3 -->
+          <g transform="translate(-2.5, -6)">
+            <ellipse class="bird-shadow" cx="0" cy="8" rx="1.0" ry="0.35" />
+            <path class="bird-silhouette" d="M -1.8,0.7 Q -0.9,-0.6 0,0.1 Q 0.9,-0.6 1.8,0.7" />
+          </g>
+        </g>
+
+        <!-- Gentle Breeze Streaks & Leaves -->
+        <g class="ambient-breeze-group">
+          <path class="breeze-trail breeze-1" d="M 12,68 Q 50,48 92,66 T 172,58" />
+          <path class="breeze-trail breeze-2" d="M 28,118 Q 72,98 116,118 T 184,112" />
+
+          <!-- Drifting Leaves -->
+          <g class="drifting-leaf leaf-1">
+            <ellipse cx="0" cy="0" rx="0.75" ry="0.38" fill="#27AE60" opacity="0.8" />
+          </g>
+          <g class="drifting-leaf leaf-2">
+            <ellipse cx="0" cy="0" rx="0.65" ry="0.32" fill="#1ABC9C" opacity="0.85" />
+          </g>
+          <g class="drifting-leaf leaf-3">
+            <ellipse cx="0" cy="0" rx="0.7" ry="0.35" fill="#196F3D" opacity="0.75" />
+          </g>
+        </g>
+      </g>
     </svg>
 
   </main>

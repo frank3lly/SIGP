@@ -262,20 +262,20 @@ export async function renderAdminDashboard(store, token) {
         </div>
       </section>
 
-      <!-- Section 2: Mapeo de Espacios (1:1 Cámaras ↔ Cliente) -->
+      <!-- Section 2: Espacios de Estacionamiento -->
       <section class="admin-section" id="adminMappingSection">
         <div class="admin-section-header">
           <div>
-            <h3>Mapeo de Espacios (1:1 Cámaras ↔ Cliente)</h3>
-            <p>Correspondencia directa entre polígonos de @config/cameras/ (spot_01, spot_02...) y el identificador único real en el cliente.</p>
+            <h3>Espacios de Estacionamiento</h3>
+            <p>Supervisión y búsqueda de plazas activas.</p>
           </div>
           <div class="admin-mapping-controls">
-            <input type="text" id="adminMappingSearch" class="admin-input-search" placeholder="Filtrar por spot_01, R1-A01, hilera..." />
+            <input type="text" id="adminMappingSearch" class="admin-input-search" placeholder="Buscar plaza, hilera o código..." />
             <select id="adminMappingCamFilter" class="admin-select">
-              <option value="cam_01">Cámara 01 (Hilera R1 • 28 spots)</option>
-              <option value="cam_02">Cámara 02 (Hileras L1-L2 • 40 spots)</option>
-              <option value="cam_03">Cámara 03 (Sector Central • 100 spots)</option>
-              <option value="all">Todas las plazas mapeadas (168)</option>
+              <option value="cam_01">Cámara 01 (Hilera R1)</option>
+              <option value="cam_02">Cámara 02 (Hileras L1-L2)</option>
+              <option value="cam_03">Cámara 03 (Sector Central)</option>
+              <option value="all">Todas las cámaras</option>
             </select>
             <button class="admin-btn-refresh" id="adminRefreshMappingBtn" title="Refrescar tabla">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
@@ -285,27 +285,28 @@ export async function renderAdminDashboard(store, token) {
         </div>
 
         <div class="admin-mapping-stats" id="adminMappingStats">
-          <!-- Estadísticas dinámicas -->
+          <!-- Estadísticas limpias -->
         </div>
 
         <div class="admin-mapping-table-wrap">
           <table class="admin-mapping-table">
             <thead>
               <tr>
-                <th>Spot Config (Cámara)</th>
-                <th>ID Real Cliente</th>
-                <th>Nº UI (Hilera)</th>
-                <th>Sector / Ubicación</th>
+                <th>Código</th>
+                <th>Plaza</th>
+                <th>Ubicación</th>
                 <th>Cámara</th>
-                <th>Estado Actual</th>
+                <th>Estado</th>
                 <th>Acción</th>
               </tr>
             </thead>
             <tbody id="adminMappingTbody">
-              <!-- Filas generadas dinámicamente -->
+              <!-- Filas generadas dinámicamente (máx 5) -->
             </tbody>
           </table>
         </div>
+
+        <div class="admin-mapping-pagination" id="adminMappingPagination"></div>
       </section>
 
       <!-- Section 3: Hardware Photo Gallery -->
@@ -376,15 +377,19 @@ export async function renderAdminDashboard(store, token) {
 }
 
 /**
- * Controller for Spot Mapping Section (1:1 Cameras <-> Client)
+ * Controller for Spot Mapping Section (Limited to 5 results with pagination)
  */
 function renderMappingSection(store, container) {
   const tbody = container.querySelector('#adminMappingTbody');
   const statsEl = container.querySelector('#adminMappingStats');
+  const paginationEl = container.querySelector('#adminMappingPagination');
   const camFilter = container.querySelector('#adminMappingCamFilter');
   const searchInput = container.querySelector('#adminMappingSearch');
   const refreshBtn = container.querySelector('#adminRefreshMappingBtn');
   if (!tbody) return;
+
+  const PAGE_SIZE = 5;
+  let currentPage = 1;
 
   function update() {
     const selectedCam = camFilter ? camFilter.value : 'cam_01';
@@ -403,21 +408,28 @@ function renderMappingSection(store, container) {
       );
     });
 
+    const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIdx = (currentPage - 1) * PAGE_SIZE;
+    const paginated = filtered.slice(startIdx, startIdx + PAGE_SIZE);
+
     if (statsEl) {
-      const camLabel = selectedCam === 'all' ? 'Todas las plazas mapeadas' : (CAMERA_METADATA[selectedCam]?.name || selectedCam);
+      const camLabel = selectedCam === 'all' ? 'Todas las cámaras' : (CAMERA_METADATA[selectedCam]?.name || selectedCam);
       statsEl.innerHTML = `
-        <div class="stat-item"><span>Cámara seleccionada:</span> <strong>${camLabel}</strong></div>
-        <div class="stat-item"><span>Espacios listados:</span> <strong>${filtered.length} de ${entries.length}</strong></div>
-        <div class="stat-item"><span>Mapeo:</span> <strong style="color:#16a34a;">1:1 Directo (spot_XX ↔ ID Real Cliente)</strong></div>
+        <div class="stat-item"><span>Cámara:</span> <strong>${camLabel}</strong></div>
+        <div class="stat-item"><span>Mostrando:</span> <strong>${filtered.length > 0 ? (startIdx + 1) : 0} - ${Math.min(filtered.length, startIdx + PAGE_SIZE)} de ${filtered.length} plazas</strong></div>
       `;
     }
 
     if (filtered.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#64748b;">No se encontraron espacios que coincidan con la búsqueda.</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:24px; color:#64748b;">No se encontraron espacios que coincidan con la búsqueda.</td></tr>`;
+      if (paginationEl) paginationEl.innerHTML = '';
       return;
     }
 
-    tbody.innerHTML = filtered
+    tbody.innerHTML = paginated
       .map((entry) => {
         const spotData = spotsState[entry.slotId] || {};
         const status = spotData.status || 'unknown';
@@ -427,18 +439,37 @@ function renderMappingSection(store, container) {
           <tr>
             <td><code class="admin-spot-badge">${entry.internalId}</code></td>
             <td><strong class="admin-slot-id">${entry.slotId}</strong></td>
-            <td><span class="admin-ui-num">Plaza ${entry.uiNum}</span></td>
             <td>${entry.sector}</td>
             <td><span class="admin-cam-pill">${entry.cameraId}</span></td>
             <td><span class="admin-status-pill ${status}">${statusLabel}</span></td>
             <td>
               <button class="admin-btn-table-action btn-locate-spot" data-id="${entry.slotId}" title="Ver y centrar en el mapa">Ver en Mapa</button>
-              <button class="admin-btn-table-action btn-copy-spot" data-copy="${entry.internalId}" title="Copiar identificador">Copiar ID</button>
+              <button class="admin-btn-table-action btn-copy-spot" data-copy="${entry.internalId}" title="Copiar identificador">Copiar</button>
             </td>
           </tr>
         `;
       })
       .join('');
+
+    // Pagination controls
+    if (paginationEl) {
+      paginationEl.innerHTML = `
+        <button class="admin-pagination-btn" id="adminPrevPage" ${currentPage === 1 ? 'disabled' : ''}>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+          <span>Anterior</span>
+        </button>
+        <span class="admin-pagination-info">Página ${currentPage} de ${totalPages}</span>
+        <button class="admin-pagination-btn" id="adminNextPage" ${currentPage === totalPages ? 'disabled' : ''}>
+          <span>Siguiente</span>
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+        </button>
+      `;
+
+      const prevBtn = paginationEl.querySelector('#adminPrevPage');
+      const nextBtn = paginationEl.querySelector('#adminNextPage');
+      if (prevBtn) prevBtn.addEventListener('click', () => { if (currentPage > 1) { currentPage--; update(); } });
+      if (nextBtn) nextBtn.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; update(); } });
+    }
 
     // Bind locate buttons
     tbody.querySelectorAll('.btn-locate-spot').forEach((btn) => {
@@ -476,8 +507,8 @@ function renderMappingSection(store, container) {
     });
   }
 
-  if (camFilter) camFilter.addEventListener('change', update);
-  if (searchInput) searchInput.addEventListener('input', update);
+  if (camFilter) camFilter.addEventListener('change', () => { currentPage = 1; update(); });
+  if (searchInput) searchInput.addEventListener('input', () => { currentPage = 1; update(); });
   if (refreshBtn) refreshBtn.addEventListener('click', update);
 
   update();

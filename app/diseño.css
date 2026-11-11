@@ -433,23 +433,34 @@
       user-select: none;
     }
 
-    @keyframes mapGlideUp {
+    @keyframes mapCoinFlip {
       0% {
         opacity: 0;
-        transform: translateY(32px) scale(0.97);
+        transform: perspective(1400px) rotateY(-90deg) scale(0.68);
+        filter: brightness(1.2) drop-shadow(0 20px 30px rgba(15, 23, 42, 0.45));
       }
-      60% {
+      45% {
         opacity: 0.9;
+        transform: perspective(1400px) rotateY(-20deg) scale(1.03);
+      }
+      70% {
+        transform: perspective(1400px) rotateY(9deg) scale(0.99);
+      }
+      85% {
+        transform: perspective(1400px) rotateY(-3deg) scale(1.01);
       }
       100% {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: perspective(1400px) rotateY(0deg) scale(1);
+        filter: brightness(1) drop-shadow(0 0 0 rgba(0, 0, 0, 0));
       }
     }
 
     .map-viewport-entering {
-      animation: mapGlideUp 750ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-      will-change: transform, opacity;
+      animation: mapCoinFlip 950ms cubic-bezier(0.2, 0.9, 0.32, 1) forwards;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
+      will-change: transform, opacity, filter;
     }
 
     .map-svg {
@@ -623,6 +634,254 @@
     .spot-node.dimmed {
       opacity: 0.18;
       pointer-events: none;
+    }
+
+    /* ========================================================================
+       AMBIENT LIVING LOT (CARS, BIRDS, GENTLE BREEZE)
+       ======================================================================== */
+    .ambient-layer,
+    .ambient-sky {
+      pointer-events: none;
+    }
+
+    .car-shadow {
+      fill: rgba(15, 23, 42, 0.22);
+      filter: blur(0.35px);
+    }
+
+    /* Ambient Mini-Cars */
+    .ambient-car {
+      will-change: transform, opacity;
+    }
+
+    @keyframes driveCentralLane {
+      0% {
+        transform: translate(50px, 34px) rotate(58.5deg);
+        opacity: 0;
+      }
+      4% {
+        opacity: 1;
+      }
+      86% {
+        opacity: 1;
+      }
+      94%, 100% {
+        transform: translate(128px, 162px) rotate(58.5deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes driveEastLane {
+      0% {
+        transform: translate(92px, 42px) rotate(58.5deg);
+        opacity: 0;
+      }
+      4% {
+        opacity: 1;
+      }
+      86% {
+        opacity: 1;
+      }
+      94%, 100% {
+        transform: translate(146px, 132px) rotate(58.5deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes driveWestLane {
+      0% {
+        transform: translate(32px, 64px) rotate(58.5deg);
+        opacity: 0;
+      }
+      4% {
+        opacity: 1;
+      }
+      86% {
+        opacity: 1;
+      }
+      94%, 100% {
+        transform: translate(82px, 146px) rotate(58.5deg);
+        opacity: 0;
+      }
+    }
+
+    .ambient-car.car-1 {
+      animation: driveCentralLane 22s cubic-bezier(0.35, 0, 0.25, 1) infinite;
+    }
+
+    .ambient-car.car-2 {
+      animation: driveEastLane 26s cubic-bezier(0.35, 0, 0.25, 1) 9s infinite;
+      opacity: 0;
+    }
+
+    .ambient-car.car-3 {
+      animation: driveWestLane 28s cubic-bezier(0.35, 0, 0.25, 1) 18s infinite;
+      opacity: 0;
+    }
+
+    /* Flocking Birds */
+    .bird-silhouette {
+      fill: none;
+      stroke: #475569;
+      stroke-width: 0.35;
+      stroke-linecap: round;
+      transform-origin: center;
+      animation: birdWingFlap 0.36s ease-in-out infinite alternate;
+    }
+
+    .bird-shadow {
+      fill: rgba(15, 23, 42, 0.08);
+    }
+
+    @keyframes birdWingFlap {
+      0% {
+        transform: scaleY(1);
+      }
+      100% {
+        transform: scaleY(0.35);
+      }
+    }
+
+    @keyframes flockFlight {
+      0%, 72% {
+        transform: translate(-30px, 35px) rotate(-14deg);
+        opacity: 0;
+      }
+      75% {
+        opacity: 0.85;
+      }
+      92% {
+        opacity: 0.85;
+      }
+      96%, 100% {
+        transform: translate(225px, 155px) rotate(-14deg);
+        opacity: 0;
+      }
+    }
+
+    .ambient-flock {
+      animation: flockFlight 28s linear infinite;
+      opacity: 0;
+      will-change: transform, opacity;
+    }
+
+    /* Breeze & Drifting Leaves */
+    .breeze-trail {
+      fill: none;
+      stroke: rgba(255, 255, 255, 0.45);
+      stroke-width: 0.5px;
+      stroke-linecap: round;
+      stroke-dasharray: 8 16;
+      opacity: 0;
+      will-change: stroke-dashoffset, opacity;
+    }
+
+    @keyframes breezeDrift1 {
+      0%, 75% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+      }
+      78% {
+        opacity: 0.6;
+      }
+      88% {
+        opacity: 0.6;
+      }
+      95%, 100% {
+        stroke-dashoffset: -48;
+        opacity: 0;
+      }
+    }
+
+    @keyframes breezeDrift2 {
+      0%, 60% {
+        stroke-dashoffset: 0;
+        opacity: 0;
+      }
+      64% {
+        opacity: 0.5;
+      }
+      76% {
+        opacity: 0.5;
+      }
+      84%, 100% {
+        stroke-dashoffset: -44;
+        opacity: 0;
+      }
+    }
+
+    .breeze-trail.breeze-1 {
+      animation: breezeDrift1 20s ease-in-out infinite;
+    }
+
+    .breeze-trail.breeze-2 {
+      animation: breezeDrift2 24s ease-in-out 7s infinite;
+    }
+
+    @keyframes leafDrift1 {
+      0%, 70% {
+        transform: translate(25px, 60px) rotate(0deg);
+        opacity: 0;
+      }
+      73% {
+        opacity: 0.85;
+      }
+      88% {
+        opacity: 0.85;
+      }
+      95%, 100% {
+        transform: translate(75px, 95px) rotate(180deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes leafDrift2 {
+      0%, 65% {
+        transform: translate(75px, 35px) rotate(45deg);
+        opacity: 0;
+      }
+      68% {
+        opacity: 0.85;
+      }
+      85% {
+        opacity: 0.85;
+      }
+      93%, 100% {
+        transform: translate(120px, 75px) rotate(240deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes leafDrift3 {
+      0%, 80% {
+        transform: translate(45px, 110px) rotate(20deg);
+        opacity: 0;
+      }
+      83% {
+        opacity: 0.8;
+      }
+      94% {
+        opacity: 0.8;
+      }
+      98%, 100% {
+        transform: translate(95px, 145px) rotate(210deg);
+        opacity: 0;
+      }
+    }
+
+    .drifting-leaf.leaf-1 {
+      animation: leafDrift1 19s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    .drifting-leaf.leaf-2 {
+      animation: leafDrift2 23s ease-in-out 6s infinite;
+      opacity: 0;
+    }
+
+    .drifting-leaf.leaf-3 {
+      animation: leafDrift3 27s ease-in-out 12s infinite;
+      opacity: 0;
     }
 
     /* ========================================================================
@@ -2149,6 +2408,49 @@
   background: #0284c7;
   border-color: #0284c7;
   color: #ffffff;
+}
+
+.admin-mapping-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.admin-pagination-btn {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.admin-pagination-btn:hover:not(:disabled) {
+  background: var(--bg-surface);
+  border-color: var(--color-secondary);
+  color: var(--color-secondary);
+}
+
+.admin-pagination-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-pagination-info {
+  font-weight: 600;
+  color: var(--text-main);
 }
 
 /* Lightbox Modal */
