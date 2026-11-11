@@ -177,7 +177,7 @@ Every single spot in the entire map must strictly have:
 
 ## 5. Pure Uniform Zoom Engine
 
-The zoom engine scales the map smoothly and symmetrically from the true geometric center $(92, 91)$. Panning or dragging left/right/up/down is strictly disabled.
+The zoom engine scales the map smoothly and symmetrically from the true geometric center $(92, 91)$. Scrolling the mouse wheel displaces the page naturally, while holding `Ctrl` + wheel or using the zoom widget scales the map.
 
 ### 5.1 CSS Zoom Setup
 ```css
@@ -185,12 +185,13 @@ The zoom engine scales the map smoothly and symmetrically from the true geometri
   position: relative;
   flex: 1;
   width: 100%;
-  height: calc(100vh - 128px);
+  min-height: calc(100vh - 128px);
   background-color: #f8fafc;
-  overflow: hidden;
+  overflow: visible;
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 24px 20px 48px;
 }
 
 .map-svg {
@@ -239,11 +240,13 @@ document.getElementById('btnResetZoom').addEventListener('click', (e) => {
   updateZoom(1.0);
 });
 
-// Mouse wheel zoom only (no dragging or panning)
+// Wheel scroll: natural page scroll. Zoom via wheel only with Ctrl/Cmd.
 document.getElementById('mapContainer').addEventListener('wheel', (e) => {
-  e.preventDefault();
-  const delta = e.deltaY < 0 ? zoomStep : -zoomStep;
-  updateZoom(currentZoom + delta);
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault();
+    const delta = e.deltaY < 0 ? zoomStep : -zoomStep;
+    updateZoom(currentZoom + delta);
+  }
 }, { passive: false });
 ```
 
