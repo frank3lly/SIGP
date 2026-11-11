@@ -1951,6 +1951,190 @@
   border-radius: 3px;
 }
 
+/* Spot Mapping Section (1:1 Cameras <-> Client) */
+.admin-mapping-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-input-search {
+  padding: 7px 14px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 13px;
+  font-family: inherit;
+  min-width: 240px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.admin-input-search:focus {
+  border-color: var(--color-secondary);
+}
+
+.admin-mapping-stats {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 10px 16px;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.admin-mapping-stats .stat-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-mapping-stats .stat-item strong {
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+
+.admin-mapping-table-wrap {
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+  box-shadow: var(--shadow-sm);
+}
+
+.admin-mapping-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 13px;
+}
+
+.admin-mapping-table th {
+  background: var(--bg-surface);
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.admin-mapping-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.admin-mapping-table tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-mapping-table tr:hover td {
+  background: #f8fafc;
+}
+
+.admin-spot-badge {
+  display: inline-block;
+  padding: 3px 8px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-slot-id {
+  font-family: monospace;
+  font-size: 13px;
+  color: var(--color-secondary);
+  font-weight: 700;
+}
+
+.admin-ui-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: #f1f5f9;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.admin-cam-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #475569;
+  padding: 2px 7px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.admin-status-pill.free {
+  background: var(--color-free-bg);
+  color: #15803d;
+  border: 1px solid var(--color-free-border);
+}
+
+.admin-status-pill.occupied {
+  background: var(--color-occupied-bg);
+  color: #b91c1c;
+  border: 1px solid var(--color-occupied-border);
+}
+
+.admin-status-pill.unknown {
+  background: #f1f5f9;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+}
+
+.admin-btn-table-action {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  background: #ffffff;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-right: 6px;
+}
+
+.admin-btn-table-action:hover {
+  background: var(--color-secondary);
+  color: #ffffff;
+  border-color: var(--color-secondary);
+}
+
+.admin-btn-table-action.btn-copy-spot:hover {
+  background: #0284c7;
+  border-color: #0284c7;
+  color: #ffffff;
+}
+
 /* Lightbox Modal */
 .admin-lightbox {
   position: fixed;

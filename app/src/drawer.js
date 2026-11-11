@@ -49,6 +49,8 @@ export function openSpot(spotId, node, store) {
   const drawerStatusText = document.getElementById('drawerStatusText');
   const drawerStatusDesc = document.getElementById('drawerStatusDesc');
   const drawerId = document.getElementById('drawerId');
+  const drawerCameraSpot = document.getElementById('drawerCameraSpot');
+  const drawerUiNum = document.getElementById('drawerUiNum');
   const drawerLoc = document.getElementById('drawerLoc');
   const drawerConf = document.getElementById('drawerConf');
   const drawerGps = document.getElementById('drawerGps');
@@ -77,9 +79,20 @@ export function openSpot(spotId, node, store) {
   if (drawerTitle) drawerTitle.textContent = 'Espacio ' + spot.id;
   if (drawerZone) drawerZone.textContent = spot.zone;
   if (drawerId) drawerId.textContent = spot.id;
+  if (drawerUiNum) drawerUiNum.textContent = spot.ui_num ? 'Plaza ' + spot.ui_num : '--';
   if (drawerLoc) drawerLoc.textContent = spot.zone + ' (' + spot.side + ')';
   if (drawerConf) drawerConf.textContent = (spot.hasServerData && spot.conf != null) ? spot.conf.toFixed(0) + '%' : 'N/A';
   if (drawerGps) drawerGps.textContent = spot.lat.toFixed(6) + ', ' + spot.lng.toFixed(6);
+
+  // Camera preview & mapping info
+  const camInfo = getSpotCameraInfo(spotId);
+  if (drawerCameraSpot) {
+    if (camInfo) {
+      drawerCameraSpot.textContent = camInfo.internalId + ' (' + camInfo.cameraId + ')';
+    } else {
+      drawerCameraSpot.textContent = 'No asignado';
+    }
+  }
 
   if (drawerCard) {
     drawerCard.className = 'drawer-card ' + (spot.status || 'unknown');
@@ -108,7 +121,6 @@ export function openSpot(spotId, node, store) {
   }
 
   // Camera preview
-  const camInfo = getSpotCameraInfo(spotId);
   if (camInfo && drawerCameraSection) {
     drawerCameraSection.style.display = 'flex';
     if (drawerCamName) drawerCamName.textContent = camInfo.cameraName;

@@ -68,6 +68,27 @@ export function mapCameraSpotToSlotId(cameraId, internalSpotId) {
   return null;
 }
 
+export function getMappingEntries(filterCameraId = 'all') {
+  const entries = [];
+  for (const [camId, spotList] of Object.entries(CAMERA_SPOTS_MAP)) {
+    if (filterCameraId !== 'all' && filterCameraId !== camId) continue;
+    spotList.forEach((slotId, index) => {
+      const match = slotId.match(/(\d+)$/);
+      const uiNum = match ? match[1] : String(index + 1).padStart(2, '0');
+      entries.push({
+        internalId: 'spot_' + String(index + 1).padStart(2, '0'),
+        slotId: slotId,
+        uiNum: uiNum,
+        cameraId: camId,
+        cameraName: CAMERA_METADATA[camId]?.name || camId,
+        sector: CAMERA_METADATA[camId]?.sector || '',
+        index: index + 1,
+      });
+    });
+  }
+  return entries;
+}
+
 if (typeof window !== 'undefined') {
   window.SGIPMapping = {
     CAMERA_SPOTS_MAP,
@@ -75,5 +96,6 @@ if (typeof window !== 'undefined') {
     SPOT_TO_CAMERA_MAP,
     getSpotCameraInfo,
     mapCameraSpotToSlotId,
+    getMappingEntries,
   };
 }

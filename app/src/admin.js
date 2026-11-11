@@ -13,6 +13,7 @@ import {
   updateCameraConfig,
   getBaseUrl,
 } from './api.js';
+import { getMappingEntries, CAMERA_METADATA } from './mapping.js';
 
 export function resolveMediaUrl(url, token) {
   if (!url) return '';
@@ -261,7 +262,53 @@ export async function renderAdminDashboard(store, token) {
         </div>
       </section>
 
-      <!-- Section 2: Hardware Photo Gallery -->
+      <!-- Section 2: Mapeo de Espacios (1:1 Cámaras ↔ Cliente) -->
+      <section class="admin-section" id="adminMappingSection">
+        <div class="admin-section-header">
+          <div>
+            <h3>Mapeo de Espacios (1:1 Cámaras ↔ Cliente)</h3>
+            <p>Correspondencia directa entre polígonos de @config/cameras/ (spot_01, spot_02...) y el identificador único real en el cliente.</p>
+          </div>
+          <div class="admin-mapping-controls">
+            <input type="text" id="adminMappingSearch" class="admin-input-search" placeholder="Filtrar por spot_01, R1-A01, hilera..." />
+            <select id="adminMappingCamFilter" class="admin-select">
+              <option value="cam_01">Cámara 01 (Hilera R1 • 28 spots)</option>
+              <option value="cam_02">Cámara 02 (Hileras L1-L2 • 40 spots)</option>
+              <option value="cam_03">Cámara 03 (Sector Central • 100 spots)</option>
+              <option value="all">Todas las plazas mapeadas (168)</option>
+            </select>
+            <button class="admin-btn-refresh" id="adminRefreshMappingBtn" title="Refrescar tabla">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+              <span>Actualizar</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-mapping-stats" id="adminMappingStats">
+          <!-- Estadísticas dinámicas -->
+        </div>
+
+        <div class="admin-mapping-table-wrap">
+          <table class="admin-mapping-table">
+            <thead>
+              <tr>
+                <th>Spot Config (Cámara)</th>
+                <th>ID Real Cliente</th>
+                <th>Nº UI (Hilera)</th>
+                <th>Sector / Ubicación</th>
+                <th>Cámara</th>
+                <th>Estado Actual</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="adminMappingTbody">
+              <!-- Filas generadas dinámicamente -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 3: Hardware Photo Gallery -->
       <section class="admin-section">
         <div class="admin-section-header">
           <h3>Galería de Capturas</h3>
@@ -324,7 +371,111 @@ export async function renderAdminDashboard(store, token) {
 
   // Initial Data Fetch
   loadCameras(token, container);
+  renderMappingSection(store, container);
   loadGallery(token, container, '');
+}
+
+/**
+ * Controller for Spot Mapping Section (1:1 Cameras <-> Client)
+ */
+function renderMappingSection(store, container) {
+  const tbody = container.querySelector('#adminMappingTbody');
+  const statsEl = container.querySelector('#adminMappingStats');
+  const camFilter = container.querySelector('#adminMappingCamFilter');
+  const searchInput = container.querySelector('#adminMappingSearch');
+  const refreshBtn = container.querySelector('#adminRefreshMappingBtn');
+  if (!tbody) return;
+
+  function update() {
+    const selectedCam = camFilter ? camFilter.value : 'cam_01';
+    const query = (searchInput ? searchInput.value : '').trim().toLowerCase();
+    const entries = getMappingEntries(selectedCam);
+    const spotsState = store.getState().spots || {};
+
+    const filtered = entries.filter((e) => {
+      if (!query) return true;
+      return (
+        e.internalId.toLowerCase().includes(query) ||
+        e.slotId.toLowerCase().includes(query) ||
+        e.uiNum.toLowerCase().includes(query) ||
+        e.sector.toLowerCase().includes(query) ||
+        e.cameraId.toLowerCase().includes(query)
+      );
+    });
+
+    if (statsEl) {
+      const camLabel = selectedCam === 'all' ? 'Todas las plazas mapeadas' : (CAMERA_METADATA[selectedCam]?.name || selectedCam);
+      statsEl.innerHTML = `
+        <div class="stat-item"><span>Cámara seleccionada:</span> <strong>${camLabel}</strong></div>
+        <div class="stat-item"><span>Espacios listados:</span> <strong>${filtered.length} de ${entries.length}</strong></div>
+        <div class="stat-item"><span>Mapeo:</span> <strong style="color:#16a34a;">1:1 Directo (spot_XX ↔ ID Real Cliente)</strong></div>
+      `;
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:24px; color:#64748b;">No se encontraron espacios que coincidan con la búsqueda.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered
+      .map((entry) => {
+        const spotData = spotsState[entry.slotId] || {};
+        const status = spotData.status || 'unknown';
+        const statusLabel = status === 'free' ? 'Libre' : status === 'occupied' ? 'Ocupado' : (status === 'warning' ? 'Revisión' : 'Sin datos');
+
+        return `
+          <tr>
+            <td><code class="admin-spot-badge">${entry.internalId}</code></td>
+            <td><strong class="admin-slot-id">${entry.slotId}</strong></td>
+            <td><span class="admin-ui-num">Plaza ${entry.uiNum}</span></td>
+            <td>${entry.sector}</td>
+            <td><span class="admin-cam-pill">${entry.cameraId}</span></td>
+            <td><span class="admin-status-pill ${status}">${statusLabel}</span></td>
+            <td>
+              <button class="admin-btn-table-action btn-locate-spot" data-id="${entry.slotId}" title="Ver y centrar en el mapa">Ver en Mapa</button>
+              <button class="admin-btn-table-action btn-copy-spot" data-copy="${entry.internalId}" title="Copiar identificador">Copiar ID</button>
+            </td>
+          </tr>
+        `;
+      })
+      .join('');
+
+    // Bind locate buttons
+    tbody.querySelectorAll('.btn-locate-spot').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const slotId = btn.getAttribute('data-id');
+        cleanupAdminViews();
+        if (window.location.hash === '#admin') {
+          window.location.hash = '';
+        } else {
+          window.history.pushState(null, '', '/');
+        }
+        setTimeout(() => {
+          const node = document.querySelector(`.spot-node[data-id="${slotId}"]`);
+          if (node) {
+            node.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }));
+          }
+        }, 90);
+      });
+    });
+
+    // Bind copy buttons
+    tbody.querySelectorAll('.btn-copy-spot').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const textToCopy = btn.getAttribute('data-copy');
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(textToCopy);
+        }
+        showAdminToast(`Copiado: ${textToCopy}`);
+      });
+    });
+  }
+
+  if (camFilter) camFilter.addEventListener('change', update);
+  if (searchInput) searchInput.addEventListener('input', update);
+  if (refreshBtn) refreshBtn.addEventListener('click', update);
+
+  update();
 }
 
 async function loadCameras(token, container) {
