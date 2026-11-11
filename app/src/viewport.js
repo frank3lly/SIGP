@@ -5,6 +5,20 @@
 
 import { CONFIG } from './config.js';
 
+export function getSpotCentroid(spotElement) {
+  try {
+    const bbox = spotElement.getBBox();
+    return {
+      cx: bbox.x + bbox.width / 2,
+      cy: bbox.y + bbox.height / 2,
+      width: bbox.width,
+      height: bbox.height,
+    };
+  } catch {
+    return { cx: 92, cy: 91, width: 8, height: 16 };
+  }
+}
+
 export class ViewportController {
   constructor(containerEl, svgEl, zoomLayerEl, badgeEl) {
     this.container = containerEl;
@@ -306,6 +320,46 @@ export class ViewportController {
         this.animId = null;
       }
     };
+    this.animId = requestAnimationFrame(animate);
+  }
+
+  zoomToSpot(cx, cy, targetScale = 2.25, durationMs = 450) {
+    this.cancelAnimation();
+
+    const startScale = this.scale;
+    const startX = this.x;
+    const startY = this.y;
+
+    let effectiveCenterY = this.viewBoxCenterY;
+    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+      // Offset visible center upwards to account for mobile bottom drawer
+      effectiveCenterY = this.viewBoxCenterY - 14;
+    }
+
+    const targetX = this.viewBoxCenterX - cx * targetScale;
+    const targetY = effectiveCenterY - cy * targetScale;
+
+    const startTime = performance.now();
+
+    const animate = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(1.0, elapsed / durationMs);
+      const ease = 1 - Math.pow(1 - progress, 3); // cubic ease out
+
+      this.scale = startScale + (targetScale - startScale) * ease;
+      this.x = startX + (targetX - startX) * ease;
+      this.y = startY + (targetY - startY) * ease;
+
+      this.clampBounds();
+      this.applyTransform();
+
+      if (progress < 1.0) {
+        this.animId = requestAnimationFrame(animate);
+      } else {
+        this.animId = null;
+      }
+    };
+
     this.animId = requestAnimationFrame(animate);
   }
 

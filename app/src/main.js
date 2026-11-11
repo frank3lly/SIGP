@@ -7,7 +7,7 @@ import { spotsDatabase } from './spots-data.js';
 import { Store } from './state.js';
 import { mapCameraSpotToSlotId } from './mapping.js';
 import { PollingManager, fetchAnalyticsSummary, fetchAnalyticsTimeline } from './api.js';
-import { ViewportController } from './viewport.js';
+import { ViewportController, getSpotCentroid } from './viewport.js';
 import { initDrawer, openSpot, closeDrawer } from './drawer.js';
 import { isAdminRouteRequested, initAdmin } from './admin.js';
 
@@ -69,9 +69,20 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
       const spotId = node.getAttribute('data-id');
+      const centroid = getSpotCentroid(node);
+      viewport.zoomToSpot(centroid.cx, centroid.cy);
       openSpot(spotId, node, store);
     });
   });
+
+  // Clicking neutral canvas background closes drawer & unfocuses
+  if (mapContainer) {
+    mapContainer.addEventListener('click', (e) => {
+      if (viewport.hasMovedSignificantly) return;
+      if (e.target.closest('.spot-node') || e.target.closest('.zoom-widget')) return;
+      closeDrawer(store);
+    });
+  }
 
   // 5. Filter Buttons
   const filterBtns = document.querySelectorAll('.filter-btn');

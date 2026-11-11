@@ -585,6 +585,19 @@
       filter: drop-shadow(0 0 4px #ffffff);
     }
 
+    .spot-node.active-spot .spot-rect,
+    .spot-node.active-spot .spot-poly {
+      stroke: #2563eb !important;
+      stroke-width: 0.85px !important;
+      filter: drop-shadow(0 0 4px rgba(37, 99, 235, 0.9)) !important;
+    }
+
+    .spot-node.active-spot .spot-num,
+    .spot-node.active-spot .spot-badge {
+      font-weight: 800;
+      fill: #ffffff !important;
+    }
+
     .spot-node.dimmed {
       opacity: 0.18;
       pointer-events: none;
