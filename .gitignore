@@ -38,6 +38,16 @@ tests/reports/
 # Dependencias de Node.js
 node_modules/
 
+# Variables de entorno
+.env
+.env.local
+.env.*.local
+app/.env
+app/.env.local
+app/.env.*.local
+!.env.example
+!app/.env.example
+
 # Archivos locales de Visual Studio
 .vs/
 
