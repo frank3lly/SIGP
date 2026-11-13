@@ -5,6 +5,7 @@ from pathlib import Path
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from server.routers.admin import router as admin_router
@@ -71,6 +72,12 @@ def root():
         "health_url": "/api/v1/health",
         "status_url": "/api/v1/status",
     }
+
+
+@app.get("/admin", include_in_schema=False)
+def admin_redirect():
+    """Redirect web browser /admin navigation to the web frontend admin dashboard."""
+    return RedirectResponse(url="https://sigp-ndwa.onrender.com/#admin")
 
 
 if __name__ == "__main__":

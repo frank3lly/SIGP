@@ -26,7 +26,7 @@ function resolveApiBaseUrl() {
   }
 
   // 5. Production Cloud Backend (Render default)
-  return 'https://parqueame-api.onrender.com';
+  return 'https://sigp-api-4vi0.onrender.com';
 }
 
 const env = typeof import.meta !== 'undefined' ? import.meta.env || {} : {};
