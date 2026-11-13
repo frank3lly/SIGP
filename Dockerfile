@@ -17,17 +17,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install PyTorch with CUDA 12 support (fallback to CPU gracefully)
-RUN pip install --upgrade pip setuptools wheel && \
-    pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124 || \
-    pip install torch torchvision
-
-# Copy requirements and install
+# Copy requirements and install lean production dependencies
 COPY requirements.txt /workspace/
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install -r requirements.txt
 
-# Pre-cache YOLOv8n weights into the container image
-RUN python3 -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+# Copy ONNX model asset and verify session initialization
+COPY yolov8n.onnx /workspace/
+RUN python3 -c "import onnxruntime as ort; ort.InferenceSession('yolov8n.onnx')"
 
 # Copy application source code
 COPY detection/ /workspace/detection/
@@ -37,7 +34,6 @@ COPY simulation/ /workspace/simulation/
 COPY tools/ /workspace/tools/
 COPY tests/ /workspace/tests/
 COPY config/ /workspace/config/
-COPY yolov8n.pt /workspace/
 
 # Copy entrypoint script
 COPY docker-entrypoint.sh /workspace/docker-entrypoint.sh

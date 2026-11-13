@@ -17,7 +17,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
-import torch
+try:
+    import torch
+except ImportError:
+    torch = None
 from fastapi.testclient import TestClient
 
 # Ensure project root is in sys.path
@@ -40,7 +43,7 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 def measure_gpu_memory_mb() -> Tuple[float, float]:
     """Returns (currently_allocated_mb, max_allocated_mb)."""
-    if torch.cuda.is_available():
+    if torch is not None and torch.cuda.is_available():
         allocated = torch.cuda.memory_allocated() / (1024 * 1024)
         peak = torch.cuda.max_memory_allocated() / (1024 * 1024)
         return round(float(allocated), 2), round(float(peak), 2)
@@ -65,7 +68,7 @@ def run_benchmark(
     print("=" * 70)
 
     # 1. Hardware Inspection
-    cuda_available = torch.cuda.is_available()
+    cuda_available = torch is not None and torch.cuda.is_available()
     device_name = torch.cuda.get_device_name(0) if cuda_available else "CPU (Fallback)"
     print(f"Hardware Compute Device: {device_name}")
     print(
@@ -116,7 +119,7 @@ def run_benchmark(
                     )
                     assert res.status_code == 200, f"Warmup request {i} failed: {res.text}"
 
-                if cuda_available:
+                if cuda_available and torch is not None:
                     torch.cuda.reset_peak_memory_stats()
                 warmup_vram, _ = measure_gpu_memory_mb()
                 print(f"  [✓] Warm-up complete. Baseline VRAM: {warmup_vram:.2f} MB")
