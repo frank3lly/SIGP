@@ -156,7 +156,10 @@ async def upload_camera_frame(
     server_state.record_raw_image(camera_id, contents)
 
     # 4. Decoupled Test Mode: Check if test mode is enabled globally or per-camera
-    is_test_mode = server_state.test_mode_enabled or getattr(camera_cfg, "test_mode_enabled", False)
+    if server_state._test_mode_override is not None:
+        is_test_mode = server_state._test_mode_override
+    else:
+        is_test_mode = server_state.test_mode_enabled or getattr(camera_cfg, "test_mode_enabled", False)
     if is_test_mode:
         custom_dir = getattr(camera_cfg, "test_mode_sample_dir", None)
         sample_path = server_state.get_next_sample_frame(camera_id, sample_dir=custom_dir)

@@ -25,8 +25,8 @@ function resolveApiBaseUrl() {
     return window.__PARQUEAME_API_URL__.replace(/\/+$/, '');
   }
 
-  // 5. Production Cloud Backend (Hugging Face Spaces default)
-  return 'https://thegxnster-parqueame-server.hf.space';
+  // 5. Production Cloud Backend (Render default)
+  return 'https://parqueame-api.onrender.com';
 }
 
 const env = typeof import.meta !== 'undefined' ? import.meta.env || {} : {};

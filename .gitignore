@@ -13,6 +13,7 @@ ENV/
 runs/
 *.pt
 *.onnx
+!yolov8n.onnx
 
 # Data & Storage
 storage/data/

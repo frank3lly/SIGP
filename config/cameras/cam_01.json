@@ -597,7 +597,7 @@
     }
   ],
   "hot_config": {
-    "interval_seconds": 5,
+    "interval_seconds": 30,
     "active": true,
     "quality": 12,
     "firmware_version": "1.0.0"

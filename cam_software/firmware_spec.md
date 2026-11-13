@@ -175,8 +175,8 @@ Cada respuesta HTTP 200/201 a `POST /api/v1/upload/{camera_id}` retorna un objet
 | `firmware_version` | Cadena | Semantic Versioning | Identificador de versión esperada de la flota. |
 
 ### C. Resolución Dinámica de Host (Sin IPs Fijas)
-1. **Modo Nube (Hugging Face Spaces):**
-   - Host: `thegxnster-parqueame-server.hf.space`
+1. **Modo Nube (Render Web Service):**
+   - Host: `parqueame-api.onrender.com`
    - Puerto: `443`
    - Protocolo: HTTPS mediante `WiFiClientSecure` con `client.setInsecure()`.
 2. **Modo Local (mDNS / Zeroconf):**

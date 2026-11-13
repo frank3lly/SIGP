@@ -98,7 +98,9 @@ def run_tests() -> int:
             files={"file": ("vga_campus.jpg", sample_img_bytes, "image/jpeg")},
         )
         assert r_alias.status_code == 200, f"Alias upload failed: {r_alias.text}"
-        assert r_alias.json()["status"] == "success"
+        alias_data = r_alias.json()
+        assert alias_data["status"] == "success"
+        up_data = alias_data
         print("  [✓] Microcontroller upload alias (/upload/{camera_id}) verified.")
 
         # ---------------------------------------------------------

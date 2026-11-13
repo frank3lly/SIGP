@@ -7,8 +7,6 @@ import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-import torch
-
 from detection.config_loader import CameraConfig, load_camera_config
 from detection.detector import VehicleDetector
 from detection.occupancy import OccupancyResponse
@@ -46,7 +44,7 @@ class ServerState:
 
     def initialize(self, config_dir: str = "config/cameras") -> None:
         logger.info("Initializing ServerState: Preloading AI detector and camera configs...")
-        # 1. Initialize YOLOv8 Detector in GPU VRAM
+        # 1. Initialize ONNX Runtime Vehicle Detector
         self.detector = VehicleDetector()
 
         # 2. Preload Camera Configurations
@@ -205,13 +203,19 @@ class ServerState:
         )
 
     def get_health(self) -> HealthResponse:
-        cuda_ok = torch.cuda.is_available()
-        dev_name = "CPU"
-        if cuda_ok:
-            try:
-                dev_name = torch.cuda.get_device_name(0)
-            except Exception:
-                dev_name = "CUDA (Unknown Device)"
+        cuda_ok = False
+        dev_name = "CPU (ONNX Runtime)"
+        try:
+            import torch
+            cuda_ok = torch.cuda.is_available()
+            if cuda_ok:
+                try:
+                    dev_name = torch.cuda.get_device_name(0)
+                except Exception:
+                    dev_name = "CUDA (Unknown Device)"
+        except (ImportError, Exception):
+            cuda_ok = False
+            dev_name = "CPU (ONNX Runtime)"
 
         with self.lock:
             reg_count = len(self.camera_configs)
