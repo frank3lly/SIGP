@@ -34,6 +34,19 @@ def run_tests() -> int:
         sample_img_bytes = buf.tobytes()
 
     with TestClient(app) as client:
+        if not server_state.camera_configs:
+            from detection.config_loader import CameraConfig, SpotConfig
+            server_state.camera_configs["cam_01"] = CameraConfig(
+                camera_id="cam_01",
+                name="Campus Parking West",
+                reference_resolution=[1280, 720],
+                spots=[
+                    SpotConfig(
+                        id="A-01",
+                        polygon=[[10, 10], [100, 10], [100, 100], [10, 100]],
+                    )
+                ],
+            )
         # ---------------------------------------------------------
         # Phase 1: Root & Health Verification
         # ---------------------------------------------------------

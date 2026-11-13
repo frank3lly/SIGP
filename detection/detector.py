@@ -1,3 +1,4 @@
+import ctypes
 import logging
 import time
 from dataclasses import dataclass
@@ -16,6 +17,14 @@ TARGET_VEHICLE_CLASSES: Dict[int, str] = {
     5: "bus",
     7: "truck",
 }
+
+
+def _release_glibc_heap() -> None:
+    """Release unmapped glibc heap pages back to the OS on Linux systems."""
+    try:
+        ctypes.CDLL("libc.so.6").malloc_trim(0)
+    except Exception:
+        pass
 
 
 @dataclass(frozen=True)
@@ -147,26 +156,37 @@ class VehicleDetector:
         preds = outputs[0][0]  # Shape: (84, 8400)
         preds = np.transpose(preds, (1, 0))  # Shape: (8400, 84)
 
-        # 3. Filter candidate boxes for vehicle classes
+        # 3. Filter candidate boxes for vehicle classes (vectorized)
+        class_scores = preds[:, 4:]
+        cids = np.argmax(class_scores, axis=1)
+        confs = class_scores[np.arange(len(cids)), cids]
+
+        is_target = np.isin(cids, list(TARGET_VEHICLE_CLASSES.keys()))
+        mask = (confs >= effective_conf) & is_target
+
         boxes: List[List[int]] = []
         confidences: List[float] = []
         class_ids: List[int] = []
 
-        for row in preds:
-            class_scores = row[4:]
-            cid = int(np.argmax(class_scores))
-            conf = float(class_scores[cid])
+        if np.any(mask):
+            filtered_preds = preds[mask]
+            filtered_cids = cids[mask]
+            filtered_confs = confs[mask]
 
-            if conf >= effective_conf and cid in TARGET_VEHICLE_CLASSES:
-                cx, cy, bw, bh = row[0:4]
-                x1 = (cx - bw / 2.0 - pad_x) / r
-                y1 = (cy - bh / 2.0 - pad_y) / r
-                w_box = bw / r
-                h_box = bh / r
+            cx = filtered_preds[:, 0]
+            cy = filtered_preds[:, 1]
+            bw = filtered_preds[:, 2]
+            bh = filtered_preds[:, 3]
 
-                boxes.append([int(x1), int(y1), int(w_box), int(h_box)])
-                confidences.append(conf)
-                class_ids.append(cid)
+            x1 = (cx - bw / 2.0 - pad_x) / r
+            y1 = (cy - bh / 2.0 - pad_y) / r
+            w_box = bw / r
+            h_box = bh / r
+
+            for i in range(len(filtered_preds)):
+                boxes.append([int(round(x1[i])), int(round(y1[i])), int(round(w_box[i])), int(round(h_box[i]))])
+                confidences.append(float(filtered_confs[i]))
+                class_ids.append(int(filtered_cids[i]))
 
         # 4. Apply Non-Maximum Suppression (NMS)
         detections: List[VehicleDetection] = []
@@ -197,5 +217,6 @@ class VehicleDetector:
                     )
                 )
 
+        _release_glibc_heap()
         latency_ms = (time.time() - t0) * 1000.0
         return detections, round(latency_ms, 2)

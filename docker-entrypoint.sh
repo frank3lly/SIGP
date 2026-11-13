@@ -6,10 +6,12 @@ mkdir -p /workspace/storage/images
 mkdir -p /workspace/tests/output
 mkdir -p /workspace/tests/reports
 
+PORT="${PORT:-8000}"
+
 case "$1" in
   server)
-    echo "[Parqueame Docker] Starting FastAPI production server on 0.0.0.0:8000..."
-    exec uvicorn server.main:app --host 0.0.0.0 --port 8000 --workers 1
+    echo "[Parqueame Docker] Starting FastAPI production server on 0.0.0.0:${PORT}..."
+    exec uvicorn server.main:app --host 0.0.0.0 --port "${PORT}" --workers 1
     ;;
   simulate)
     echo "[Parqueame Docker] Launching multi-camera simulator..."

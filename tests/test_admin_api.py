@@ -20,6 +20,20 @@ class TestAdminAPI(unittest.TestCase):
         os.environ["PARQUEAME_ADMIN_USER"] = "admin"
         os.environ["PARQUEAME_ADMIN_PASSWORD"] = "parqueame_secret_2026"
         server_state.initialize(config_dir="config/cameras")
+        if not server_state.camera_configs:
+            from detection.config_loader import CameraConfig, SpotConfig
+            dummy_cfg = CameraConfig(
+                camera_id="cam_01",
+                name="Test Camera 01",
+                reference_resolution=[1280, 720],
+                spots=[
+                    SpotConfig(
+                        id="A-01",
+                        polygon=[[10, 10], [100, 10], [100, 100], [10, 100]],
+                    )
+                ],
+            )
+            server_state.camera_configs["cam_01"] = dummy_cfg
         cls.client = TestClient(app)
 
     def test_01_unauthenticated_access_rejected(self):
