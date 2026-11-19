@@ -393,6 +393,211 @@ class ROICalibrator:
             cv2.destroyAllWindows()
 
 
+class TkinterROICalibrator:
+    """Tkinter fallback calibrator for OpenCV builds without GUI support."""
+
+    def __init__(
+        self,
+        image_path: str,
+        camera_id: str,
+        config_dir: str = "config/cameras",
+        clean_start: bool = False,
+    ) -> None:
+        import tkinter as tk
+        from PIL import Image, ImageTk
+
+        self.tk = tk
+        self.Image = Image
+        self.ImageTk = ImageTk
+        self.camera_id = camera_id
+        self.config_file = Path(config_dir) / f"{camera_id}.json"
+        self.config_file.parent.mkdir(parents=True, exist_ok=True)
+
+        self.base_bgr = cv2.imread(image_path)
+        if self.base_bgr is None:
+            raise FileNotFoundError(f"Failed to read image at '{image_path}'")
+        self.h, self.w = self.base_bgr.shape[:2]
+
+        self.existing_config: Dict[str, Any] = {}
+        self.spots: List[Dict[str, Any]] = []
+        if not clean_start and self.config_file.exists():
+            try:
+                with open(self.config_file, "r", encoding="utf-8") as f:
+                    loaded = json.load(f)
+                if isinstance(loaded, dict):
+                    self.existing_config = loaded
+                    self.spots = list(loaded.get("spots", []))
+                    logger.info(f"Loaded {len(self.spots)} existing spots from '{self.config_file}'")
+            except Exception as e:
+                logger.warning(f"Could not load existing config '{self.config_file}': {e}")
+
+        self.in_progress_points: List[List[int]] = []
+        self.mouse_pos: Tuple[int, int] = (0, 0)
+
+        self.root = tk.Tk()
+        self.root.title(f"Parqueame Calibration - {self.camera_id} ({self.w}x{self.h})")
+
+        screen_w = self.root.winfo_screenwidth()
+        screen_h = self.root.winfo_screenheight()
+        self.scale = min(1.0, max(screen_w - 100, 320) / self.w, max(screen_h - 180, 240) / self.h)
+        disp_w = max(1, int(self.w * self.scale))
+        disp_h = max(1, int(self.h * self.scale))
+
+        rgb = cv2.cvtColor(self.base_bgr, cv2.COLOR_BGR2RGB)
+        pil_img = Image.fromarray(rgb)
+        if (disp_w, disp_h) != (self.w, self.h):
+            pil_img = pil_img.resize((disp_w, disp_h), Image.Resampling.LANCZOS)
+        self.tk_image = ImageTk.PhotoImage(pil_img)
+
+        self.canvas = tk.Canvas(self.root, width=disp_w, height=disp_h, highlightthickness=0)
+        self.canvas.pack()
+        self.canvas.create_image(0, 0, anchor="nw", image=self.tk_image)
+
+        self.status_var = tk.StringVar()
+        tk.Label(
+            self.root,
+            textvariable=self.status_var,
+            anchor="w",
+            bg="#1e1e1e",
+            fg="white",
+            padx=6,
+            pady=4,
+        ).pack(fill="x")
+
+        self.canvas.bind("<Button-1>", self.on_click)
+        self.canvas.bind("<Motion>", self.on_motion)
+        self.root.bind_all("<KeyPress>", self.on_key)
+        self.root.protocol("WM_DELETE_WINDOW", self.root.destroy)
+        self.root.after(100, lambda: self.root.focus_force())
+
+        self._draw_overlay()
+
+    def _to_canvas(self, pt: List[int]) -> Tuple[float, float]:
+        return float(pt[0]) * self.scale, float(pt[1]) * self.scale
+
+    def _to_image(self, x: float, y: float) -> List[int]:
+        ix = int(round(x / self.scale))
+        iy = int(round(y / self.scale))
+        return [max(0, min(self.w - 1, ix)), max(0, min(self.h - 1, iy))]
+
+    def _draw_overlay(self) -> None:
+        c = self.canvas
+        c.delete("overlay")
+
+        for spot in self.spots:
+            poly = spot.get("polygon", [])
+            if len(poly) < 3:
+                continue
+            pts = [self._to_canvas(p) for p in poly]
+            flat = [coord for pt in pts for coord in pt]
+            c.create_polygon(flat, fill="#00bcd4", stipple="gray25", outline="#00e5ff", width=2, tags="overlay")
+            lx, ly = pts[0]
+            label = str(spot.get("id", "spot"))
+            c.create_rectangle(lx, ly - 18, lx + 74, ly + 2, fill="#141414", outline="", tags="overlay")
+            c.create_text(lx + 4, ly - 8, anchor="w", text=label, fill="white", font=("TkDefaultFont", 9), tags="overlay")
+
+        for i, pt in enumerate(self.in_progress_points):
+            cx, cy = self._to_canvas(pt)
+            c.create_oval(cx - 7, cy - 7, cx + 7, cy + 7, outline="white", width=2, tags="overlay")
+            c.create_oval(cx - 5, cy - 5, cx + 5, cy + 5, fill="#008cff", outline="", tags="overlay")
+            c.create_text(cx + 9, cy - 9, anchor="w", text=str(i + 1), fill="white", font=("TkDefaultFont", 9, "bold"), tags="overlay")
+
+        if len(self.in_progress_points) > 1:
+            for i in range(len(self.in_progress_points) - 1):
+                p1 = self._to_canvas(self.in_progress_points[i])
+                p2 = self._to_canvas(self.in_progress_points[i + 1])
+                c.create_line(*p1, *p2, fill="#008cff", width=2, tags="overlay")
+        if 1 <= len(self.in_progress_points) <= 3:
+            last = self._to_canvas(self.in_progress_points[-1])
+            c.create_line(*last, *self.mouse_pos, fill="#00dcff", width=1, dash=(4, 3), tags="overlay")
+
+        self.status_var.set(
+            f"Spots: {len(self.spots)} | In progress: {len(self.in_progress_points)}/4 | "
+            "Click 4 corners | S Save | U Undo | C Cancel | R Reset | Q Quit"
+        )
+
+    def on_motion(self, event: Any) -> None:
+        self.mouse_pos = (event.x, event.y)
+        self._draw_overlay()
+
+    def on_click(self, event: Any) -> None:
+        self.in_progress_points.append(self._to_image(event.x, event.y))
+        print(f"[+] Corner {len(self.in_progress_points)}/4 clicked at {self.in_progress_points[-1]}", flush=True)
+
+        if len(self.in_progress_points) == 4:
+            used_ids = {s.get("id") for s in self.spots}
+            n = len(self.spots) + 1
+            default_id = f"spot_{n:02d}"
+            while default_id in used_ids:
+                n += 1
+                default_id = f"spot_{n:02d}"
+
+            from tkinter import simpledialog
+
+            user_id = simpledialog.askstring(
+                "Spot ID",
+                "Identifier for this spot:",
+                initialvalue=default_id,
+                parent=self.root,
+            )
+            spot_id = (user_id or default_id).strip() or default_id
+            if spot_id in used_ids:
+                spot_id = default_id
+
+            self.spots.append({"id": spot_id, "polygon": list(self.in_progress_points)})
+            print(f"[✓] Recorded '{spot_id}' with 4 vertices. Press S to save.", flush=True)
+            self.in_progress_points.clear()
+
+        self._draw_overlay()
+
+    def on_key(self, event: Any) -> None:
+        key = (event.keysym or "").lower()
+        if key in ("q", "escape"):
+            self.root.destroy()
+        elif key == "s":
+            self.save()
+        elif key == "u":
+            self.undo()
+        elif key == "c":
+            self.in_progress_points.clear()
+            print("[!] Cancelled in-progress spot points.", flush=True)
+            self._draw_overlay()
+        elif key == "r":
+            self.spots.clear()
+            self.in_progress_points.clear()
+            print("[!] Reset all spots.", flush=True)
+            self._draw_overlay()
+
+    def save(self) -> None:
+        payload = dict(self.existing_config)
+        payload["camera_id"] = self.camera_id
+        payload.setdefault("name", f"Camera {self.camera_id}")
+        payload.setdefault("description", "Configured via calibrate_rois.py")
+        payload["reference_resolution"] = [self.w, self.h]
+        payload["spots"] = self.spots
+        with open(self.config_file, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2)
+        print(f"[✓] Successfully saved {len(self.spots)} spots to '{self.config_file}'", flush=True)
+
+    def undo(self) -> None:
+        if self.in_progress_points:
+            popped = self.in_progress_points.pop()
+            print(f"[-] Undid in-progress point {popped}", flush=True)
+        elif self.spots:
+            popped_spot = self.spots.pop()
+            print(f"[-] Undid spot '{popped_spot.get('id')}'", flush=True)
+        else:
+            logger.info("Nothing to undo.")
+        self._draw_overlay()
+
+    def run(self) -> None:
+        logger.info("=" * 60)
+        logger.info(f"Started Tkinter ROI Calibration for {self.camera_id}")
+        logger.info("Click 4 corners for each spot. Keys: S Save | U Undo | C Cancel | R Reset | Q Quit")
+        logger.info("=" * 60)
+        self.root.mainloop()
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Parqueame ROI Calibrator: auto-cut from XML directory, draw via GUI, or preview cuts",
@@ -495,8 +700,19 @@ def main() -> int:
             calibrator.run()
             return 0
         except cv2.error as e:
-            logger.error(f"OpenCV GUI error (X11/Wayland display server required): {e}")
-            return 1
+            logger.warning(f"OpenCV GUI unavailable ({e}). Falling back to Tkinter calibration window.")
+            try:
+                calibrator = TkinterROICalibrator(
+                    image_path=str(target),
+                    camera_id=camera_id,
+                    config_dir=args.config_dir,
+                    clean_start=args.clean,
+                )
+                calibrator.run()
+                return 0
+            except Exception as tk_error:
+                logger.error(f"Tkinter GUI error (a graphical display is required): {tk_error}")
+                return 1
         except Exception as e:
             logger.error(f"Error during calibration: {e}")
             return 1
