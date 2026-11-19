@@ -2,10 +2,11 @@
  * SGIP - Mapeo de Identificadores entre Servidor (Cámaras) y Plano Vectorial SVG
  */
 
-// cam_01 (28 plazas): Hilera R1 completa
+// cam_01 (23 plazas): Hilera L4-B02..B08, Hilera L4-A01..A08 y Hilera L3-A01..A08
 const cam01Spots = [];
-for (let i = 1; i <= 14; i++) cam01Spots.push('R1-A' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 14; i++) cam01Spots.push('R1-B' + String(i).padStart(2, '0'));
+for (let i = 2; i <= 8; i++) cam01Spots.push('L4-B' + String(i).padStart(2, '0'));
+for (let i = 1; i <= 8; i++) cam01Spots.push('L4-A' + String(i).padStart(2, '0'));
+for (let i = 1; i <= 8; i++) cam01Spots.push('L3-A' + String(i).padStart(2, '0'));
 
 // cam_02 (40 plazas): Hileras L1 (18), L2 (18) y LW-top (4)
 const cam02Spots = [];
@@ -15,27 +16,14 @@ for (let i = 1; i <= 9; i++) cam02Spots.push('L2-A' + String(i).padStart(2, '0')
 for (let i = 1; i <= 9; i++) cam02Spots.push('L2-B' + String(i).padStart(2, '0'));
 for (let i = 1; i <= 4; i++) cam02Spots.push('LW-top-' + String(i).padStart(2, '0'));
 
-// cam_03 (100 plazas): Hileras R2 (28), R3 (28), R4 (28) y L3 (16)
-const cam03Spots = [];
-for (let i = 1; i <= 14; i++) cam03Spots.push('R2-A' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 14; i++) cam03Spots.push('R2-B' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 14; i++) cam03Spots.push('R3-A' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 14; i++) cam03Spots.push('R3-B' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 14; i++) cam03Spots.push('R4-A' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 14; i++) cam03Spots.push('R4-B' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 8; i++) cam03Spots.push('L3-A' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 8; i++) cam03Spots.push('L3-B' + String(i).padStart(2, '0'));
-
 export const CAMERA_SPOTS_MAP = {
   cam_01: cam01Spots,
   cam_02: cam02Spots,
-  cam_03: cam03Spots,
 };
 
 export const CAMERA_METADATA = {
-  cam_01: { name: 'Cámara 01 - Hilera R1', resolution: '1280x720', sector: 'Sector Este R1' },
+  cam_01: { name: 'Cámara 01 - Hileras L4/L3', resolution: '1280x1024', sector: 'Sector L4/L3' },
   cam_02: { name: 'Cámara 02 - Hileras L1/L2', resolution: '1280x720', sector: 'Sector Oeste L1-L2' },
-  cam_03: { name: 'Cámara 03 - Hileras R2/R3/R4/L3', resolution: '1280x720', sector: 'Sector Central UCE' },
 };
 
 // Índice inverso para búsqueda O(1)
