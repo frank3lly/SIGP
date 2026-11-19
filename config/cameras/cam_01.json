@@ -1,6 +1,6 @@
 {
   "camera_id": "cam_01",
-  "name": "UFPR04 Campus Lot - Cam 01",
+  "name": "Cam 01",
   "description": "Calibrated with 28 official ground-truth parking slots (1280x720)",
   "reference_resolution": [
     1280,
@@ -531,7 +531,7 @@
           229
         ]
       ]
-    },
+    }
   ],
   "hot_config": {
     "interval_seconds": 30,
