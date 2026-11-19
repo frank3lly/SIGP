@@ -2,12 +2,14 @@
  * SGIP - Mapeo de Identificadores entre Servidor (Cámaras) y Plano Vectorial SVG
  */
 
-// cam_02 (33 plazas): Hilera L4-B01..B08, L4-A01..A08, L3-B01..B09 y L3-A02..A09
+// cam_02 (33 plazas): L4-B02..B09, L4-A02..A09, L4-A01, L4-B01, L3-B01..B09 y L3-A01..A06
 const cam02Spots = [];
-for (let i = 1; i <= 8; i++) cam02Spots.push('L4-B' + String(i).padStart(2, '0'));
-for (let i = 1; i <= 8; i++) cam02Spots.push('L4-A' + String(i).padStart(2, '0'));
+for (let i = 2; i <= 9; i++) cam02Spots.push('L4-B' + String(i).padStart(2, '0'));
+for (let i = 2; i <= 9; i++) cam02Spots.push('L4-A' + String(i).padStart(2, '0'));
+cam02Spots.push('L4-A01');
+cam02Spots.push('L4-B01');
 for (let i = 1; i <= 9; i++) cam02Spots.push('L3-B' + String(i).padStart(2, '0'));
-for (let i = 2; i <= 9; i++) cam02Spots.push('L3-A' + String(i).padStart(2, '0'));
+for (let i = 1; i <= 6; i++) cam02Spots.push('L3-A' + String(i).padStart(2, '0'));
 
 export const CAMERA_SPOTS_MAP = {
   cam_02: cam02Spots,

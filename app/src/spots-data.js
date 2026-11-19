@@ -512,8 +512,8 @@ export const spotsDatabase = {
     "lat": 18.45194272950678,
     "lng": -69.31034215599631,
     "ui_num": "01",
-    "camera_id": null,
-    "camera_spot_id": null,
+    "camera_id": "cam_02",
+    "camera_spot_id": "spot_28",
     "cx": 42.1,
     "cy": 139.29
   },
@@ -527,7 +527,7 @@ export const spotsDatabase = {
     "lng": -69.31028782576503,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_26",
+    "camera_spot_id": "spot_29",
     "cx": 45.12,
     "cy": 137.44
   },
@@ -541,7 +541,7 @@ export const spotsDatabase = {
     "lng": -69.31023349553377,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_27",
+    "camera_spot_id": "spot_30",
     "cx": 48.14,
     "cy": 135.59
   },
@@ -555,7 +555,7 @@ export const spotsDatabase = {
     "lng": -69.31017916530249,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_28",
+    "camera_spot_id": "spot_31",
     "cx": 51.16,
     "cy": 133.74
   },
@@ -569,7 +569,7 @@ export const spotsDatabase = {
     "lng": -69.31012483507122,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_29",
+    "camera_spot_id": "spot_32",
     "cx": 54.18,
     "cy": 131.89
   },
@@ -583,7 +583,7 @@ export const spotsDatabase = {
     "lng": -69.31007050483994,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_30",
+    "camera_spot_id": "spot_33",
     "cx": 57.19,
     "cy": 130.04
   },
@@ -596,8 +596,8 @@ export const spotsDatabase = {
     "lat": 18.452142491158043,
     "lng": -69.31001617460868,
     "ui_num": "07",
-    "camera_id": "cam_02",
-    "camera_spot_id": "spot_31",
+    "camera_id": null,
+    "camera_spot_id": null,
     "cx": 60.21,
     "cy": 128.19
   },
@@ -610,8 +610,8 @@ export const spotsDatabase = {
     "lat": 18.452175784766588,
     "lng": -69.3099618443774,
     "ui_num": "08",
-    "camera_id": "cam_02",
-    "camera_spot_id": "spot_32",
+    "camera_id": null,
+    "camera_spot_id": null,
     "cx": 63.23,
     "cy": 126.35
   },
@@ -624,8 +624,8 @@ export const spotsDatabase = {
     "lat": 18.45220907837513,
     "lng": -69.30990751414613,
     "ui_num": "09",
-    "camera_id": "cam_02",
-    "camera_spot_id": "spot_33",
+    "camera_id": null,
+    "camera_spot_id": null,
     "cx": 66.25,
     "cy": 124.5
   },
@@ -639,7 +639,7 @@ export const spotsDatabase = {
     "lng": -69.31026127321849,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_17",
+    "camera_spot_id": "spot_19",
     "cx": 46.6,
     "cy": 146.63
   },
@@ -653,7 +653,7 @@ export const spotsDatabase = {
     "lng": -69.31020694298722,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_18",
+    "camera_spot_id": "spot_20",
     "cx": 49.61,
     "cy": 144.78
   },
@@ -667,7 +667,7 @@ export const spotsDatabase = {
     "lng": -69.31015261275594,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_19",
+    "camera_spot_id": "spot_21",
     "cx": 52.63,
     "cy": 142.93
   },
@@ -681,7 +681,7 @@ export const spotsDatabase = {
     "lng": -69.31009828252468,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_20",
+    "camera_spot_id": "spot_22",
     "cx": 55.65,
     "cy": 141.08
   },
@@ -695,7 +695,7 @@ export const spotsDatabase = {
     "lng": -69.3100439522934,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_21",
+    "camera_spot_id": "spot_23",
     "cx": 58.67,
     "cy": 139.23
   },
@@ -709,7 +709,7 @@ export const spotsDatabase = {
     "lng": -69.30998962206213,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_22",
+    "camera_spot_id": "spot_24",
     "cx": 61.69,
     "cy": 137.38
   },
@@ -723,7 +723,7 @@ export const spotsDatabase = {
     "lng": -69.30993529183085,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_23",
+    "camera_spot_id": "spot_25",
     "cx": 64.71,
     "cy": 135.53
   },
@@ -737,7 +737,7 @@ export const spotsDatabase = {
     "lng": -69.30988096159957,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_24",
+    "camera_spot_id": "spot_26",
     "cx": 67.72,
     "cy": 133.68
   },
@@ -751,7 +751,7 @@ export const spotsDatabase = {
     "lng": -69.30982663136831,
     "ui_num": "09",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_25",
+    "camera_spot_id": "spot_27",
     "cx": 70.74,
     "cy": 131.83
   },
@@ -765,7 +765,7 @@ export const spotsDatabase = {
     "lng": -69.31011928989963,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_09",
+    "camera_spot_id": "spot_17",
     "cx": 54.48,
     "cy": 159.34
   },
@@ -779,7 +779,7 @@ export const spotsDatabase = {
     "lng": -69.31006495966837,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_10",
+    "camera_spot_id": "spot_09",
     "cx": 57.5,
     "cy": 157.49
   },
@@ -793,7 +793,7 @@ export const spotsDatabase = {
     "lng": -69.31001062943709,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_11",
+    "camera_spot_id": "spot_10",
     "cx": 60.52,
     "cy": 155.64
   },
@@ -807,7 +807,7 @@ export const spotsDatabase = {
     "lng": -69.30995629920582,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_12",
+    "camera_spot_id": "spot_11",
     "cx": 63.54,
     "cy": 153.79
   },
@@ -821,7 +821,7 @@ export const spotsDatabase = {
     "lng": -69.30990196897454,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_13",
+    "camera_spot_id": "spot_12",
     "cx": 66.56,
     "cy": 151.94
   },
@@ -835,7 +835,7 @@ export const spotsDatabase = {
     "lng": -69.30984763874328,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_14",
+    "camera_spot_id": "spot_13",
     "cx": 69.58,
     "cy": 150.09
   },
@@ -849,7 +849,7 @@ export const spotsDatabase = {
     "lng": -69.309793308512,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_15",
+    "camera_spot_id": "spot_14",
     "cx": 72.59,
     "cy": 148.24
   },
@@ -863,7 +863,7 @@ export const spotsDatabase = {
     "lng": -69.30973897828073,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_16",
+    "camera_spot_id": "spot_15",
     "cx": 75.61,
     "cy": 146.39
   },
@@ -876,8 +876,8 @@ export const spotsDatabase = {
     "lat": 18.45184822186721,
     "lng": -69.30968464804945,
     "ui_num": "09",
-    "camera_id": null,
-    "camera_spot_id": null,
+    "camera_id": "cam_02",
+    "camera_spot_id": "spot_16",
     "cx": 78.63,
     "cy": 144.54
   },
@@ -891,7 +891,7 @@ export const spotsDatabase = {
     "lng": -69.31003840712182,
     "ui_num": "01",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_01",
+    "camera_spot_id": "spot_18",
     "cx": 58.98,
     "cy": 166.67
   },
@@ -905,7 +905,7 @@ export const spotsDatabase = {
     "lng": -69.30998407689054,
     "ui_num": "02",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_02",
+    "camera_spot_id": "spot_01",
     "cx": 62.0,
     "cy": 164.82
   },
@@ -919,7 +919,7 @@ export const spotsDatabase = {
     "lng": -69.30992974665928,
     "ui_num": "03",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_03",
+    "camera_spot_id": "spot_02",
     "cx": 65.01,
     "cy": 162.97
   },
@@ -933,7 +933,7 @@ export const spotsDatabase = {
     "lng": -69.309875416428,
     "ui_num": "04",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_04",
+    "camera_spot_id": "spot_03",
     "cx": 68.03,
     "cy": 161.12
   },
@@ -947,7 +947,7 @@ export const spotsDatabase = {
     "lng": -69.30982108619673,
     "ui_num": "05",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_05",
+    "camera_spot_id": "spot_04",
     "cx": 71.05,
     "cy": 159.27
   },
@@ -961,7 +961,7 @@ export const spotsDatabase = {
     "lng": -69.30976675596546,
     "ui_num": "06",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_06",
+    "camera_spot_id": "spot_05",
     "cx": 74.07,
     "cy": 157.42
   },
@@ -975,7 +975,7 @@ export const spotsDatabase = {
     "lng": -69.30971242573418,
     "ui_num": "07",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_07",
+    "camera_spot_id": "spot_06",
     "cx": 77.09,
     "cy": 155.58
   },
@@ -989,7 +989,7 @@ export const spotsDatabase = {
     "lng": -69.30965809550291,
     "ui_num": "08",
     "camera_id": "cam_02",
-    "camera_spot_id": "spot_08",
+    "camera_spot_id": "spot_07",
     "cx": 80.11,
     "cy": 153.73
   },
@@ -1002,8 +1002,8 @@ export const spotsDatabase = {
     "lat": 18.45171623316977,
     "lng": -69.30960376527163,
     "ui_num": "09",
-    "camera_id": null,
-    "camera_spot_id": null,
+    "camera_id": "cam_02",
+    "camera_spot_id": "spot_08",
     "cx": 83.12,
     "cy": 151.88
   },
