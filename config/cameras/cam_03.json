@@ -35,5 +35,5 @@
     "quality": 12,
     "firmware_version": "1.0.0"
   },
-  "test_mode": true
+  "test_mode": false 
 }
