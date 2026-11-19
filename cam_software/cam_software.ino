@@ -23,10 +23,10 @@ const char* WIFI_SSID     = "Ezequiel";
 const char* WIFI_PASSWORD = "Ezequiel23101609";
 
 // Configuración del Servidor Central FastAPI
-const char* SERVER_HOST   = "192.168.1.29";
-const uint16_t SERVER_PORT = 8000;
-const bool USE_HTTPS      = false;
-const char* CAMERA_ID     = "cam_01";
+const char* SERVER_HOST   = "sigp-api-4vi0.onrender.com";
+const uint16_t SERVER_PORT = 443;
+const bool USE_HTTPS      = true;
+const char* CAMERA_ID     = "cam_01"; // vas cambiando entre camara
 
 // Variables dinámicas de Hot-Configuration (persisten en memoria RTC durante Deep Sleep)
 const uint32_t DEFAULT_INTERVAL_SECONDS      = 30;

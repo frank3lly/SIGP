@@ -1,0 +1,39 @@
+{
+  "camera_id": "cam_02",
+  "name": "Cam 02 config prueba",
+  "description": "Calibrated with 28 official ground-truth parking slots (1280x720)",
+  "reference_resolution": [
+    1280,
+    720
+  ],
+  "spots": [
+    {
+      "id": "spot_28",
+      "polygon": [
+        [
+          444,
+          129
+        ],
+        [
+          473,
+          171
+        ],
+        [
+          432,
+          187
+        ],
+        [
+          401,
+          154
+        ]
+      ]
+    }
+  ],
+  "hot_config": {
+    "interval_seconds": 30,
+    "active": true,
+    "quality": 12,
+    "firmware_version": "1.0.0"
+  },
+  "test_mode": true
+}

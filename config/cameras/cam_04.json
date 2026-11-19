@@ -1,0 +1,39 @@
+{
+  "camera_id": "cam_04",
+  "name": "Cam 04",
+  "description": "Calibrated with 28 official ground-truth parking slots (1280x720)",
+  "reference_resolution": [
+    1280,
+    720
+  ],
+  "spots": [
+    {
+      "id": "spot_26",
+      "polygon": [
+        [
+          369,
+          178
+        ],
+        [
+          396,
+          224
+        ],
+        [
+          352,
+          239
+        ],
+        [
+          323,
+          199
+        ]
+      ]
+    }
+  ],
+  "hot_config": {
+    "interval_seconds": 30,
+    "active": true,
+    "quality": 12,
+    "firmware_version": "1.0.0"
+  },
+  "test_mode": true
+}
